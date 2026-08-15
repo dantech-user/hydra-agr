@@ -8,7 +8,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode (project.findProperty("HYDRA_VERSION_CODE") ?: "1").toInteger()
-        versionName project.findProperty("HYDRA_VERSION_NAME") ?: "1.0.0"
+        versionName (project.findProperty("HYDRA_VERSION_NAME") ?: "1.0.0").toString()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
