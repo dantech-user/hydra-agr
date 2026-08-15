@@ -1,0 +1,271 @@
+export type MainTab = "home" | "water" | "herd" | "monitor" | "profile";
+
+export type AppRoute =
+  | MainTab
+  | "community"
+  | "challenges"
+  | "property"
+  | "activities"
+  | "nfc"
+  | "notifications"
+  | "admin";
+
+export type UserRole = "user" | "moderator" | "admin" | "owner";
+
+export type WaterSource = {
+  id: string;
+  name: string;
+  type: string;
+  status: "ativa" | "atenção" | "inativa";
+};
+
+export type WaterRecord = {
+  id: string;
+  date: string;
+  amount: number;
+  sourceId: string;
+  purpose: string;
+  note?: string;
+};
+
+export type AnimalHistoryEntry = {
+  id: string;
+  date: string;
+  type: string;
+  description: string;
+};
+
+export type Animal = {
+  id: string;
+  identification: string;
+  name?: string;
+  species: string;
+  breed?: string;
+  sex?: string;
+  birthDate?: string;
+  weight?: number;
+  photoPath?: string;
+  photoUrl?: string;
+  status: string;
+  electronicId?: string;
+  notes?: string;
+  history?: AnimalHistoryEntry[];
+};
+
+export type Sector = {
+  id: string;
+  name: string;
+  kind: string;
+  note?: string;
+};
+
+export type Activity = {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+  sectorId?: string;
+  animalId?: string;
+  note?: string;
+  done: boolean;
+};
+
+export type MonitoringRecord = {
+  id: string;
+  date: string;
+  sectorId?: string;
+  type: string;
+  duration?: string;
+  note?: string;
+  occurrence?: string;
+  photoPaths?: string[];
+  photoUrls?: string[];
+};
+
+export type Drone = {
+  id: string;
+  identifier: string;
+  status: "offline" | "ready" | "mission" | "maintenance";
+  battery?: number;
+  sectorId?: string;
+  lastSeenAt?: string;
+};
+
+export type CommunityComment = {
+  id: string;
+  authorId: string;
+  author: string;
+  text: string;
+  date: string;
+};
+
+export type CommunityPost = {
+  id: string;
+  authorId: string;
+  author: string;
+  authorAvatarUrl?: string;
+  propertyName?: string;
+  municipality?: string;
+  text: string;
+  date: string;
+  image?: string;
+  likes: number;
+  liked: boolean;
+  comments: CommunityComment[];
+  moderationStatus: "published" | "hidden" | "removed";
+};
+
+export type Property = {
+  id?: string;
+  name: string;
+  municipality: string;
+  state: string;
+  area: string;
+  areaUnit: string;
+  type: string;
+  mainActivity: string;
+  otherActivities: string[];
+  approximateAnimals: string;
+  waterKinds: string[];
+};
+
+export type HydraAccount = {
+  id: string;
+  email: string;
+  phone: string;
+  profile: {
+    name: string;
+    plan: "Gratuito" | "Hydra Agro+";
+    avatarUrl?: string;
+    bio?: string;
+  };
+  property: Property;
+  waterSources: WaterSource[];
+  waterRecords: WaterRecord[];
+  animals: Animal[];
+  sectors: Sector[];
+  activities: Activity[];
+  monitoring: MonitoringRecord[];
+  drones: Drone[];
+  nfcReadCount: number;
+  posts: CommunityPost[];
+  notifications: string[];
+  settings: {
+    waterAlerts: boolean;
+    pushNotifications: boolean;
+  };
+  role: UserRole;
+  bannedAt?: string;
+  banReason?: string;
+};
+
+export type SignupPayload = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  property: Property;
+};
+
+export type AuthResult = {
+  ok: boolean;
+  message: string;
+  needsEmailConfirmation?: boolean;
+};
+
+export type Announcement = {
+  id: string;
+  title: string;
+  body: string;
+  level: "info" | "attention" | "critical";
+  active: boolean;
+  startsAt?: string;
+  endsAt?: string;
+  createdAt: string;
+};
+
+export type AppLink = {
+  id: string;
+  label: string;
+  url: string;
+  description?: string;
+  active: boolean;
+  position: number;
+};
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  name: string;
+  propertyName?: string;
+  municipality?: string;
+  role: UserRole;
+  plan: "Gratuito" | "Hydra Agro+";
+  createdAt: string;
+  bannedAt?: string;
+  banReason?: string;
+};
+
+export type AdminMetrics = {
+  users: number;
+  properties: number;
+  animals: number;
+  waterRecords: number;
+  posts: number;
+  activeSubscriptions: number;
+};
+
+export type AdminData = {
+  users: AdminUser[];
+  announcements: Announcement[];
+  links: AppLink[];
+  metrics: AdminMetrics;
+};
+
+export function makeId(prefix: string) {
+  const random =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2);
+  return `${prefix}-${random}`;
+}
+
+export const emptyProperty: Property = {
+  name: "",
+  municipality: "",
+  state: "BA",
+  area: "",
+  areaUnit: "hectares",
+  type: "",
+  mainActivity: "",
+  otherActivities: [],
+  approximateAnimals: "",
+  waterKinds: [],
+};
+
+export function createEmptyAccount(user: {
+  id: string;
+  email: string;
+  name?: string;
+  phone?: string;
+}): HydraAccount {
+  return {
+    id: user.id,
+    email: user.email,
+    phone: user.phone ?? "",
+    profile: { name: user.name?.trim() || "Produtor", plan: "Gratuito" },
+    property: { ...emptyProperty },
+    waterSources: [],
+    waterRecords: [],
+    animals: [],
+    sectors: [],
+    activities: [],
+    monitoring: [],
+    drones: [],
+    nfcReadCount: 0,
+    posts: [],
+    notifications: [],
+    settings: { waterAlerts: true, pushNotifications: true },
+    role: "user",
+  };
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hydra Agro</string>
+    <string name="title_activity_main">Hydra Agro</string>
+    <string name="package_name">br.com.hydraagro.app</string>
+    <string name="custom_url_scheme">br.com.hydraagro.app</string>
+</resources>

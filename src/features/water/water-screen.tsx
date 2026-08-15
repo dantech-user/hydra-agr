@@ -1,0 +1,321 @@
+"use client";
+
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  AlertTriangle,
+  BarChart3,
+  BellRing,
+  ChevronRight,
+  Droplet,
+  Droplets,
+  Plus,
+  Pencil,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Minus,
+  Waves,
+} from "lucide-react";
+import { EmptyState, Field, Modal, ScreenHeader, SectionHeader, Toggle } from "../../components/ui";
+import { makeId, type HydraAccount, type WaterRecord, type WaterSource } from "../../lib/hydra-types";
+
+type Props = {
+  account: HydraAccount;
+  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  createRecordRequest?: number;
+  onRequestHandled?: () => void;
+};
+
+const today = () => new Date().toISOString().slice(0, 10);
+
+export function WaterScreen({ account, updateAccount, createRecordRequest, onRequestHandled }: Props) {
+  const [sourceOpen, setSourceOpen] = useState(false);
+  const [recordOpen, setRecordOpen] = useState(false);
+  const [editingSourceId, setEditingSourceId] = useState<string>();
+  const [editingRecordId, setEditingRecordId] = useState<string>();
+  const [selectedSource, setSelectedSource] = useState<WaterSource | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<WaterRecord | null>(null);
+  const [sourceName, setSourceName] = useState("");
+  const [sourceType, setSourceType] = useState("Poço");
+  const [sourceStatus, setSourceStatus] = useState<WaterSource["status"]>("ativa");
+  const [record, setRecord] = useState({ date: today(), amount: "", sourceId: "", purpose: "Consumo animal", note: "" });
+  const [error, setError] = useState("");
+
+  const total = useMemo(
+    () => account.waterRecords.reduce((sum, item) => sum + item.amount, 0),
+    [account.waterRecords],
+  );
+  const maxRecord = Math.max(...account.waterRecords.map((item) => item.amount), 1);
+  const trend = useMemo(() => {
+    if (account.waterRecords.length < 3) return null;
+    const ordered = [...account.waterRecords].sort((left, right) => left.date.localeCompare(right.date));
+    const latest = ordered.at(-1)!.amount;
+    const comparison = ordered.slice(-3, -1);
+    const baseline = comparison.reduce((sum, item) => sum + item.amount, 0) / comparison.length;
+    if (baseline <= 0) return null;
+    const change = ((latest - baseline) / baseline) * 100;
+    const direction: "stable" | "up" | "down" = Math.abs(change) < 5 ? "stable" : change > 0 ? "up" : "down";
+    return { change, direction };
+  }, [account.waterRecords]);
+
+  function addSource(event: FormEvent) {
+    event.preventDefault();
+    if (!sourceName.trim()) {
+      setError("Dê um nome para a fonte de água.");
+      return;
+    }
+    const id = editingSourceId ?? makeId("source");
+    updateAccount((current) => ({ ...current, waterSources: editingSourceId
+      ? current.waterSources.map((source) => source.id === editingSourceId ? { ...source, name: sourceName.trim(), type: sourceType, status: sourceStatus } : source)
+      : [...current.waterSources, { id, name: sourceName.trim(), type: sourceType, status: sourceStatus }],
+    }));
+    setRecord((current) => ({ ...current, sourceId: current.sourceId || id }));
+    setSourceName("");
+    setSourceStatus("ativa");
+    setEditingSourceId(undefined);
+    setError("");
+    setSourceOpen(false);
+  }
+
+  function addRecord(event: FormEvent) {
+    event.preventDefault();
+    const amount = Number(record.amount.replace(",", "."));
+    if (!record.sourceId) {
+      setError("Selecione a origem da água.");
+      return;
+    }
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setError("Informe uma quantidade válida.");
+      return;
+    }
+    const nextRecord = { id: editingRecordId ?? makeId("water"), date: record.date, amount, sourceId: record.sourceId, purpose: record.purpose, note: record.note.trim() };
+    updateAccount((current) => ({ ...current, waterRecords: editingRecordId
+      ? current.waterRecords.map((item) => item.id === editingRecordId ? nextRecord : item)
+      : [nextRecord, ...current.waterRecords],
+    }));
+    setRecord({ date: today(), amount: "", sourceId: account.waterSources[0]?.id ?? "", purpose: "Consumo animal", note: "" });
+    setError("");
+    setEditingRecordId(undefined);
+    setRecordOpen(false);
+  }
+
+  function openRecord() {
+    setError("");
+    if (account.waterSources.length > 0 && !record.sourceId) {
+      setRecord((current) => ({ ...current, sourceId: account.waterSources[0].id }));
+    }
+    setRecordOpen(true);
+  }
+
+  useEffect(() => { if (createRecordRequest !== undefined) { openRecord(); onRequestHandled?.(); } }, [createRecordRequest]);
+
+  function openSourceForm() {
+    setEditingSourceId(undefined);
+    setSourceName("");
+    setSourceType("Poço");
+    setSourceStatus("ativa");
+    setError("");
+    setSourceOpen(true);
+  }
+
+  function editSource(source: WaterSource) {
+    setEditingSourceId(source.id);
+    setSourceName(source.name);
+    setSourceType(source.type);
+    setSourceStatus(source.status);
+    setSelectedSource(null);
+    setSourceOpen(true);
+  }
+
+  function deleteSource(source: WaterSource) {
+    if (account.waterRecords.some((item) => item.sourceId === source.id)) {
+      setError("Esta fonte possui leituras. Exclua ou edite os registros vinculados primeiro.");
+      return;
+    }
+    if (!window.confirm(`Excluir a fonte ${source.name}?`)) return;
+    updateAccount((current) => ({ ...current, waterSources: current.waterSources.filter((item) => item.id !== source.id) }));
+    setSelectedSource(null);
+  }
+
+  function editRecord(item: WaterRecord) {
+    setEditingRecordId(item.id);
+    setRecord({ date: item.date, amount: String(item.amount), sourceId: item.sourceId, purpose: item.purpose, note: item.note ?? "" });
+    setSelectedRecord(null);
+    setRecordOpen(true);
+  }
+
+  function deleteRecord(item: WaterRecord) {
+    if (!window.confirm("Excluir esta leitura de água?")) return;
+    updateAccount((current) => ({ ...current, waterRecords: current.waterRecords.filter((recordItem) => recordItem.id !== item.id) }));
+    setSelectedRecord(null);
+  }
+
+  return (
+    <div className="screen page-enter">
+      <ScreenHeader
+        eyebrow="GESTÃO HÍDRICA"
+        title="Água"
+        subtitle="Registre apenas leituras reais da propriedade."
+        action={<button className="icon-button accent" onClick={openSourceForm} aria-label="Adicionar fonte"><Plus size={21} /></button>}
+      />
+
+      <section className="water-overview">
+        <div className="water-total">
+          <div className="water-total-icon"><Droplets size={28} /></div>
+          <span>Volume registrado</span>
+          <strong>{account.waterRecords.length ? `${total.toLocaleString("pt-BR")} L` : "—"}</strong>
+          <small>{account.waterRecords.length ? `${account.waterRecords.length} leitura${account.waterRecords.length > 1 ? "s" : ""}` : "Nenhuma leitura ainda"}</small>
+        </div>
+        <div className="water-mini-metrics">
+          <div><span>Fontes</span><strong>{account.waterSources.length}</strong></div>
+          <div><span>Média</span><strong>{account.waterRecords.length ? `${Math.round(total / account.waterRecords.length)} L` : "—"}</strong></div>
+        </div>
+      </section>
+
+      <div className="action-pair">
+        <button className="primary-button" onClick={openRecord}><Droplet size={18} /> Registrar leitura</button>
+        <button className="secondary-button" onClick={openSourceForm}><Waves size={18} /> Nova fonte</button>
+      </div>
+
+      <section className="content-section">
+        <SectionHeader title="Evolução" action={<span className="subtle-label">Registros recentes</span>} />
+        {account.waterRecords.length === 0 ? (
+          <EmptyState
+            icon={<BarChart3 size={25} />}
+            title="A evolução começa com uma leitura"
+            text="O gráfico só aparecerá quando houver dados registrados por você."
+            action={<button className="small-button" onClick={openRecord}>Registrar agora</button>}
+          />
+        ) : (
+          <div className="water-chart" aria-label="Gráfico das leituras recentes">
+            {account.waterRecords.slice(0, 7).reverse().map((item) => (
+              <div className="chart-column" key={item.id}>
+                <span className="chart-value">{item.amount}L</span>
+                <div className="chart-track"><i style={{ height: `${Math.max((item.amount / maxRecord) * 100, 8)}%` }} /></div>
+                <small>{new Date(`${item.date}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</small>
+              </div>
+            ))}
+          </div>
+        )}
+        {trend && <div className={`water-trend ${trend.direction}`}><span>{trend.direction === "up" ? <TrendingUp size={21} /> : trend.direction === "down" ? <TrendingDown size={21} /> : <Minus size={21} />}</span><div><small>TENDÊNCIA PELAS 3 ÚLTIMAS LEITURAS</small><strong>{trend.direction === "up" ? "Última leitura acima da média" : trend.direction === "down" ? "Última leitura abaixo da média" : "Consumo recente estável"}</strong><p>{Math.abs(trend.change).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}% {trend.direction === "stable" ? "de variação" : trend.direction === "up" ? "acima" : "abaixo"} da média das duas leituras anteriores.</p></div></div>}
+      </section>
+
+      <section className="content-section">
+        <SectionHeader title="Fontes cadastradas" action={<button className="text-button" onClick={openSourceForm}>Adicionar</button>} />
+        {account.waterSources.length === 0 ? (
+          <div className="inline-empty"><Waves size={21} /><span><strong>Nenhuma fonte cadastrada</strong><small>Poço, cisterna, nascente, açude e outras.</small></span></div>
+        ) : (
+          <div className="compact-list">
+            {account.waterSources.map((source) => (
+              <button className="compact-row" key={source.id} onClick={() => { setSelectedSource(source); setError(""); }}>
+                <span className="row-icon soft-blue"><Droplet size={19} /></span>
+                <div><strong>{source.name}</strong><small>{source.type}</small></div>
+                <span className={`status-pill ${source.status}`}>{source.status}</span>
+                <ChevronRight size={18} />
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="content-section">
+        <div className="setting-card">
+          <span className="row-icon soft-orange"><BellRing size={20} /></span>
+          <div><strong>Alertas de consumo</strong><small>Avisos dependem de leituras suficientes.</small></div>
+          <Toggle
+            checked={account.settings.waterAlerts}
+            label="Alertas de consumo de água"
+            onChange={(waterAlerts) => updateAccount((current) => ({ ...current, settings: { ...current.settings, waterAlerts } }))}
+          />
+        </div>
+        {account.settings.waterAlerts && account.waterRecords.length < 3 && (
+          <div className="info-strip"><AlertTriangle size={17} /> Registre pelo menos 3 leituras para começar a observar tendências.</div>
+        )}
+        {account.settings.waterAlerts && trend?.direction === "up" && trend.change >= 15 && <div className="info-strip attention"><AlertTriangle size={17} /> Atenção: a última leitura ficou {trend.change.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}% acima da média das duas anteriores.</div>}
+        {account.settings.waterAlerts && account.waterSources.some((source) => source.status === "atenção") && <div className="info-strip attention"><AlertTriangle size={17} /> Há fonte de água marcada como “atenção”. Abra a fonte para revisar sua situação.</div>}
+      </section>
+
+      <section className="content-section last-section">
+        <SectionHeader title="Histórico" />
+        {account.waterRecords.length === 0 ? (
+          <div className="plain-empty">Nenhum registro de água.</div>
+        ) : (
+          <div className="timeline-list">
+            {account.waterRecords.map((item) => {
+              const source = account.waterSources.find((entry) => entry.id === item.sourceId);
+              return (
+                <button key={item.id} onClick={() => setSelectedRecord(item)}>
+                  <span className="timeline-dot" />
+                  <div><strong>{item.amount.toLocaleString("pt-BR")} L · {item.purpose}</strong><small>{source?.name || "Origem removida"} · {new Date(`${item.date}T12:00:00`).toLocaleDateString("pt-BR")}</small></div>
+                  <ChevronRight size={18} />
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <Modal open={sourceOpen} onClose={() => { setSourceOpen(false); setEditingSourceId(undefined); setError(""); }} eyebrow="RECURSO HÍDRICO" title={editingSourceId ? "Editar fonte de água" : "Cadastrar fonte de água"}>
+        <form className="modal-form" onSubmit={addSource}>
+          <Field label="Nome da fonte">
+            <input value={sourceName} onChange={(e) => { setSourceName(e.target.value); setError(""); }} placeholder="Ex.: Cisterna principal" autoFocus />
+          </Field>
+          <Field label="Tipo">
+            <select value={sourceType} onChange={(e) => setSourceType(e.target.value)}>
+              {['Poço', 'Cisterna', 'Nascente', 'Açude', 'Reservatório', 'Rede', 'Outra'].map((type) => <option key={type}>{type}</option>)}
+            </select>
+          </Field>
+          <Field label="Situação">
+            <select value={sourceStatus} onChange={(event) => setSourceStatus(event.target.value as WaterSource["status"])}>
+              <option value="ativa">Ativa</option>
+              <option value="atenção">Atenção</option>
+              <option value="inativa">Inativa</option>
+            </select>
+          </Field>
+          {error && <p className="form-error">{error}</p>}
+          <button className="primary-button full" type="submit">{editingSourceId ? "Salvar alterações" : "Cadastrar fonte"}</button>
+        </form>
+      </Modal>
+
+      <Modal open={recordOpen} onClose={() => { setRecordOpen(false); setEditingRecordId(undefined); setError(""); }} eyebrow={editingRecordId ? "EDIÇÃO" : "NOVA LEITURA"} title={editingRecordId ? "Editar leitura" : "Registrar água"}>
+        {account.waterSources.length === 0 ? (
+          <EmptyState
+            icon={<Waves size={24} />}
+            title="Cadastre uma fonte primeiro"
+            text="Toda leitura precisa informar de onde veio a água."
+            action={<button className="primary-button" onClick={() => { setRecordOpen(false); setSourceOpen(true); }}>Cadastrar fonte</button>}
+          />
+        ) : (
+          <form className="modal-form" onSubmit={addRecord}>
+            <div className="field-combo">
+              <Field label="Data"><input type="date" value={record.date} onChange={(e) => setRecord({ ...record, date: e.target.value })} /></Field>
+              <Field label="Quantidade (L)"><input inputMode="decimal" value={record.amount} onChange={(e) => { setRecord({ ...record, amount: e.target.value }); setError(""); }} placeholder="0" /></Field>
+            </div>
+            <Field label="Origem">
+              <select value={record.sourceId} onChange={(e) => setRecord({ ...record, sourceId: e.target.value })}>
+                <option value="">Selecione</option>
+                {account.waterSources.map((source) => <option key={source.id} value={source.id}>{source.name}</option>)}
+              </select>
+            </Field>
+            <Field label="Finalidade">
+              <select value={record.purpose} onChange={(e) => setRecord({ ...record, purpose: e.target.value })}>
+                {['Consumo animal', 'Irrigação', 'Uso doméstico rural', 'Limpeza', 'Outra'].map((purpose) => <option key={purpose}>{purpose}</option>)}
+              </select>
+            </Field>
+            <Field label="Observação (opcional)"><textarea value={record.note} onChange={(e) => setRecord({ ...record, note: e.target.value })} placeholder="Alguma informação importante?" /></Field>
+            {error && <p className="form-error">{error}</p>}
+            <button className="primary-button full" type="submit">{editingRecordId ? "Salvar alterações" : "Salvar leitura"}</button>
+          </form>
+        )}
+      </Modal>
+
+      <Modal open={Boolean(selectedSource)} onClose={() => { setSelectedSource(null); setError(""); }} eyebrow="FONTE DE ÁGUA" title={selectedSource?.name || "Fonte"}>
+        {selectedSource && <div className="water-detail"><span><Waves size={27} /></span><strong>{selectedSource.type}</strong><p>Situação: {selectedSource.status}</p>{error && <p className="form-error">{error}</p>}<div className="detail-actions"><button className="secondary-button" onClick={() => editSource(selectedSource)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => deleteSource(selectedSource)}><Trash2 size={17} /> Excluir</button></div></div>}
+      </Modal>
+
+      <Modal open={Boolean(selectedRecord)} onClose={() => setSelectedRecord(null)} eyebrow="LEITURA DE ÁGUA" title={selectedRecord ? `${selectedRecord.amount.toLocaleString("pt-BR")} L` : "Leitura"}>
+        {selectedRecord && <div className="water-detail"><span><Droplet size={27} /></span><strong>{selectedRecord.purpose}</strong><p>{account.waterSources.find((source) => source.id === selectedRecord.sourceId)?.name || "Origem removida"} · {new Date(`${selectedRecord.date}T12:00:00`).toLocaleDateString("pt-BR")}</p>{selectedRecord.note && <div className="detail-note">{selectedRecord.note}</div>}<div className="detail-actions"><button className="secondary-button" onClick={() => editRecord(selectedRecord)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => deleteRecord(selectedRecord)}><Trash2 size={17} /> Excluir</button></div></div>}
+      </Modal>
+    </div>
+  );
+}
