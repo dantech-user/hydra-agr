@@ -20,7 +20,6 @@ const PropertyScreen = lazy(() => import("./features/property/property-screen").
 const ActivitiesScreen = lazy(() => import("./features/activities/activities-screen").then((module) => ({ default: module.ActivitiesScreen })));
 const NfcScreen = lazy(() => import("./features/nfc/nfc-screen").then((module) => ({ default: module.NfcScreen })));
 const NotificationsScreen = lazy(() => import("./features/notifications/notifications-screen").then((module) => ({ default: module.NotificationsScreen })));
-const PlusScreen = lazy(() => import("./features/premium/plus-screen").then((module) => ({ default: module.PlusScreen })));
 const AdminScreen = lazy(() => import("./features/admin/admin-screen").then((module) => ({ default: module.AdminScreen })));
 
 const mainTabs: { id: MainTab; label: string; icon: typeof Home }[] = [
@@ -183,14 +182,13 @@ export default function HydraApp() {
       case "water": return <WaterScreen account={account} updateAccount={store.updateAccount} createRecordRequest={quickIntent?.kind === "water" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "herd": return <HerdScreen account={account} updateAccount={store.updateAccount} openNfc={openNfc} focusAnimalId={animalToOpen} saveAnimalPhoto={store.saveAnimalPhoto} createRequest={quickIntent?.kind === "animal" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "monitor": return <MonitorScreen account={account} updateAccount={store.updateAccount} saveMonitoringPhoto={store.saveMonitoringPhoto} createSectorRequest={quickIntent?.kind === "sector" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
-      case "profile": return <ProfileScreen account={account} links={store.links} updateAccount={store.updateAccount} navigate={navigate} logout={store.logout} saveAvatar={store.saveAvatar} savePropertyCover={store.savePropertyCover} changeCredentials={store.changeCredentials} />;
+      case "profile": return <ProfileScreen account={account} links={store.links} updateAccount={store.updateAccount} navigate={navigate} logout={store.logout} saveAvatar={store.saveAvatar} changeCredentials={store.changeCredentials} />;
       case "community": return <CommunityScreen account={account} onBack={goBack} publishPost={store.publishPost} likePost={store.likePost} commentPost={store.commentPost} deletePost={store.deletePost} refreshCommunity={store.refreshCommunity} createRequest={quickIntent?.kind === "post" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "challenges": return <ChallengesScreen account={account} onBack={goBack} />;
       case "property": return <PropertyScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "activities": return <ActivitiesScreen account={account} updateAccount={store.updateAccount} onBack={goBack} createRequest={quickIntent?.kind === "activity" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "nfc": return <NfcScreen account={account} updateAccount={store.updateAccount} onBack={goBack} initialAnimalId={nfcAnimalId} onRealRead={store.registerNfcRead} onFound={(animal) => { setAnimalToOpen(animal.id); navigate("herd"); }} />;
       case "notifications": return <NotificationsScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
-      case "plus": return <PlusScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "admin": return ["moderator", "admin", "owner"].includes(account.role) ? <AdminScreen account={account} onBack={goBack} /> : <HomeScreen account={account} announcements={store.announcements} navigate={navigate} onQuickAction={openQuick} />;
       default: return null;
     }
@@ -198,7 +196,7 @@ export default function HydraApp() {
 
   const activeTab: MainTab = (["home", "water", "herd", "monitor", "profile"] as string[]).includes(route)
     ? route as MainTab
-    : route === "property" || route === "plus" || route === "admin" ? "profile"
+    : route === "property" || route === "admin" ? "profile"
     : route === "nfc" ? "herd"
     : "home";
   const activeIndex = mainTabs.findIndex((tab) => tab.id === activeTab);

@@ -51,16 +51,7 @@ async function readCachedAccount(userId: string) {
   if (!value) return null;
   try {
     const parsed = JSON.parse(value) as HydraAccount;
-    return {
-      ...parsed,
-      nfcReadCount: Number(parsed.nfcReadCount ?? 0),
-      subscription: parsed.subscription ?? { status: "active" },
-      settings: {
-        waterAlerts: parsed.settings?.waterAlerts !== false,
-        pushNotifications: parsed.settings?.pushNotifications !== false,
-        premiumGoals: parsed.settings?.premiumGoals ?? {},
-      },
-    };
+    return { ...parsed, nfcReadCount: Number(parsed.nfcReadCount ?? 0) };
   } catch {
     await Preferences.remove({ key: accountCacheKey(userId) });
     return null;
@@ -77,19 +68,6 @@ async function finishPendingSync(userId: string, expectedValue: string, account:
   await Preferences.remove({ key: accountPendingKey(userId) });
   await cacheAccount(account);
   return true;
-}
-
-function applyProtectedServerFields(local: HydraAccount, remote: HydraAccount): HydraAccount {
-  return {
-    ...local,
-    id: remote.id,
-    email: remote.email,
-    role: remote.role,
-    bannedAt: remote.bannedAt,
-    banReason: remote.banReason,
-    profile: { ...local.profile, plan: remote.profile.plan },
-    subscription: remote.subscription,
-  };
 }
 
 export function useHydraStore() {
@@ -132,14 +110,9 @@ export function useHydraStore() {
     setLastError("");
     const cached = await readCachedAccount(user.id);
     if (cached && currentBoot === bootId.current) {
-      // Cargos e Premium nunca são confiados ao cache local. O servidor
-      // precisa confirmar ambos em cada inicialização antes de liberá-los.
-      applyAccount({
-        ...cached,
-        role: "user",
-        profile: { ...cached.profile, plan: "Gratuito" },
-        subscription: { status: "unverified" },
-      });
+      // Cargos administrativos nunca são confiados ao cache local.
+      // O servidor precisa confirmar a role em cada inicialização.
+      applyAccount({ ...cached, role: "user" });
       setReady(true);
     }
 
@@ -148,7 +121,7 @@ export function useHydraStore() {
       if (currentBoot !== bootId.current) return;
       const pendingValue = (await Preferences.get({ key: accountPendingKey(user.id) })).value;
       if (pendingValue && !remote.bannedAt) {
-        const pending = applyProtectedServerFields(JSON.parse(pendingValue) as HydraAccount, remote);
+        const pending = { ...(JSON.parse(pendingValue) as HydraAccount), role: remote.role, bannedAt: remote.bannedAt, banReason: remote.banReason };
         applyAccount(pending);
         setSyncStatus("saving");
         await syncAccountDelta(remote, pending);
@@ -183,7 +156,7 @@ export function useHydraStore() {
       setSyncStatus("saving");
       const remote = await loadAccount(user);
       if (remote.bannedAt) { applyAccount(remote); await Preferences.remove({ key: accountPendingKey(user.id) }); await cacheAccount(remote); setSyncStatus("saved"); return; }
-      const pending = applyProtectedServerFields(JSON.parse(pendingValue) as HydraAccount, remote);
+      const pending = { ...(JSON.parse(pendingValue) as HydraAccount), role: remote.role, bannedAt: remote.bannedAt, banReason: remote.banReason };
       await syncAccountDelta(remote, pending);
       setSyncStatus(await finishPendingSync(user.id, pendingValue, pending) ? "saved" : "saving");
       setLastError("");
@@ -237,21 +210,6 @@ export function useHydraStore() {
     };
   }, [applyAccount, loadUser, retrySync]);
 
-  useEffect(() => {
-    const userId = account?.id;
-    const client = supabase;
-    if (!client || !userId) return;
-    const channel = client
-      .channel(`hydra-subscription-${userId}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "subscriptions", filter: `user_id=eq.${userId}` },
-        () => { if (userRef.current) void loadUser(userRef.current); },
-      )
-      .subscribe();
-    return () => { void client.removeChannel(channel); };
-  }, [account?.id, loadUser]);
-
   const login = useCallback(async (email: string, password: string): Promise<AuthResult> => {
     try {
       setReady(false);
@@ -294,17 +252,7 @@ export function useHydraStore() {
   const updateAccount = useCallback((updater: (current: HydraAccount) => HydraAccount) => {
     const previous = accountRef.current;
     if (!previous || previous.bannedAt) return;
-    const proposed = updater(previous);
-    const next: HydraAccount = {
-      ...proposed,
-      id: previous.id,
-      email: previous.email,
-      role: previous.role,
-      bannedAt: previous.bannedAt,
-      banReason: previous.banReason,
-      profile: { ...proposed.profile, plan: previous.profile.plan },
-      subscription: previous.subscription,
-    };
+    const next = updater(previous);
     applyAccount(next);
     setSyncStatus("saving");
     void cacheAccount(next);
@@ -366,18 +314,6 @@ export function useHydraStore() {
     const path = await uploadPrivateImage(current.id, selected, `monitoring/${recordId}-${Date.now()}`);
     const url = await signedPrivateUrl(path);
     updateAccount((value) => ({ ...value, monitoring: value.monitoring.map((record) => record.id === recordId ? { ...record, photoPaths: [...(record.photoPaths ?? []), path], photoUrls: url ? [...(record.photoUrls ?? []), url] : record.photoUrls } : record) }));
-    return true;
-  }, [updateAccount]);
-
-  const savePropertyCover = useCallback(async (file?: File) => {
-    const current = accountRef.current;
-    if (!current) throw new Error("Sessão inválida.");
-    const selected = file ?? await capturePhoto();
-    if (!selected) return false;
-    const propertyId = current.property.id ?? `property-${current.id}`;
-    const path = await uploadPrivateImage(current.id, selected, `property/${propertyId}-cover-${Date.now()}`);
-    const url = await signedPrivateUrl(path);
-    updateAccount((value) => ({ ...value, property: { ...value.property, coverPath: path, coverUrl: url } }));
     return true;
   }, [updateAccount]);
 
@@ -474,7 +410,6 @@ export function useHydraStore() {
     saveAvatar,
     saveAnimalPhoto,
     saveMonitoringPhoto,
-    savePropertyCover,
     changeCredentials,
     registerNfcRead,
     refreshCommunity,

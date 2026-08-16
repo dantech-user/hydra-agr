@@ -8,7 +8,6 @@ export type AppRoute =
   | "activities"
   | "nfc"
   | "notifications"
-  | "plus"
   | "admin";
 
 export type UserRole = "user" | "moderator" | "admin" | "owner";
@@ -34,9 +33,6 @@ export type AnimalHistoryEntry = {
   date: string;
   type: string;
   description: string;
-  weight?: number;
-  reminderAt?: string;
-  done?: boolean;
 };
 
 export type Animal = {
@@ -124,9 +120,6 @@ export type Property = {
   name: string;
   municipality: string;
   state: string;
-  locationDetails?: string;
-  coverPath?: string;
-  coverUrl?: string;
   area: string;
   areaUnit: string;
   type: string;
@@ -146,13 +139,6 @@ export type HydraAccount = {
     avatarUrl?: string;
     bio?: string;
   };
-  subscription: {
-    status: string;
-    createdAt?: string;
-    premiumStartedAt?: string;
-    premiumExpiresAt?: string;
-    premiumDeactivatedAt?: string;
-  };
   property: Property;
   waterSources: WaterSource[];
   waterRecords: WaterRecord[];
@@ -167,11 +153,6 @@ export type HydraAccount = {
   settings: {
     waterAlerts: boolean;
     pushNotifications: boolean;
-    premiumGoals: {
-      monthlyWater?: number;
-      monthlyActivities?: number;
-      identifiedAnimals?: number;
-    };
   };
   role: UserRole;
   bannedAt?: string;
@@ -220,11 +201,6 @@ export type AdminUser = {
   municipality?: string;
   role: UserRole;
   plan: "Gratuito" | "Hydra Agro+";
-  subscriptionStatus: string;
-  subscriptionCreatedAt?: string;
-  premiumStartedAt?: string;
-  premiumExpiresAt?: string;
-  premiumDeactivatedAt?: string;
   createdAt: string;
   bannedAt?: string;
   banReason?: string;
@@ -278,8 +254,7 @@ export function createEmptyAccount(user: {
     email: user.email,
     phone: user.phone ?? "",
     profile: { name: user.name?.trim() || "Produtor", plan: "Gratuito" },
-    subscription: { status: "active" },
-    property: { ...emptyProperty, otherActivities: [], waterKinds: [] },
+    property: { ...emptyProperty },
     waterSources: [],
     waterRecords: [],
     animals: [],
@@ -290,7 +265,7 @@ export function createEmptyAccount(user: {
     nfcReadCount: 0,
     posts: [],
     notifications: [],
-    settings: { waterAlerts: true, pushNotifications: true, premiumGoals: {} },
+    settings: { waterAlerts: true, pushNotifications: true },
     role: "user",
   };
 }

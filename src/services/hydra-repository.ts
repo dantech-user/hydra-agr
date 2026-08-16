@@ -33,11 +33,6 @@ function dateString(value: unknown) {
   return typeof value === "string" ? value.slice(0, 10) : "";
 }
 
-function optionalPositiveNumber(value: unknown) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
-}
-
 export async function loadCommunityFeed(): Promise<CommunityPost[]> {
   const client = requireSupabase();
   const { data, error } = await client.rpc("community_feed");
@@ -70,11 +65,10 @@ export async function loadAccount(user: User): Promise<HydraAccount> {
   const [profileResult, roleResult, subscriptionResult] = await Promise.all([
     client.from("profiles").select("*").eq("id", user.id).single(),
     client.from("roles").select("role").eq("user_id", user.id).single(),
-    client.from("subscriptions").select("plan,status,created_at,premium_started_at,premium_expires_at,premium_deactivated_at").eq("user_id", user.id).single(),
+    client.from("subscriptions").select("plan").eq("user_id", user.id).single(),
   ]);
   throwIfError(profileResult.error);
   throwIfError(roleResult.error);
-  throwIfError(subscriptionResult.error);
 
   const profile = profileResult.data as Row;
   const base = createEmptyAccount({
@@ -83,33 +77,13 @@ export async function loadAccount(user: User): Promise<HydraAccount> {
     name: String(profile.full_name || user.user_metadata.full_name || "Produtor"),
     phone: String(profile.phone || ""),
   });
-  const subscription = subscriptionResult.data as Row | null;
-  const premiumExpiresAt = subscription?.premium_expires_at ? String(subscription.premium_expires_at) : undefined;
-  const plusActive = String(subscription?.plan) === "plus"
-    && String(subscription?.status) === "active"
-    && (!premiumExpiresAt || new Date(premiumExpiresAt).getTime() > Date.now());
   base.role = String((roleResult.data as Row)?.role || "user") as UserRole;
-  base.profile.plan = plusActive ? "Hydra Agro+" : "Gratuito";
-  base.subscription = {
-    status: String(subscription?.status || "active"),
-    createdAt: subscription?.created_at ? String(subscription.created_at) : undefined,
-    premiumStartedAt: subscription?.premium_started_at ? String(subscription.premium_started_at) : undefined,
-    premiumExpiresAt,
-    premiumDeactivatedAt: subscription?.premium_deactivated_at ? String(subscription.premium_deactivated_at) : undefined,
-  };
+  base.profile.plan = String((subscriptionResult.data as Row | null)?.plan) === "plus" ? "Hydra Agro+" : "Gratuito";
   base.profile.avatarUrl = publicMediaUrl("avatars", profile.avatar_path as string | undefined);
   base.profile.bio = profile.bio ? String(profile.bio) : undefined;
-  const goals = typeof profile.premium_goals === "object" && profile.premium_goals
-    ? profile.premium_goals as Row
-    : {};
   base.settings = {
     waterAlerts: profile.water_alerts !== false,
     pushNotifications: profile.push_notifications !== false,
-    premiumGoals: {
-      monthlyWater: optionalPositiveNumber(goals.monthlyWater),
-      monthlyActivities: optionalPositiveNumber(goals.monthlyActivities),
-      identifiedAnimals: optionalPositiveNumber(goals.identifiedAnimals),
-    },
   };
   base.bannedAt = profile.banned_at ? String(profile.banned_at) : undefined;
   base.banReason = profile.ban_reason ? String(profile.ban_reason) : undefined;
@@ -125,9 +99,6 @@ export async function loadAccount(user: User): Promise<HydraAccount> {
     name: String(property?.name ?? ""),
     municipality: String(property?.municipality ?? ""),
     state: String(property?.state ?? "BA"),
-    locationDetails: property?.location_details ? String(property.location_details) : undefined,
-    coverPath: property?.cover_path ? String(property.cover_path) : undefined,
-    coverUrl: await signedPrivateUrl(property?.cover_path as string | undefined),
     area: numberString(property?.area),
     areaUnit: String(property?.area_unit ?? "hectares"),
     type: String(property?.property_type ?? ""),
@@ -233,7 +204,6 @@ export async function syncAccountDelta(previous: HydraAccount, next: HydraAccoun
       bio: next.profile.bio ?? null,
       water_alerts: next.settings.waterAlerts,
       push_notifications: next.settings.pushNotifications,
-      premium_goals: next.settings.premiumGoals,
     }).eq("id", owner);
     throwIfError(error);
   }
@@ -247,8 +217,6 @@ export async function syncAccountDelta(previous: HydraAccount, next: HydraAccoun
       name: next.property.name,
       municipality: next.property.municipality,
       state: "BA",
-      location_details: next.property.locationDetails ?? null,
-      cover_path: next.property.coverPath ?? null,
       area: Number.isFinite(area) ? area : null,
       area_unit: next.property.areaUnit,
       property_type: next.property.type,
@@ -421,15 +389,6 @@ export async function setUserBan(userId: string, banned: boolean, reason?: strin
 
 export async function setUserRole(userId: string, role: Exclude<UserRole, "owner">) {
   const { error } = await requireSupabase().rpc("admin_set_user_role", { target_user_id: userId, next_role: role });
-  throwIfError(error);
-}
-
-export async function setUserSubscription(userId: string, enablePlus: boolean, premiumUntil?: string) {
-  const { error } = await requireSupabase().rpc("admin_set_subscription", {
-    target_user_id: userId,
-    enable_plus: enablePlus,
-    premium_until: premiumUntil ? new Date(`${premiumUntil}T23:59:59-03:00`).toISOString() : null,
-  });
   throwIfError(error);
 }
 

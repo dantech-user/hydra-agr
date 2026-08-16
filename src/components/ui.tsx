@@ -3,22 +3,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, X } from "lucide-react";
 
-let modalLockCount = 0;
-let bodyOverflowBeforeModal = "";
-
-function lockBodyScroll() {
-  if (modalLockCount === 0) {
-    bodyOverflowBeforeModal = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-  }
-  modalLockCount += 1;
-}
-
-function unlockBodyScroll() {
-  modalLockCount = Math.max(0, modalLockCount - 1);
-  if (modalLockCount === 0) document.body.style.overflow = bodyOverflowBeforeModal;
-}
-
 export function ScreenHeader({
   eyebrow,
   title,
@@ -94,7 +78,6 @@ export function Modal({
   children,
   onClose,
   wide = false,
-  tall = false,
 }: {
   open: boolean;
   title: string;
@@ -102,7 +85,6 @@ export function Modal({
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
-  tall?: boolean;
 }) {
   const [closing, setClosing] = useState(false);
   const closeTimer = useRef<number | null>(null);
@@ -122,22 +104,18 @@ export function Modal({
 
   useEffect(() => {
     if (!open) return;
-    lockBodyScroll();
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") requestClose();
     }
     document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      unlockBodyScroll();
-      document.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, requestClose]);
 
   if (!open) return null;
   return (
     <div className={`modal-layer ${closing ? "is-closing" : ""}`} role="presentation" onMouseDown={requestClose}>
       <section
-        className={`modal-sheet ${wide ? "modal-wide" : ""} ${tall ? "modal-tall" : ""}`}
+        className={`modal-sheet ${wide ? "modal-wide" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -178,39 +156,6 @@ export function Toggle({
     >
       <span />
     </button>
-  );
-}
-
-export function ConfirmDialog({
-  open,
-  title,
-  text,
-  confirmLabel = "Confirmar",
-  onCancel,
-  onConfirm,
-  busy = false,
-  danger = true,
-}: {
-  open: boolean;
-  title: string;
-  text: string;
-  confirmLabel?: string;
-  onCancel: () => void;
-  onConfirm: () => void;
-  busy?: boolean;
-  danger?: boolean;
-}) {
-  return (
-    <Modal open={open} title={title} eyebrow="CONFIRMAÇÃO OBRIGATÓRIA" onClose={onCancel}>
-      <div className="confirm-action">
-        <span><X size={27} /></span>
-        <p>{text}</p>
-        <div className="modal-action-row">
-          <button className="secondary-button" onClick={onCancel} disabled={busy}>Cancelar</button>
-          <button className={danger ? "danger-button" : "primary-button"} onClick={onConfirm} disabled={busy}>{confirmLabel}</button>
-        </div>
-      </div>
-    </Modal>
   );
 }
 

@@ -441,7 +441,7 @@ export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
                 {error && <p className="form-error" role="alert">{error}</p>}
                 <div className="form-actions">
                   <button className="secondary-button" type="button" onClick={() => setSignupStep(2)}>Voltar</button>
-                  <button className="primary-button" type="button" onClick={finishSignup} disabled={submitting}>{submitting ? "Criando conta…" : "Confirmar e criar conta"}</button>
+                  <button className="primary-button" type="button" onClick={finishSignup} disabled={submitting}>{submitting ? "Criando conta…" : "Entrar no Hydra Agro"}</button>
                 </div>
               </div>
             )}

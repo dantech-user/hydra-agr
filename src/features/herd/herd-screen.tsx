@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { BadgeCheck, Camera, ChevronRight, Beef as Cow, Filter, History, LoaderCircle, Nfc, Pencil, Plus, Search, Trash2, Weight } from "lucide-react";
-import { ConfirmDialog, EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
+import { EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
 import { makeId, type Animal, type HydraAccount } from "../../lib/hydra-types";
 
 type Props = {
@@ -29,7 +29,6 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
   const [animal, setAnimal] = useState(blankAnimal);
   const [error, setError] = useState("");
   const [photoBusy, setPhotoBusy] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<Animal | null>(null);
   const photoRef = useRef<HTMLInputElement>(null);
   const selected = account.animals.find((item) => item.id === selectedId) ?? null;
 
@@ -92,9 +91,9 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
   }
 
   function removeAnimal(item: Animal) {
+    if (!window.confirm(`Excluir ${item.name || item.identification}? O registro será removido da sua conta.`)) return;
     updateAccount((current) => ({ ...current, animals: current.animals.filter((animalItem) => animalItem.id !== item.id), activities: current.activities.map((activity) => activity.animalId === item.id ? { ...activity, animalId: undefined } : activity) }));
     setSelectedId(undefined);
-    setDeleteTarget(null);
   }
 
   async function setPhoto(file?: File) {
@@ -125,7 +124,7 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
           <div className="field-combo"><Field label="Peso (kg)"><input inputMode="decimal" value={animal.weight} onChange={(event) => setAnimal({ ...animal, weight: event.target.value })} placeholder="0" /></Field><Field label="Situação"><select value={animal.status} onChange={(event) => setAnimal({ ...animal, status: event.target.value })}><option>Ativo</option><option>Em observação</option><option>Vendido</option><option>Baixa</option></select></Field></div>
           <Field label="Código NFC/RFID (opcional)" hint="Você também pode usar a Central NFC para ler uma tag real."><input value={animal.electronicId} onChange={(event) => setAnimal({ ...animal, electronicId: event.target.value })} placeholder="Digite o código da tag" /></Field>
           <Field label="Observações"><textarea value={animal.notes} onChange={(event) => setAnimal({ ...animal, notes: event.target.value })} placeholder="Histórico ou informações importantes" /></Field>
-          {error && <p className="form-error">{error}</p>}<div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setFormOpen(false)}>Cancelar</button><button className="primary-button" type="submit">{editingId ? "Confirmar alterações" : "Confirmar animal"}</button></div>
+          {error && <p className="form-error">{error}</p>}<button className="primary-button full" type="submit">{editingId ? "Salvar alterações" : "Salvar animal"}</button>
         </form>
       </Modal>
 
@@ -139,10 +138,9 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
           {selected.notes && <div className="detail-note">{selected.notes}</div>}
           {(selected.history?.length ?? 0) > 0 && <div className="animal-history"><h3><History size={17} /> Histórico</h3>{selected.history!.slice().reverse().map((entry) => <div key={entry.id}><span /><p><strong>{entry.type}</strong>{entry.description}<small>{new Date(entry.date).toLocaleString("pt-BR")}</small></p></div>)}</div>}
           {error && <p className="form-error">{error}</p>}
-          <div className="detail-actions three"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="secondary-button" onClick={() => openNfc(selected.id)}><Nfc size={17} /> Vincular tag</button><button className="danger-button" onClick={() => setDeleteTarget(selected)}><Trash2 size={17} /> Excluir</button></div>
+          <div className="detail-actions three"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="secondary-button" onClick={() => openNfc(selected.id)}><Nfc size={17} /> Vincular tag</button><button className="danger-button" onClick={() => removeAnimal(selected)}><Trash2 size={17} /> Excluir</button></div>
         </div>}
       </Modal>
-      <ConfirmDialog open={Boolean(deleteTarget)} title="Excluir animal?" text={`${deleteTarget?.name || deleteTarget?.identification || "Este animal"} e seu histórico serão removidos da conta. Atividades vinculadas perderão apenas a referência ao animal.`} confirmLabel="Confirmar exclusão" onCancel={() => setDeleteTarget(null)} onConfirm={() => { if (deleteTarget) removeAnimal(deleteTarget); }} />
     </div>
   );
 }
