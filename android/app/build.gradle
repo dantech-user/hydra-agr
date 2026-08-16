@@ -7,8 +7,8 @@ android {
     applicationId = "br.com.hydraagro.app"
     minSdk = rootProject.ext.minSdkVersion
     targetSdk = rootProject.ext.targetSdkVersion
-    versionCode = (project.findProperty("HYDRA_VERSION_CODE") ?: "1").toString().toInteger()
-    versionName = (project.findProperty("HYDRA_VERSION_NAME") ?: "1.0.0").toString()
+    versionCode = (project.findProperty("HYDRA_VERSION_CODE") ?: "2").toString().toInteger()
+    versionName = (project.findProperty("HYDRA_VERSION_NAME") ?: "1.1.0").toString()
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 }
         

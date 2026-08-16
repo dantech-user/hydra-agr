@@ -23,6 +23,7 @@ Registre aparelho, versão Android, versão do APK, data, responsável e evidên
 - [ ] Editar propriedade persiste após reiniciar.
 - [ ] Fonte de água: criar, editar situação, abrir detalhes e excluir.
 - [ ] Leitura de água: criar, editar, abrir detalhes e excluir.
+- [ ] Fonte e leitura exibem Cancelar/Confirmar; exclusão exige segunda confirmação.
 - [ ] Gráfico usa apenas registros reais.
 - [ ] Animal: criar, editar, pesquisar, filtrar, abrir ficha e excluir.
 - [ ] Foto do animal funciona por câmera e galeria.
@@ -44,9 +45,14 @@ Registre aparelho, versão Android, versão do APK, data, responsável e evidên
 
 - [ ] Publicar texto e imagem.
 - [ ] Curtir, descurtir, comentar e excluir publicação própria.
+- [ ] Nova publicação exibe Cancelar/Confirmar; exclusão exige segunda confirmação.
 - [ ] Estado vazio aparece sem posts falsos.
 - [ ] Foto de perfil persiste e aparece na comunidade.
-- [ ] E-mail, telefone, biografia e senha são editáveis.
+- [ ] Lápis do perfil abre nome, telefone, biografia, propriedade, referência, cidade e estado.
+- [ ] Foto do perfil e capa da propriedade persistem após reiniciar.
+- [ ] E-mail e senha são editáveis pela área Segurança.
+- [ ] Card Gratuito mostra Hydra Agro+ por R$ 6/mês e abre o fluxo manual pelo Instagram.
+- [ ] “Apoie o Hydra Agro” fica separado da assinatura e não bloqueia funções.
 - [ ] Suporte abre `rlkdn.dev@hydracity.sbs`.
 - [ ] Instagram abre `@daniel.4fe`.
 - [ ] Owner cria, edita e exclui aviso e link.
@@ -54,6 +60,9 @@ Registre aparelho, versão Android, versão do APK, data, responsável e evidên
 - [ ] Owner/moderação oculta, restaura e remove publicação.
 - [ ] Owner bloqueia e desbloqueia usuário.
 - [ ] Owner altera cargo sem permitir outro `owner`.
+- [ ] Owner libera/remove Hydra Agro+ somente após a confirmação obrigatória.
+- [ ] Mudança do plano chega à conta do usuário e remoção preserva os dados.
+- [ ] Usuário comum não consegue alterar a própria assinatura pela API.
 - [ ] Logout do owner remove totalmente o painel.
 
 ## Sistema Android e build
@@ -63,6 +72,8 @@ Registre aparelho, versão Android, versão do APK, data, responsável e evidên
 - [ ] Bottom navigation fica centralizada em diferentes larguras.
 - [ ] Teclado não cobre o campo ativo.
 - [ ] Botão voltar fecha modal/rota antes de sair.
+- [ ] Modal longo ocupa aproximadamente 80–90% da tela e tem scroll interno.
+- [ ] Modal curto se ajusta ao conteúdo e nenhum botão fica atrás da barra inferior.
 - [ ] Feedback tátil é discreto.
 - [ ] App abre a interface sem internet após login/cache válido.
 - [ ] Alterações offline sincronizam quando a internet retorna.

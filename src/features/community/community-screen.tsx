@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Camera, Heart, ImagePlus, LoaderCircle, MessageCircle, RefreshCw, Send, Trash2, UsersRound } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
+import { ConfirmDialog, EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
 import type { AuthResult, CommunityPost, HydraAccount } from "../../lib/hydra-types";
 
 type Props = {
@@ -26,6 +26,7 @@ export function CommunityScreen({ account, onBack, publishPost, likePost, commen
   const [filter, setFilter] = useState<FeedFilter>("all");
   const [busy, setBusy] = useState("");
   const [message, setMessage] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<CommunityPost | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { if (createRequest !== undefined) { setComposerOpen(true); onRequestHandled?.(); } }, [createRequest]);
@@ -80,11 +81,11 @@ export function CommunityScreen({ account, onBack, publishPost, likePost, commen
   }
 
   async function remove(postId: string) {
-    if (!window.confirm("Excluir esta publicação e seus comentários?")) return;
     setBusy(`delete-${postId}`);
     const result = await deletePost(postId);
     setBusy("");
     setMessage(result.message);
+    if (result.ok) setDeleteTarget(null);
   }
 
   async function refresh() {
@@ -121,7 +122,7 @@ export function CommunityScreen({ account, onBack, publishPost, likePost, commen
               <header>
                 {post.authorAvatarUrl ? <img src={post.authorAvatarUrl} alt={`Foto de ${post.author}`} /> : <span>{post.author.charAt(0).toUpperCase()}</span>}
                 <div><strong>{post.author}</strong><small>{[post.propertyName, post.municipality].filter(Boolean).join(" · ") || new Date(post.date).toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</small></div>
-                {post.authorId === account.id && <button className="post-delete" onClick={() => void remove(post.id)} aria-label="Excluir publicação" disabled={busy === `delete-${post.id}`}>{busy === `delete-${post.id}` ? <LoaderCircle size={17} className="spin" /> : <Trash2 size={17} />}</button>}
+                {post.authorId === account.id && <button className="post-delete" onClick={() => setDeleteTarget(post)} aria-label="Excluir publicação" disabled={busy === `delete-${post.id}`}>{busy === `delete-${post.id}` ? <LoaderCircle size={17} className="spin" /> : <Trash2 size={17} />}</button>}
               </header>
               {post.text && <p>{post.text}</p>}
               {post.image && <img className="post-image" src={post.image} alt="Imagem enviada na publicação" />}
@@ -143,9 +144,10 @@ export function CommunityScreen({ account, onBack, publishPost, likePost, commen
           <input className="hidden-file" ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => chooseImage(event.target.files?.[0])} />
           {imagePreview ? <div className="image-preview"><img src={imagePreview} alt="Imagem selecionada" /><button type="button" onClick={clearImage}>Remover</button></div> : <button className="upload-button" type="button" onClick={() => fileRef.current?.click()}><ImagePlus size={20} /> Adicionar imagem</button>}
           {message && <p className="form-notice">{message}</p>}
-          <button className="primary-button full" type="submit" disabled={(!text.trim() && !imageFile) || busy === "publish"}>{busy === "publish" ? <><LoaderCircle size={18} className="spin" /> Publicando…</> : "Publicar"}</button>
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setComposerOpen(false)}>Cancelar</button><button className="primary-button" type="submit" disabled={(!text.trim() && !imageFile) || busy === "publish"}>{busy === "publish" ? <><LoaderCircle size={18} className="spin" /> Publicando…</> : "Confirmar publicação"}</button></div>
         </form>
       </Modal>
+      <ConfirmDialog open={Boolean(deleteTarget)} title="Excluir publicação?" text="A publicação, suas curtidas e seus comentários serão removidos da comunidade. Esta ação não pode ser desfeita." confirmLabel="Confirmar exclusão" busy={Boolean(deleteTarget && busy === `delete-${deleteTarget.id}`)} onCancel={() => setDeleteTarget(null)} onConfirm={() => { if (deleteTarget) void remove(deleteTarget.id); }} />
     </div>
   );
 }

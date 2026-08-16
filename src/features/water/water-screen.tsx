@@ -16,7 +16,7 @@ import {
   Minus,
   Waves,
 } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader, SectionHeader, Toggle } from "../../components/ui";
+import { ConfirmDialog, EmptyState, Field, Modal, ScreenHeader, SectionHeader, Toggle } from "../../components/ui";
 import { makeId, type HydraAccount, type WaterRecord, type WaterSource } from "../../lib/hydra-types";
 
 type Props = {
@@ -40,6 +40,7 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
   const [sourceStatus, setSourceStatus] = useState<WaterSource["status"]>("ativa");
   const [record, setRecord] = useState({ date: today(), amount: "", sourceId: "", purpose: "Consumo animal", note: "" });
   const [error, setError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<{ kind: "source"; item: WaterSource } | { kind: "record"; item: WaterRecord } | null>(null);
 
   const total = useMemo(
     () => account.waterRecords.reduce((sum, item) => sum + item.amount, 0),
@@ -132,9 +133,7 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
       setError("Esta fonte possui leituras. Exclua ou edite os registros vinculados primeiro.");
       return;
     }
-    if (!window.confirm(`Excluir a fonte ${source.name}?`)) return;
-    updateAccount((current) => ({ ...current, waterSources: current.waterSources.filter((item) => item.id !== source.id) }));
-    setSelectedSource(null);
+    setDeleteTarget({ kind: "source", item: source });
   }
 
   function editRecord(item: WaterRecord) {
@@ -145,9 +144,19 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
   }
 
   function deleteRecord(item: WaterRecord) {
-    if (!window.confirm("Excluir esta leitura de água?")) return;
-    updateAccount((current) => ({ ...current, waterRecords: current.waterRecords.filter((recordItem) => recordItem.id !== item.id) }));
-    setSelectedRecord(null);
+    setDeleteTarget({ kind: "record", item });
+  }
+
+  function confirmDelete() {
+    if (!deleteTarget) return;
+    if (deleteTarget.kind === "source") {
+      updateAccount((current) => ({ ...current, waterSources: current.waterSources.filter((item) => item.id !== deleteTarget.item.id) }));
+      setSelectedSource(null);
+    } else {
+      updateAccount((current) => ({ ...current, waterRecords: current.waterRecords.filter((item) => item.id !== deleteTarget.item.id) }));
+      setSelectedRecord(null);
+    }
+    setDeleteTarget(null);
   }
 
   return (
@@ -273,7 +282,7 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
             </select>
           </Field>
           {error && <p className="form-error">{error}</p>}
-          <button className="primary-button full" type="submit">{editingSourceId ? "Salvar alterações" : "Cadastrar fonte"}</button>
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setSourceOpen(false)}>Cancelar</button><button className="primary-button" type="submit">{editingSourceId ? "Confirmar alterações" : "Confirmar fonte"}</button></div>
         </form>
       </Modal>
 
@@ -304,7 +313,7 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
             </Field>
             <Field label="Observação (opcional)"><textarea value={record.note} onChange={(e) => setRecord({ ...record, note: e.target.value })} placeholder="Alguma informação importante?" /></Field>
             {error && <p className="form-error">{error}</p>}
-            <button className="primary-button full" type="submit">{editingRecordId ? "Salvar alterações" : "Salvar leitura"}</button>
+            <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setRecordOpen(false)}>Cancelar</button><button className="primary-button" type="submit">{editingRecordId ? "Confirmar alterações" : "Confirmar leitura"}</button></div>
           </form>
         )}
       </Modal>
@@ -316,6 +325,7 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
       <Modal open={Boolean(selectedRecord)} onClose={() => setSelectedRecord(null)} eyebrow="LEITURA DE ÁGUA" title={selectedRecord ? `${selectedRecord.amount.toLocaleString("pt-BR")} L` : "Leitura"}>
         {selectedRecord && <div className="water-detail"><span><Droplet size={27} /></span><strong>{selectedRecord.purpose}</strong><p>{account.waterSources.find((source) => source.id === selectedRecord.sourceId)?.name || "Origem removida"} · {new Date(`${selectedRecord.date}T12:00:00`).toLocaleDateString("pt-BR")}</p>{selectedRecord.note && <div className="detail-note">{selectedRecord.note}</div>}<div className="detail-actions"><button className="secondary-button" onClick={() => editRecord(selectedRecord)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => deleteRecord(selectedRecord)}><Trash2 size={17} /> Excluir</button></div></div>}
       </Modal>
+      <ConfirmDialog open={Boolean(deleteTarget)} title={deleteTarget?.kind === "source" ? "Excluir fonte de água?" : "Excluir leitura de água?"} text={deleteTarget?.kind === "source" ? `A fonte ${deleteTarget.item.name} será removida da propriedade.` : "Esta leitura será removida do histórico e dos indicadores de água."} confirmLabel="Confirmar exclusão" onCancel={() => setDeleteTarget(null)} onConfirm={confirmDelete} />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { CalendarDays, Check, ChevronRight, ClipboardCheck, Pencil, Plus, Trash2 } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
+import { ConfirmDialog, EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
 import { makeId, type Activity, type HydraAccount } from "../../lib/hydra-types";
 
 type Props = {
@@ -19,6 +19,7 @@ export function ActivitiesScreen({ account, updateAccount, onBack, createRequest
   const [editingId, setEditingId] = useState<string>();
   const [form, setForm] = useState({ title: "", category: "Manejo", customCategory: "", date: new Date().toISOString().slice(0, 10), sectorId: "", animalId: "", note: "" });
   const [error, setError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Activity | null>(null);
 
   function save(event: FormEvent) {
     event.preventDefault();
@@ -44,9 +45,9 @@ export function ActivitiesScreen({ account, updateAccount, onBack, createRequest
   }
 
   function remove(item: Activity) {
-    if (!window.confirm(`Excluir a atividade ${item.title}?`)) return;
     updateAccount((current) => ({ ...current, activities: current.activities.filter((activity) => activity.id !== item.id) }));
     setSelected(null);
+    setDeleteTarget(null);
   }
 
   function openCreate() {
@@ -98,13 +99,14 @@ export function ActivitiesScreen({ account, updateAccount, onBack, createRequest
           <Field label="Animal (opcional)"><select value={form.animalId} onChange={(e) => setForm({ ...form, animalId: e.target.value })}><option value="">Nenhum animal específico</option>{account.animals.map((item) => <option key={item.id} value={item.id}>{item.name || item.identification}</option>)}</select></Field>
           <Field label="Observação"><textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Detalhes da atividade" /></Field>
           {error && <p className="form-error">{error}</p>}
-          <button className="primary-button full" type="submit">{editingId ? "Salvar alterações" : "Salvar atividade"}</button>
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setOpen(false)}>Cancelar</button><button className="primary-button" type="submit">{editingId ? "Confirmar alterações" : "Confirmar atividade"}</button></div>
         </form>
       </Modal>
 
       <Modal open={Boolean(selected)} onClose={() => setSelected(null)} eyebrow="ATIVIDADE" title={selected?.title || "Detalhes"}>
-        {selected && <div className="activity-detail"><span>{selected.category}</span><p>{selected.note || "Sem observações cadastradas."}</p><small>{new Date(`${selected.date}T12:00:00`).toLocaleDateString("pt-BR")}</small><div className="detail-actions"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => remove(selected)}><Trash2 size={17} /> Excluir atividade</button></div></div>}
+        {selected && <div className="activity-detail"><span>{selected.category}</span><p>{selected.note || "Sem observações cadastradas."}</p><small>{new Date(`${selected.date}T12:00:00`).toLocaleDateString("pt-BR")}</small><div className="detail-actions"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => setDeleteTarget(selected)}><Trash2 size={17} /> Excluir atividade</button></div></div>}
       </Modal>
+      <ConfirmDialog open={Boolean(deleteTarget)} title="Excluir atividade?" text={`A atividade ${deleteTarget?.title || "selecionada"} será removida da rotina e não poderá ser recuperada.`} confirmLabel="Confirmar exclusão" onCancel={() => setDeleteTarget(null)} onConfirm={() => { if (deleteTarget) remove(deleteTarget); }} />
     </div>
   );
 }

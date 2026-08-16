@@ -2,7 +2,7 @@
 
 Aplicativo mobile de tecnologia rural para gestão da propriedade, recursos hídricos, rebanho, identificação NFC/RFID, atividades, setores, comunidade e monitoramento inteligente.
 
-O projeto foi reconstruído com arquitetura modular, persistência multiusuário e Android nativo via Capacitor. A interface é empacotada dentro do APK: não há `server.url`, `HYDRA_APP_URL` nem dependência de uma página hospedada para abrir o aplicativo.
+O projeto mantém arquitetura modular, persistência multiusuário e Android nativo via Capacitor. Esta versão evolui o código existente por migrations incrementais, sem trocar o projeto Supabase nem recriar a autenticação. A interface é empacotada dentro do APK: não há `server.url`, `HYDRA_APP_URL` nem dependência de uma página hospedada para abrir o aplicativo.
 
 ## Estado do projeto
 
@@ -11,6 +11,7 @@ Funcional e conectado ao banco:
 - criação de conta rural em quatro etapas;
 - login, sessão persistente, logout e recuperação de senha por deep link;
 - perfis independentes, foto editável por câmera/galeria, telefone, biografia, e-mail e senha;
+- perfil limpo com edição por lápis, capa privada da propriedade e localização rural persistente;
 - ficha digital e edição da propriedade;
 - gestão de fontes e leituras de água, histórico, gráfico e alertas baseados em dados reais;
 - rebanho com cadastro, edição, exclusão, busca, filtros, foto, ficha individual e histórico;
@@ -20,7 +21,9 @@ Funcional e conectado ao banco:
 - comunidade real com posts, imagens, curtidas, comentários e moderação;
 - avisos e links oficiais administráveis;
 - notificações internas enviadas pela administração;
-- painel administrativo com métricas, busca de usuários, banimento, cargos, avisos, links e moderação;
+- Hydra Agro+ oficial por R$ 6/mês, com ativação manual, dashboard baseado em dados reais, metas, histórico animal, gráficos e relatório imprimível;
+- painel administrativo com métricas, busca de usuários, banimento, cargos, assinaturas, avisos, links e moderação;
+- confirmações visíveis nos cadastros e confirmação adicional antes de exclusões, bloqueios, troca de cargo e alteração do Premium;
 - cache local por usuário, fila de sincronização e retomada após perda de conexão;
 - splash, ícone, safe areas, teclado, status bar, botão voltar e feedback tátil no Android;
 - workflow de APK debug no GitHub Actions.
@@ -28,7 +31,7 @@ Funcional e conectado ao banco:
 Recursos preparados, mas que exigem integração externa antes de operar:
 
 - **Drone Pastor:** o modelo de dados e a central de monitoramento existem, mas nenhuma missão real é iniciada sem hardware/API compatíveis;
-- **Hydra Agro+:** assinatura e plano existem no banco, sem cobrança simulada; é necessário integrar um provedor de pagamentos;
+- **pagamento automático:** o Hydra Agro+ funciona por conferência manual do Pix via canal oficial; checkout automático só deve ser adicionado com um provedor de pagamentos apropriado;
 - **push notifications nativas:** avisos internos funcionam; push em segundo plano depende de FCM/APNs e serviço próprio;
 - **NFC/RFID:** a leitura nativa depende de aparelho/tag compatível e deve ser validada no hardware final.
 
@@ -71,6 +74,7 @@ src/
     nfc/               leitura e vínculo NFC/RFID
     notifications/     avisos do usuário
     profile/           perfil, foto, segurança e plano
+    premium/           Hydra Agro+, análises, metas e relatórios
     property/          ficha digital da propriedade
     water/             gestão hídrica
   hooks/               sessão, cache isolado e sincronização
@@ -104,6 +108,8 @@ Todos os dados rurais privados recebem `owner_user_id` e/ou `property_id`. As po
 
 Nunca coloque a `service_role` no `.env`, no repositório ou no APK. O cliente usa somente a chave pública/publishable; as permissões efetivas ficam no banco.
 
+O status do Hydra Agro+ é lido da tabela `subscriptions` e não pode ser promovido pelo cache, pelo React ou pelo próprio usuário. A função `admin_set_subscription` é `security definer`, valida a role no PostgreSQL, registra auditoria e só aceita administrador ou proprietário. A aplicação também recoloca `role`, plano e datas de assinatura vindos do servidor durante a sincronização offline.
+
 ### Conta proprietária
 
 O trigger do banco atribui `owner` exclusivamente a:
@@ -120,15 +126,16 @@ Essa decisão ocorre no PostgreSQL. Digitar esse e-mail no frontend não libera 
 
 Extraia o ZIP, envie todo o conteúdo para a raiz de um repositório e escolha **Code > Codespaces > Create codespace on main**. O devcontainer instala Node 22, Java 21 e executa `npm ci`.
 
-### 2. Criar o Supabase
+### 2. Preparar o Supabase
 
-Crie um projeto vazio e execute integralmente:
+No projeto Supabase atual, execute as migrations em ordem:
 
 ```text
 supabase/migrations/202608150001_hydra_agro.sql
+supabase/migrations/202608160001_hydra_agro_plus.sql
 ```
 
-Pode ser pelo SQL Editor do painel ou por `supabase db push` em um ambiente com a CLI configurada.
+A segunda migration é incremental: adiciona metas, capa/localização da propriedade, datas Premium, RPC administrativa e realtime da assinatura. Ela não apaga tabelas, usuários ou registros. Pode ser executada pelo SQL Editor do painel ou por `supabase db push` em um ambiente com a CLI configurada.
 
 Em **Authentication > URL Configuration > Redirect URLs**, adicione:
 
@@ -178,6 +185,21 @@ npm run android:sync  # build conectado + cap sync
 Os arquivos da interface, ícones e fontes ficam no próprio APK. O aplicativo abre sem site externo.
 
 Após uma sessão válida, a conta é armazenada localmente pelo UUID do usuário. Alterações rurais ficam numa fila persistente e são enviadas quando a conexão retorna. Uma conta nunca lê o cache de outra porque as chaves incluem o ID autenticado. Comunidade, primeiro login, upload e sincronização naturalmente dependem do backend.
+
+## Hydra Agro+ e apoio voluntário
+
+O Hydra Agro+ custa **R$ 6 por mês**. Não há checkout falso nem ativação automática. O fluxo atual é:
+
+1. o usuário abre o card Hydra Agro+ no perfil;
+2. toca em **Continuar pelo Instagram**;
+3. recebe as instruções de Pix pelo canal oficial;
+4. a administração confere o pagamento;
+5. um administrador ou proprietário usa **Assinaturas > Liberar Hydra Agro+**;
+6. a RPC segura atualiza o servidor e a conta conectada recebe a mudança por realtime.
+
+Ao remover o plano, os dados rurais permanecem intactos. “Apoie o Hydra Agro” é uma contribuição voluntária separada: não libera Premium e não restringe recursos gratuitos.
+
+O painel Premium utiliza somente dados da conta: períodos de água, comparação, metas, histórico e evolução de peso, vacinação, lembretes, atividades, monitoramentos, conquistas e relatório da propriedade. Na web, **Gerar relatório em PDF** abre a impressão do navegador, que permite salvar em PDF. No Android, o app informa que essa exportação ainda depende de uma integração nativa; os indicadores continuam disponíveis na tela.
 
 ## NFC/RFID
 
@@ -298,7 +320,7 @@ O AAB é gerado em `android/app/build/outputs/bundle/release/`. Arquivos `.jks` 
 npm run verify
 ```
 
-A suíte automatizada verifica cobertura regional, validação de autenticação, isolamento estrutural de contas, ausência de concessão administrativa no cliente, RLS/owner no banco e empacotamento Capacitor sem URL remota. O build TypeScript/Vite e o `cap sync android` também fazem parte da validação de entrega.
+A suíte automatizada verifica cobertura regional, validação de autenticação, isolamento estrutural de contas, ausência de concessão administrativa no cliente, proteção do Hydra Agro+, contratos dos botões, RLS/owner no banco e empacotamento Capacitor sem URL remota. O build TypeScript/Vite e o `cap sync android` também fazem parte da validação de entrega.
 
 Testes que dependem de ambiente externo devem ser feitos antes de publicação:
 
