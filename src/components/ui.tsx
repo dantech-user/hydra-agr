@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, X } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { AlertCircle, CheckCircle2, ChevronLeft, Info, X } from "lucide-react";
+import { useAppOverlay, useAppToasts } from "./modal-system";
 
 export function ScreenHeader({
   eyebrow,
@@ -78,6 +79,8 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  tall = false,
+  dismissible = true,
 }: {
   open: boolean;
   title: string;
@@ -85,49 +88,75 @@ export function Modal({
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  tall?: boolean;
+  dismissible?: boolean;
 }) {
+  const titleId = useId();
+  const [present, setPresent] = useState(open);
   const [closing, setClosing] = useState(false);
   const closeTimer = useRef<number | null>(null);
+  const closeRequested = useRef(false);
 
   const requestClose = useCallback(() => {
+    if (closing || closeRequested.current || !dismissible) return;
+    closeRequested.current = true;
+    onClose();
+  }, [closing, dismissible, onClose]);
+
+  useEffect(() => {
+    if (open) {
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
+      closeRequested.current = false;
+      setPresent(true);
+      setClosing(false);
+      return;
+    }
+    if (!present) {
+      closeRequested.current = false;
+      return;
+    }
     if (closing) return;
     setClosing(true);
     closeTimer.current = window.setTimeout(() => {
-      onClose();
+      setPresent(false);
       setClosing(false);
+      closeRequested.current = false;
     }, 240);
-  }, [closing, onClose]);
+  }, [open, present, closing]);
+
+  useEffect(() => {
+    if (!present) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && dismissible) requestClose();
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [present, dismissible, requestClose]);
 
   useEffect(() => () => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") requestClose();
-    }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, requestClose]);
+  useAppOverlay(present, requestClose);
 
-  if (!open) return null;
+  if (!present) return null;
   return (
-    <div className={`modal-layer ${closing ? "is-closing" : ""}`} role="presentation" onMouseDown={requestClose}>
+    <div className={`modal-layer ${closing ? "is-closing" : ""}`} role="presentation" onMouseDown={() => { if (dismissible) requestClose(); }}>
       <section
-        className={`modal-sheet ${wide ? "modal-wide" : ""}`}
+        className={`modal-sheet ${wide ? "modal-wide" : ""} ${tall ? "modal-tall" : ""}`}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-labelledby={titleId}
+        aria-busy={!dismissible}
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="sheet-handle" />
         <div className="modal-head">
           <div>
             {eyebrow && <span className="eyebrow orange">{eyebrow}</span>}
-            <h2>{title}</h2>
+            <h2 id={titleId}>{title}</h2>
           </div>
-          <button className="icon-button" onClick={requestClose} aria-label="Fechar">
+          <button className="icon-button" onClick={requestClose} aria-label="Fechar" disabled={!dismissible}>
             <X size={22} />
           </button>
         </div>
@@ -156,6 +185,73 @@ export function Toggle({
     >
       <span />
     </button>
+  );
+}
+
+export function ConfirmDialog({
+  open,
+  title,
+  text,
+  confirmLabel = "Confirmar",
+  onCancel,
+  onConfirm,
+  busy = false,
+  danger = true,
+  error,
+}: {
+  open: boolean;
+  title: string;
+  text: string;
+  confirmLabel?: string;
+  onCancel: () => void;
+  onConfirm: () => void | Promise<void>;
+  busy?: boolean;
+  danger?: boolean;
+  error?: string;
+}) {
+  return (
+    <Modal open={open} title={title} eyebrow="CONFIRMAÇÃO OBRIGATÓRIA" onClose={onCancel} dismissible={!busy}>
+      <div className="confirm-action">
+        <span><X size={27} /></span>
+        <p>{text}</p>
+        {error && <p className="form-error" role="alert">{error}</p>}
+        <div className="modal-action-row">
+          <button className="secondary-button" onClick={onCancel} disabled={busy}>Cancelar</button>
+          <LoadingButton className={danger ? "danger-button" : "primary-button"} onClick={() => void onConfirm()} loading={busy} loadingLabel={danger ? "Excluindo..." : "Confirmando..."}>{confirmLabel}</LoadingButton>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+export function LoadingButton({
+  loading = false,
+  loadingLabel = "Salvando...",
+  children,
+  disabled,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  loading?: boolean;
+  loadingLabel?: string;
+}) {
+  return (
+    <button {...props} onClick={props.onClick} disabled={disabled || loading} aria-busy={loading}>
+      {loading ? <><span className="button-spinner" aria-hidden="true" />{loadingLabel}</> : children}
+    </button>
+  );
+}
+
+export function AppToastRegion() {
+  const toasts = useAppToasts();
+  return (
+    <div className="app-toast-region" aria-live="polite" aria-atomic="true">
+      {toasts.map((toast) => (
+        <div key={toast.id} className={`app-toast ${toast.tone}`} role={toast.tone === "error" ? "alert" : "status"}>
+          <span aria-hidden="true">{toast.tone === "success" ? <CheckCircle2 size={21} /> : toast.tone === "error" ? <AlertCircle size={21} /> : <Info size={21} />}</span>
+          <p>{toast.message}</p>
+        </div>
+      ))}
+    </div>
   );
 }
 

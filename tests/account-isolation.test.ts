@@ -14,11 +14,14 @@ describe("isolamento entre contas", () => {
       status: "Ativo",
     });
     accountA.property.name = "Fazenda A";
+    accountA.settings.premiumGoals.monthlyWater = 2500;
 
     expect(accountB.animals).toEqual([]);
     expect(accountB.property.name).toBe("");
+    expect(accountB.settings.premiumGoals.monthlyWater).toBeUndefined();
     expect(accountA.animals).not.toBe(accountB.animals);
     expect(accountA.property).not.toBe(accountB.property);
+    expect(accountA.settings.premiumGoals).not.toBe(accountB.settings.premiumGoals);
   });
 
   it("nunca concede função administrativa no cliente", () => {

@@ -16,12 +16,13 @@ import {
   Minus,
   Waves,
 } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader, SectionHeader, Toggle } from "../../components/ui";
-import { makeId, type HydraAccount, type WaterRecord, type WaterSource } from "../../lib/hydra-types";
+import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader, SectionHeader, Toggle } from "../../components/ui";
+import { showAppToast } from "../../components/modal-system";
+import { makeId, type HydraAccount, type UpdateAccount, type WaterRecord, type WaterSource } from "../../lib/hydra-types";
 
 type Props = {
   account: HydraAccount;
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   createRecordRequest?: number;
   onRequestHandled?: () => void;
 };
@@ -40,6 +41,9 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
   const [sourceStatus, setSourceStatus] = useState<WaterSource["status"]>("ativa");
   const [record, setRecord] = useState({ date: today(), amount: "", sourceId: "", purpose: "Consumo animal", note: "" });
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState<"source" | "record" | "delete" | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<{ kind: "source"; item: WaterSource } | { kind: "record"; item: WaterRecord } | null>(null);
 
   const total = useMemo(
     () => account.waterRecords.reduce((sum, item) => sum + item.amount, 0),
@@ -58,26 +62,34 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
     return { change, direction };
   }, [account.waterRecords]);
 
-  function addSource(event: FormEvent) {
+  async function addSource(event: FormEvent) {
     event.preventDefault();
     if (!sourceName.trim()) {
       setError("Dê um nome para a fonte de água.");
       return;
     }
     const id = editingSourceId ?? makeId("source");
-    updateAccount((current) => ({ ...current, waterSources: editingSourceId
-      ? current.waterSources.map((source) => source.id === editingSourceId ? { ...source, name: sourceName.trim(), type: sourceType, status: sourceStatus } : source)
-      : [...current.waterSources, { id, name: sourceName.trim(), type: sourceType, status: sourceStatus }],
-    }));
-    setRecord((current) => ({ ...current, sourceId: current.sourceId || id }));
-    setSourceName("");
-    setSourceStatus("ativa");
-    setEditingSourceId(undefined);
+    setSaving("source");
     setError("");
-    setSourceOpen(false);
+    try {
+      await updateAccount((current) => ({ ...current, waterSources: editingSourceId
+        ? current.waterSources.map((source) => source.id === editingSourceId ? { ...source, name: sourceName.trim(), type: sourceType, status: sourceStatus } : source)
+        : [...current.waterSources, { id, name: sourceName.trim(), type: sourceType, status: sourceStatus }],
+      }), { requireRemote: true });
+      setRecord((current) => ({ ...current, sourceId: current.sourceId || id }));
+      setSourceName("");
+      setSourceStatus("ativa");
+      setEditingSourceId(undefined);
+      setSourceOpen(false);
+      showAppToast(editingSourceId ? "Fonte de água atualizada" : "Fonte de água cadastrada");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Não foi possível salvar a fonte de água.");
+    } finally {
+      setSaving(null);
+    }
   }
 
-  function addRecord(event: FormEvent) {
+  async function addRecord(event: FormEvent) {
     event.preventDefault();
     const amount = Number(record.amount.replace(",", "."));
     if (!record.sourceId) {
@@ -89,14 +101,22 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
       return;
     }
     const nextRecord = { id: editingRecordId ?? makeId("water"), date: record.date, amount, sourceId: record.sourceId, purpose: record.purpose, note: record.note.trim() };
-    updateAccount((current) => ({ ...current, waterRecords: editingRecordId
-      ? current.waterRecords.map((item) => item.id === editingRecordId ? nextRecord : item)
-      : [nextRecord, ...current.waterRecords],
-    }));
-    setRecord({ date: today(), amount: "", sourceId: account.waterSources[0]?.id ?? "", purpose: "Consumo animal", note: "" });
+    setSaving("record");
     setError("");
-    setEditingRecordId(undefined);
-    setRecordOpen(false);
+    try {
+      await updateAccount((current) => ({ ...current, waterRecords: editingRecordId
+        ? current.waterRecords.map((item) => item.id === editingRecordId ? nextRecord : item)
+        : [nextRecord, ...current.waterRecords],
+      }), { requireRemote: true });
+      setRecord({ date: today(), amount: "", sourceId: account.waterSources[0]?.id ?? "", purpose: "Consumo animal", note: "" });
+      setEditingRecordId(undefined);
+      setRecordOpen(false);
+      showAppToast(editingRecordId ? "Leitura atualizada com sucesso" : "Água registrada com sucesso");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Não foi possível registrar a leitura.");
+    } finally {
+      setSaving(null);
+    }
   }
 
   function openRecord() {
@@ -132,9 +152,7 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
       setError("Esta fonte possui leituras. Exclua ou edite os registros vinculados primeiro.");
       return;
     }
-    if (!window.confirm(`Excluir a fonte ${source.name}?`)) return;
-    updateAccount((current) => ({ ...current, waterSources: current.waterSources.filter((item) => item.id !== source.id) }));
-    setSelectedSource(null);
+    setDeleteTarget({ kind: "source", item: source });
   }
 
   function editRecord(item: WaterRecord) {
@@ -145,9 +163,28 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
   }
 
   function deleteRecord(item: WaterRecord) {
-    if (!window.confirm("Excluir esta leitura de água?")) return;
-    updateAccount((current) => ({ ...current, waterRecords: current.waterRecords.filter((recordItem) => recordItem.id !== item.id) }));
-    setSelectedRecord(null);
+    setDeleteTarget({ kind: "record", item });
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setSaving("delete");
+    setDeleteError("");
+    try {
+      if (deleteTarget.kind === "source") {
+        await updateAccount((current) => ({ ...current, waterSources: current.waterSources.filter((item) => item.id !== deleteTarget.item.id) }), { requireRemote: true });
+        setSelectedSource(null);
+      } else {
+        await updateAccount((current) => ({ ...current, waterRecords: current.waterRecords.filter((item) => item.id !== deleteTarget.item.id) }), { requireRemote: true });
+        setSelectedRecord(null);
+      }
+      setDeleteTarget(null);
+      showAppToast("Registro excluído com sucesso");
+    } catch (caught) {
+      setDeleteError(caught instanceof Error ? caught.message : "Não foi possível concluir a exclusão.");
+    } finally {
+      setSaving(null);
+    }
   }
 
   return (
@@ -255,7 +292,7 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
         )}
       </section>
 
-      <Modal open={sourceOpen} onClose={() => { setSourceOpen(false); setEditingSourceId(undefined); setError(""); }} eyebrow="RECURSO HÍDRICO" title={editingSourceId ? "Editar fonte de água" : "Cadastrar fonte de água"}>
+      <Modal open={sourceOpen} onClose={() => { setSourceOpen(false); setEditingSourceId(undefined); setError(""); }} eyebrow="RECURSO HÍDRICO" title={editingSourceId ? "Editar fonte de água" : "Cadastrar fonte de água"} dismissible={!saving}>
         <form className="modal-form" onSubmit={addSource}>
           <Field label="Nome da fonte">
             <input value={sourceName} onChange={(e) => { setSourceName(e.target.value); setError(""); }} placeholder="Ex.: Cisterna principal" autoFocus />
@@ -272,12 +309,12 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
               <option value="inativa">Inativa</option>
             </select>
           </Field>
-          {error && <p className="form-error">{error}</p>}
-          <button className="primary-button full" type="submit">{editingSourceId ? "Salvar alterações" : "Cadastrar fonte"}</button>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setSourceOpen(false)} disabled={saving === "source"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "source"} loadingLabel="Salvando fonte...">{editingSourceId ? "Confirmar alterações" : "Confirmar fonte"}</LoadingButton></div>
         </form>
       </Modal>
 
-      <Modal open={recordOpen} onClose={() => { setRecordOpen(false); setEditingRecordId(undefined); setError(""); }} eyebrow={editingRecordId ? "EDIÇÃO" : "NOVA LEITURA"} title={editingRecordId ? "Editar leitura" : "Registrar água"}>
+      <Modal open={recordOpen} onClose={() => { setRecordOpen(false); setEditingRecordId(undefined); setError(""); }} eyebrow={editingRecordId ? "EDIÇÃO" : "NOVA LEITURA"} title={editingRecordId ? "Editar leitura" : "Registrar água"} dismissible={!saving}>
         {account.waterSources.length === 0 ? (
           <EmptyState
             icon={<Waves size={24} />}
@@ -303,19 +340,20 @@ export function WaterScreen({ account, updateAccount, createRecordRequest, onReq
               </select>
             </Field>
             <Field label="Observação (opcional)"><textarea value={record.note} onChange={(e) => setRecord({ ...record, note: e.target.value })} placeholder="Alguma informação importante?" /></Field>
-            {error && <p className="form-error">{error}</p>}
-            <button className="primary-button full" type="submit">{editingRecordId ? "Salvar alterações" : "Salvar leitura"}</button>
+            {error && <p className="form-error" role="alert">{error}</p>}
+            <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setRecordOpen(false)} disabled={saving === "record"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "record"} loadingLabel="Salvando leitura...">{editingRecordId ? "Confirmar alterações" : "Confirmar leitura"}</LoadingButton></div>
           </form>
         )}
       </Modal>
 
       <Modal open={Boolean(selectedSource)} onClose={() => { setSelectedSource(null); setError(""); }} eyebrow="FONTE DE ÁGUA" title={selectedSource?.name || "Fonte"}>
-        {selectedSource && <div className="water-detail"><span><Waves size={27} /></span><strong>{selectedSource.type}</strong><p>Situação: {selectedSource.status}</p>{error && <p className="form-error">{error}</p>}<div className="detail-actions"><button className="secondary-button" onClick={() => editSource(selectedSource)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => deleteSource(selectedSource)}><Trash2 size={17} /> Excluir</button></div></div>}
+        {selectedSource && <div className="water-detail"><span><Waves size={27} /></span><strong>{selectedSource.type}</strong><p>Situação: {selectedSource.status}</p>{error && <p className="form-error" role="alert">{error}</p>}<div className="detail-actions"><button className="secondary-button" onClick={() => editSource(selectedSource)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => deleteSource(selectedSource)}><Trash2 size={17} /> Excluir</button></div></div>}
       </Modal>
 
       <Modal open={Boolean(selectedRecord)} onClose={() => setSelectedRecord(null)} eyebrow="LEITURA DE ÁGUA" title={selectedRecord ? `${selectedRecord.amount.toLocaleString("pt-BR")} L` : "Leitura"}>
         {selectedRecord && <div className="water-detail"><span><Droplet size={27} /></span><strong>{selectedRecord.purpose}</strong><p>{account.waterSources.find((source) => source.id === selectedRecord.sourceId)?.name || "Origem removida"} · {new Date(`${selectedRecord.date}T12:00:00`).toLocaleDateString("pt-BR")}</p>{selectedRecord.note && <div className="detail-note">{selectedRecord.note}</div>}<div className="detail-actions"><button className="secondary-button" onClick={() => editRecord(selectedRecord)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => deleteRecord(selectedRecord)}><Trash2 size={17} /> Excluir</button></div></div>}
       </Modal>
+      <ConfirmDialog open={Boolean(deleteTarget)} title={deleteTarget?.kind === "source" ? "Excluir fonte de água?" : "Excluir leitura de água?"} text={deleteTarget?.kind === "source" ? `A fonte ${deleteTarget.item.name} será removida da propriedade.` : "Esta leitura será removida do histórico e dos indicadores de água."} confirmLabel="Confirmar exclusão" busy={saving === "delete"} error={deleteError} onCancel={() => { setDeleteTarget(null); setDeleteError(""); }} onConfirm={confirmDelete} />
     </div>
   );
 }

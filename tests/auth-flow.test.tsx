@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthFlow } from "../src/features/auth/auth-flow";
 
 const handlers = {
@@ -7,6 +7,10 @@ const handlers = {
   onSignup: vi.fn(async () => ({ ok: true, message: "ok" })),
   onResetPassword: vi.fn(async () => ({ ok: true, message: "ok" })),
 };
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe("autenticação", () => {
   it("valida o e-mail antes de pedir senha", () => {
@@ -24,5 +28,18 @@ describe("autenticação", () => {
     fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: "produtor@example.com" } });
     fireEvent.click(screen.getByRole("button", { name: /avançar/i }));
     expect(screen.getByRole("button", { name: /esqueci minha senha/i })).toBeEnabled();
+  });
+
+  it("abre a recuperação e solicita o link para o e-mail informado", async () => {
+    render(<AuthFlow {...handlers} />);
+    fireEvent.change(screen.getByLabelText(/^e-mail$/i), { target: { value: "produtor@example.com" } });
+    fireEvent.click(screen.getByRole("button", { name: /avançar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /esqueci minha senha/i }));
+
+    expect(screen.getByRole("heading", { name: /recuperar acesso/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /enviar link de recuperação/i }));
+
+    expect(handlers.onResetPassword).toHaveBeenCalledWith("produtor@example.com");
+    expect(await screen.findByRole("status")).toHaveTextContent("ok");
   });
 });

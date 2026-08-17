@@ -2,11 +2,11 @@
 
 import { Bell, BellOff } from "lucide-react";
 import { EmptyState, ScreenHeader, Toggle } from "../../components/ui";
-import type { HydraAccount } from "../../lib/hydra-types";
+import type { HydraAccount, UpdateAccount } from "../../lib/hydra-types";
 
 type Props = {
   account: HydraAccount;
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   onBack: () => void;
 };
 
@@ -22,4 +22,3 @@ export function NotificationsScreen({ account, updateAccount, onBack }: Props) {
     </div>
   );
 }
-

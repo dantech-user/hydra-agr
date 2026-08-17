@@ -19,13 +19,14 @@ import {
   Sprout,
   Target,
 } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader, SectionHeader } from "../../components/ui";
-import { makeId, type AnimalHistoryEntry, type HydraAccount } from "../../lib/hydra-types";
+import { EmptyState, Field, LoadingButton, Modal, ScreenHeader, SectionHeader } from "../../components/ui";
+import { showAppToast } from "../../components/modal-system";
+import { makeId, type AnimalHistoryEntry, type HydraAccount, type UpdateAccount } from "../../lib/hydra-types";
 import { hydraSupport } from "../../lib/support";
 
 type Props = {
   account: HydraAccount;
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   onBack: () => void;
 };
 
@@ -58,6 +59,8 @@ export function PlusScreen({ account, updateAccount, onBack }: Props) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [goalsOpen, setGoalsOpen] = useState(false);
   const [notice, setNotice] = useState("");
+  const [modalError, setModalError] = useState("");
+  const [saving, setSaving] = useState<"history" | "goals" | null>(null);
   const [history, setHistory] = useState({ animalId: "", type: "Pesagem", date: new Date().toISOString().slice(0, 10), description: "", weight: "", reminderAt: "" });
   const [goals, setGoals] = useState({
     monthlyWater: account.settings.premiumGoals.monthlyWater?.toString() || "",
@@ -119,11 +122,11 @@ export function PlusScreen({ account, updateAccount, onBack }: Props) {
     window.open(hydraSupport.instagramUrl, "_blank", "noopener,noreferrer");
   }
 
-  function saveHistory(event: FormEvent) {
+  async function saveHistory(event: FormEvent) {
     event.preventDefault();
-    if (!history.animalId || !history.description.trim()) { setNotice("Escolha o animal e descreva o registro."); return; }
+    if (!history.animalId || !history.description.trim()) { setModalError("Escolha o animal e descreva o registro."); return; }
     const weight = history.weight ? Number(history.weight.replace(",", ".")) : undefined;
-    if (history.type === "Pesagem" && (!weight || weight <= 0)) { setNotice("Informe um peso válido."); return; }
+    if (history.type === "Pesagem" && (!weight || weight <= 0)) { setModalError("Informe um peso válido."); return; }
     const entry: AnimalHistoryEntry = {
       id: makeId("history"),
       date: new Date(`${history.date}T12:00:00`).toISOString(),
@@ -133,30 +136,46 @@ export function PlusScreen({ account, updateAccount, onBack }: Props) {
       reminderAt: history.reminderAt ? new Date(`${history.reminderAt}T09:00:00`).toISOString() : undefined,
       done: false,
     };
-    updateAccount((current) => ({
-      ...current,
-      animals: current.animals.map((animal) => animal.id === history.animalId
-        ? { ...animal, weight: entry.weight ?? animal.weight, history: [...(animal.history ?? []), entry] }
-        : animal),
-    }));
-    setHistory({ animalId: "", type: "Pesagem", date: new Date().toISOString().slice(0, 10), description: "", weight: "", reminderAt: "" });
-    setNotice("Registro salvo no histórico do animal.");
-    setHistoryOpen(false);
+    setSaving("history");
+    setModalError("");
+    try {
+      await updateAccount((current) => ({
+        ...current,
+        animals: current.animals.map((animal) => animal.id === history.animalId
+          ? { ...animal, weight: entry.weight ?? animal.weight, history: [...(animal.history ?? []), entry] }
+          : animal),
+      }), { requireRemote: true });
+      setHistory({ animalId: "", type: "Pesagem", date: new Date().toISOString().slice(0, 10), description: "", weight: "", reminderAt: "" });
+      setHistoryOpen(false);
+      showAppToast("Registro salvo no histórico do animal");
+    } catch (caught) {
+      setModalError(caught instanceof Error ? caught.message : "Não foi possível salvar o registro.");
+    } finally {
+      setSaving(null);
+    }
   }
 
-  function saveGoals(event: FormEvent) {
+  async function saveGoals(event: FormEvent) {
     event.preventDefault();
     const numberOrUndefined = (value: string) => {
       const parsed = Number(value.replace(",", "."));
       return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
     };
-    updateAccount((current) => ({ ...current, settings: { ...current.settings, premiumGoals: {
-      monthlyWater: numberOrUndefined(goals.monthlyWater),
-      monthlyActivities: numberOrUndefined(goals.monthlyActivities),
-      identifiedAnimals: numberOrUndefined(goals.identifiedAnimals),
-    } } }));
-    setNotice("Metas atualizadas com segurança.");
-    setGoalsOpen(false);
+    setSaving("goals");
+    setModalError("");
+    try {
+      await updateAccount((current) => ({ ...current, settings: { ...current.settings, premiumGoals: {
+        monthlyWater: numberOrUndefined(goals.monthlyWater),
+        monthlyActivities: numberOrUndefined(goals.monthlyActivities),
+        identifiedAnimals: numberOrUndefined(goals.identifiedAnimals),
+      } } }), { requireRemote: true });
+      setGoalsOpen(false);
+      showAppToast("Metas atualizadas com segurança");
+    } catch (caught) {
+      setModalError(caught instanceof Error ? caught.message : "Não foi possível atualizar as metas.");
+    } finally {
+      setSaving(null);
+    }
   }
 
   function printReport() {
@@ -219,7 +238,7 @@ export function PlusScreen({ account, updateAccount, onBack }: Props) {
       </section>
 
       <section className="plus-section-card">
-        <SectionHeader title="Histórico do rebanho" action={<button className="small-button" onClick={() => setHistoryOpen(true)} disabled={account.animals.length === 0}><Plus size={16} /> Registro</button>} />
+        <SectionHeader title="Histórico do rebanho" action={<button className="small-button" onClick={() => { setModalError(""); setHistoryOpen(true); }} disabled={account.animals.length === 0}><Plus size={16} /> Registro</button>} />
         {account.animals.length === 0 ? <EmptyState icon={<Cow size={25} />} title="Nenhum animal cadastrado" text="Cadastre um animal na aba Rebanho antes de criar pesagens, vacinas ou lembretes." /> : <>
           <div className="plus-herd-stats"><div><Scale size={19} /><span><strong>{averageWeight ? formatNumber(averageWeight, " kg") : "—"}</strong><small>peso médio atual</small></span></div><div><BellRing size={19} /><span><strong>{analytics.reminders.length}</strong><small>lembretes futuros</small></span></div><div><ClipboardCheck size={19} /><span><strong>{analytics.vaccinationEntries.length}</strong><small>vacinações registradas</small></span></div></div>
           {analytics.reminders.length > 0 ? <div className="plus-reminder-list">{analytics.reminders.slice(0, 4).map((entry) => <div key={entry.id}><BellRing size={17} /><span><strong>{entry.animal.name || entry.animal.identification}</strong><small>{entry.description} · {formatDate(entry.reminderAt)}</small></span></div>)}</div> : <p className="plus-inline-empty">Nenhum lembrete futuro. Use “Registro” para programar o próximo manejo.</p>}
@@ -229,7 +248,7 @@ export function PlusScreen({ account, updateAccount, onBack }: Props) {
       </section>
 
       <section className="plus-section-card">
-        <SectionHeader title="Metas da propriedade" action={<button className="text-button" onClick={() => { setGoals({ monthlyWater: account.settings.premiumGoals.monthlyWater?.toString() || "", monthlyActivities: account.settings.premiumGoals.monthlyActivities?.toString() || "", identifiedAnimals: account.settings.premiumGoals.identifiedAnimals?.toString() || "" }); setGoalsOpen(true); }}>Editar metas</button>} />
+        <SectionHeader title="Metas da propriedade" action={<button className="text-button" onClick={() => { setModalError(""); setGoals({ monthlyWater: account.settings.premiumGoals.monthlyWater?.toString() || "", monthlyActivities: account.settings.premiumGoals.monthlyActivities?.toString() || "", identifiedAnimals: account.settings.premiumGoals.identifiedAnimals?.toString() || "" }); setGoalsOpen(true); }}>Editar metas</button>} />
         <div className="plus-goals"><ProgressRow label="Água registrada no mês" value={analytics.thisMonthWater} goal={account.settings.premiumGoals.monthlyWater} unit=" L" /><ProgressRow label="Atividades no mês" value={analytics.thisMonthActivities} goal={account.settings.premiumGoals.monthlyActivities} /><ProgressRow label="Animais identificados" value={identified} goal={account.settings.premiumGoals.identifiedAnimals} /></div>
       </section>
 
@@ -248,23 +267,23 @@ export function PlusScreen({ account, updateAccount, onBack }: Props) {
 
       <section className="plus-future-card"><span><LockKeyhole size={22} /></span><div><small>EVOLUÇÃO FUTURA</small><strong>NFC/RFID avançado</strong><p>Arquitetura reservada para automações e relatórios de leitura. Só será ativada quando houver integração real compatível; nenhuma leitura é simulada.</p></div><Nfc size={29} /></section>
 
-      <Modal open={historyOpen} onClose={() => setHistoryOpen(false)} eyebrow="REBANHO PREMIUM" title="Novo registro animal" tall>
+      <Modal open={historyOpen} onClose={() => setHistoryOpen(false)} eyebrow="REBANHO PREMIUM" title="Novo registro animal" tall dismissible={saving !== "history"}>
         <form className="modal-form" onSubmit={saveHistory}>
           <Field label="Animal"><select value={history.animalId} onChange={(event) => setHistory({ ...history, animalId: event.target.value })}><option value="">Selecione</option>{account.animals.map((animal) => <option key={animal.id} value={animal.id}>{animal.name || animal.identification} · {animal.identification}</option>)}</select></Field>
           <div className="field-combo"><Field label="Tipo"><select value={history.type} onChange={(event) => setHistory({ ...history, type: event.target.value })}>{["Pesagem", "Vacinação", "Manejo", "Lembrete", "Observação"].map((type) => <option key={type}>{type}</option>)}</select></Field><Field label="Data"><input type="date" value={history.date} onChange={(event) => setHistory({ ...history, date: event.target.value })} /></Field></div>
           {history.type === "Pesagem" && <Field label="Peso (kg)"><input inputMode="decimal" value={history.weight} onChange={(event) => setHistory({ ...history, weight: event.target.value })} placeholder="0" /></Field>}
           <Field label="Descrição"><textarea value={history.description} onChange={(event) => setHistory({ ...history, description: event.target.value })} placeholder="Ex.: Aplicada vacina contra clostridioses" /></Field>
           <Field label="Lembrar em (opcional)" hint="Use para a próxima dose, pesagem ou manejo."><input type="date" value={history.reminderAt} min={new Date().toISOString().slice(0, 10)} onChange={(event) => setHistory({ ...history, reminderAt: event.target.value })} /></Field>
-          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setHistoryOpen(false)}>Cancelar</button><button className="primary-button" type="submit">Confirmar registro</button></div>
+          {modalError && <p className="form-error" role="alert">{modalError}</p>}<div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setHistoryOpen(false)} disabled={saving === "history"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "history"} loadingLabel="Salvando registro...">Confirmar registro</LoadingButton></div>
         </form>
       </Modal>
 
-      <Modal open={goalsOpen} onClose={() => setGoalsOpen(false)} eyebrow="PLANEJAMENTO" title="Metas mensais">
+      <Modal open={goalsOpen} onClose={() => setGoalsOpen(false)} eyebrow="PLANEJAMENTO" title="Metas mensais" dismissible={saving !== "goals"}>
         <form className="modal-form" onSubmit={saveGoals}>
           <Field label="Água registrada (L)" hint="Meta de acompanhamento, não limite de consumo."><input inputMode="decimal" value={goals.monthlyWater} onChange={(event) => setGoals({ ...goals, monthlyWater: event.target.value })} placeholder="Opcional" /></Field>
           <Field label="Atividades registradas"><input inputMode="numeric" value={goals.monthlyActivities} onChange={(event) => setGoals({ ...goals, monthlyActivities: event.target.value })} placeholder="Opcional" /></Field>
           <Field label="Animais identificados"><input inputMode="numeric" value={goals.identifiedAnimals} onChange={(event) => setGoals({ ...goals, identifiedAnimals: event.target.value })} placeholder="Opcional" /></Field>
-          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setGoalsOpen(false)}>Cancelar</button><button className="primary-button" type="submit"><Target size={18} /> Confirmar metas</button></div>
+          {modalError && <p className="form-error" role="alert">{modalError}</p>}<div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setGoalsOpen(false)} disabled={saving === "goals"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "goals"} loadingLabel="Salvando metas..."><Target size={18} /> Confirmar metas</LoadingButton></div>
         </form>
       </Modal>
     </div>

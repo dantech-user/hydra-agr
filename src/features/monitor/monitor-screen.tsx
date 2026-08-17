@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   BatteryMedium,
+  CalendarClock,
   Camera,
   ChevronRight,
   Clock3,
@@ -17,12 +18,13 @@ import {
   Satellite,
   Trash2,
 } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader, SectionHeader } from "../../components/ui";
-import { makeId, type HydraAccount, type MonitoringRecord, type Sector } from "../../lib/hydra-types";
+import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader, SectionHeader } from "../../components/ui";
+import { showAppToast } from "../../components/modal-system";
+import { makeId, type HydraAccount, type MonitoringRecord, type Sector, type UpdateAccount } from "../../lib/hydra-types";
 
 type Props = {
   account: HydraAccount;
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   saveMonitoringPhoto: (recordId: string, file?: File) => Promise<boolean>;
   createSectorRequest?: number;
   onRequestHandled?: () => void;
@@ -40,53 +42,60 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
   const [record, setRecord] = useState({ date: new Date().toISOString().slice(0, 10), sectorId: "", type: "Inspeção manual", duration: "", note: "", occurrence: "" });
   const [error, setError] = useState("");
   const [photoBusy, setPhotoBusy] = useState(false);
+  const [saving, setSaving] = useState<"sector" | "monitoring" | "delete" | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<{ kind: "sector"; item: Sector } | { kind: "monitoring"; item: MonitoringRecord } | null>(null);
   const photoRef = useRef<HTMLInputElement>(null);
   const selectedMonitoring = account.monitoring.find((item) => item.id === selectedMonitoringId) ?? null;
 
-  function saveSector(event: FormEvent) {
+  async function saveSector(event: FormEvent) {
     event.preventDefault();
     if (!sector.name.trim()) {
       setError("Informe o nome do setor.");
       return;
     }
-    updateAccount((current) => ({ ...current, sectors: editingSectorId
-      ? current.sectors.map((item) => item.id === editingSectorId ? { ...item, name: sector.name.trim(), kind: sector.kind, note: sector.note.trim() || undefined } : item)
-      : [...current.sectors, { id: makeId("sector"), name: sector.name.trim(), kind: sector.kind, note: sector.note.trim() || undefined }],
-    }));
-    setSector({ name: "", kind: "Pasto", note: "" });
+    setSaving("sector");
     setError("");
-    setEditingSectorId(undefined);
-    setSectorOpen(false);
+    try {
+      await updateAccount((current) => ({ ...current, sectors: editingSectorId
+        ? current.sectors.map((item) => item.id === editingSectorId ? { ...item, name: sector.name.trim(), kind: sector.kind, note: sector.note.trim() || undefined } : item)
+        : [...current.sectors, { id: makeId("sector"), name: sector.name.trim(), kind: sector.kind, note: sector.note.trim() || undefined }],
+      }), { requireRemote: true });
+      setSector({ name: "", kind: "Pasto", note: "" });
+      setEditingSectorId(undefined);
+      setSectorOpen(false);
+      showAppToast(editingSectorId ? "Setor atualizado" : "Setor criado com sucesso");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Não foi possível salvar o setor.");
+    } finally {
+      setSaving(null);
+    }
   }
 
-  function saveMonitoring(event: FormEvent) {
+  async function saveMonitoring(event: FormEvent) {
     event.preventDefault();
     if (!record.sectorId) {
       setError("Selecione o setor monitorado.");
       return;
     }
-    updateAccount((current) => ({
-      ...current,
-      monitoring: [
-        { id: makeId("monitor"), date: record.date, sectorId: record.sectorId, type: record.type, duration: record.duration || undefined, note: record.note.trim() || undefined, occurrence: record.occurrence.trim() || undefined },
-        ...current.monitoring,
-      ],
-    }));
-    setRecord({ date: new Date().toISOString().slice(0, 10), sectorId: "", type: "Inspeção manual", duration: "", note: "", occurrence: "" });
+    const item = { id: makeId("monitor"), date: record.date, sectorId: record.sectorId, type: record.type, duration: record.duration || undefined, note: record.note.trim() || undefined, occurrence: record.occurrence.trim() || undefined };
+    setSaving("monitoring");
     setError("");
-    setRecordOpen(false);
-    setTab("history");
+    try {
+      await updateAccount((current) => ({ ...current, monitoring: [item, ...current.monitoring] }), { requireRemote: true });
+      setRecord({ date: new Date().toISOString().slice(0, 10), sectorId: "", type: "Inspeção manual", duration: "", note: "", occurrence: "" });
+      setRecordOpen(false);
+      setTab("history");
+      showAppToast("Monitoramento registrado com sucesso");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Não foi possível registrar o monitoramento.");
+    } finally {
+      setSaving(null);
+    }
   }
 
   function removeSector(item: Sector) {
-    if (!window.confirm(`Excluir o setor ${item.name}?`)) return;
-    updateAccount((current) => ({
-      ...current,
-      sectors: current.sectors.filter((sectorItem) => sectorItem.id !== item.id),
-      activities: current.activities.map((activity) => activity.sectorId === item.id ? { ...activity, sectorId: undefined } : activity),
-      monitoring: current.monitoring.map((recordItem) => recordItem.sectorId === item.id ? { ...recordItem, sectorId: undefined } : recordItem),
-    }));
-    setSelected(null);
+    setDeleteTarget({ kind: "sector", item });
   }
 
   function editSector(item: Sector) {
@@ -106,16 +115,36 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
   useEffect(() => { if (createSectorRequest !== undefined) { openNewSector(); onRequestHandled?.(); } }, [createSectorRequest]);
 
   function removeMonitoring(item: MonitoringRecord) {
-    if (!window.confirm("Excluir este registro de monitoramento?")) return;
-    updateAccount((current) => ({ ...current, monitoring: current.monitoring.filter((recordItem) => recordItem.id !== item.id) }));
-    setSelectedMonitoringId(undefined);
+    setDeleteTarget({ kind: "monitoring", item });
+  }
+
+  async function confirmDelete() {
+    const target = deleteTarget;
+    if (!target) return;
+    setSaving("delete");
+    setDeleteError("");
+    try {
+      if (target.kind === "sector") {
+        await updateAccount((current) => ({ ...current, sectors: current.sectors.filter((item) => item.id !== target.item.id), activities: current.activities.map((activity) => activity.sectorId === target.item.id ? { ...activity, sectorId: undefined } : activity), monitoring: current.monitoring.map((record) => record.sectorId === target.item.id ? { ...record, sectorId: undefined } : record) }), { requireRemote: true });
+        setSelected(null);
+      } else {
+        await updateAccount((current) => ({ ...current, monitoring: current.monitoring.filter((item) => item.id !== target.item.id) }), { requireRemote: true });
+        setSelectedMonitoringId(undefined);
+      }
+      setDeleteTarget(null);
+      showAppToast(target.kind === "sector" ? "Setor excluído" : "Monitoramento excluído");
+    } catch (caught) {
+      setDeleteError(caught instanceof Error ? caught.message : "Não foi possível concluir a exclusão.");
+    } finally {
+      setSaving(null);
+    }
   }
 
   async function addMonitoringPhoto(file?: File) {
     if (!selectedMonitoring) return;
     setPhotoBusy(true);
     setError("");
-    try { await saveMonitoringPhoto(selectedMonitoring.id, file); }
+    try { if (await saveMonitoringPhoto(selectedMonitoring.id, file)) showAppToast("Foto adicionada ao monitoramento"); }
     catch (caught) { setError(caught instanceof Error ? caught.message : "Não foi possível anexar a foto."); }
     finally { setPhotoBusy(false); if (photoRef.current) photoRef.current.value = ""; }
   }
@@ -145,6 +174,11 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
         </button>
         <p className="hardware-note"><Cpu size={15} /> A ação real será liberada com hardware e API compatíveis.</p>
       </section>
+
+      <aside className="drone-roadmap-notice" role="note">
+        <span><CalendarClock size={21} /></span>
+        <div><small>PRÓXIMA ATUALIZAÇÃO</small><strong>Integração do Drone Pastor</strong><p>A conexão com drone e API compatíveis está prevista para a próxima versão. Até lá, nenhum voo é iniciado pelo aplicativo.</p></div>
+      </aside>
 
       <div className="segmented-control">
         <button className={tab === "sectors" ? "active" : ""} onClick={() => setTab("sectors")}>Setores <span>{account.sectors.length}</span></button>
@@ -204,7 +238,7 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
         </section>
       )}
 
-      <Modal open={sectorOpen} onClose={() => { setSectorOpen(false); setEditingSectorId(undefined); setError(""); }} eyebrow="MAPEAMENTO" title={editingSectorId ? "Editar setor" : "Criar setor"}>
+      <Modal open={sectorOpen} onClose={() => { setSectorOpen(false); setEditingSectorId(undefined); setError(""); }} eyebrow="MAPEAMENTO" title={editingSectorId ? "Editar setor" : "Criar setor"} dismissible={!saving}>
         <form className="modal-form" onSubmit={saveSector}>
           <Field label="Nome"><input value={sector.name} onChange={(e) => { setSector({ ...sector, name: e.target.value }); setError(""); }} placeholder="Ex.: Pasto 1" autoFocus /></Field>
           <Field label="Tipo">
@@ -213,12 +247,12 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
             </select>
           </Field>
           <Field label="Observação"><textarea value={sector.note} onChange={(e) => setSector({ ...sector, note: e.target.value })} placeholder="Características ou uso desta área" /></Field>
-          {error && <p className="form-error">{error}</p>}
-          <button className="primary-button full" type="submit">{editingSectorId ? "Salvar alterações" : "Salvar setor"}</button>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setSectorOpen(false)} disabled={saving === "sector"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "sector"} loadingLabel="Salvando setor...">{editingSectorId ? "Confirmar alterações" : "Confirmar setor"}</LoadingButton></div>
         </form>
       </Modal>
 
-      <Modal open={recordOpen} onClose={() => { setRecordOpen(false); setError(""); }} eyebrow="HISTÓRICO" title="Registrar monitoramento">
+      <Modal open={recordOpen} onClose={() => { setRecordOpen(false); setError(""); }} eyebrow="HISTÓRICO" title="Registrar monitoramento" dismissible={!saving}>
         <form className="modal-form" onSubmit={saveMonitoring}>
           <div className="field-combo">
             <Field label="Data"><input type="date" value={record.date} onChange={(e) => setRecord({ ...record, date: e.target.value })} /></Field>
@@ -233,15 +267,16 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
           <Field label="Observações"><textarea value={record.note} onChange={(e) => setRecord({ ...record, note: e.target.value })} placeholder="O que foi observado?" /></Field>
           <Field label="Ocorrências"><textarea value={record.occurrence} onChange={(e) => setRecord({ ...record, occurrence: e.target.value })} placeholder="Opcional" /></Field>
           <div className="upload-placeholder"><Camera size={20} /><span>Depois de salvar, abra o registro para anexar fotos reais.</span></div>
-          {error && <p className="form-error">{error}</p>}
-          <button className="primary-button full" type="submit">Salvar monitoramento</button>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setRecordOpen(false)} disabled={saving === "monitoring"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "monitoring"} loadingLabel="Salvando monitoramento...">Confirmar monitoramento</LoadingButton></div>
         </form>
       </Modal>
 
       <Modal open={hardwareOpen} onClose={() => setHardwareOpen(false)} eyebrow="DRONE PASTOR" title="Integração necessária">
         <div className="hardware-message">
           <span><PlaneTakeoff size={30} /></span>
-          <p>O Hydra Agro não vai simular um voo. Para iniciar um sobrevoo real, será necessário conectar um drone compatível e sua API.</p>
+          <div className="hardware-release-tag"><CalendarClock size={16} /> Previsto para a próxima atualização</div>
+          <p>O Hydra Agro não vai simular um voo. A próxima versão será preparada para conectar um drone compatível e sua API; a marca e o modelo ainda precisam ser definidos.</p>
           <div className="future-data-list">
             <div><Cpu size={17} /> Identificação e estado</div><div><BatteryMedium size={17} /> Bateria e sinal</div><div><MapPin size={17} /> Setor e missão</div>
           </div>
@@ -253,9 +288,10 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
         {selected && <div className="sector-detail"><span><MapPin size={28} /></span><strong>{selected.kind}</strong><p>{selected.note || "Sem observações cadastradas."}</p><small>{account.activities.filter((item) => item.sectorId === selected.id).length} atividades · {account.monitoring.filter((item) => item.sectorId === selected.id).length} monitoramentos</small><div className="detail-actions"><button className="secondary-button" onClick={() => editSector(selected)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => removeSector(selected)}><Trash2 size={17} /> Excluir setor</button></div></div>}
       </Modal>
 
-      <Modal open={Boolean(selectedMonitoring)} onClose={() => { setSelectedMonitoringId(undefined); setError(""); }} eyebrow="MONITORAMENTO" title={selectedMonitoring?.type || "Detalhes"}>
-        {selectedMonitoring && <div className="monitoring-detail"><div className="detail-grid"><div><span>Data</span><strong>{new Date(`${selectedMonitoring.date}T12:00:00`).toLocaleDateString("pt-BR")}</strong></div><div><span>Setor</span><strong>{account.sectors.find((item) => item.id === selectedMonitoring.sectorId)?.name || "Setor removido"}</strong></div><div><span>Duração</span><strong>{selectedMonitoring.duration || "Não informada"}</strong></div><div><span>Tipo</span><strong>{selectedMonitoring.type}</strong></div></div>{selectedMonitoring.note && <div className="detail-note">{selectedMonitoring.note}</div>}{selectedMonitoring.occurrence && <div className="info-strip">Ocorrência: {selectedMonitoring.occurrence}</div>}{(selectedMonitoring.photoUrls?.length ?? 0) > 0 && <div className="monitoring-photos">{selectedMonitoring.photoUrls!.map((url, index) => <img src={url} alt={`Foto do monitoramento ${index + 1}`} key={url} />)}</div>}<div className="animal-photo-actions"><button className="secondary-button" onClick={() => void addMonitoringPhoto()} disabled={photoBusy}>{photoBusy ? <LoaderCircle size={17} className="spin" /> : <Camera size={17} />} Câmera</button><button className="secondary-button" onClick={() => photoRef.current?.click()} disabled={photoBusy}>Galeria</button><input ref={photoRef} className="hidden-file" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void addMonitoringPhoto(event.target.files?.[0])} /></div>{error && <p className="form-error">{error}</p>}<button className="danger-button full" onClick={() => removeMonitoring(selectedMonitoring)}><Trash2 size={17} /> Excluir monitoramento</button></div>}
+      <Modal open={Boolean(selectedMonitoring)} onClose={() => { setSelectedMonitoringId(undefined); setError(""); }} eyebrow="MONITORAMENTO" title={selectedMonitoring?.type || "Detalhes"} dismissible={!photoBusy}>
+        {selectedMonitoring && <div className="monitoring-detail"><div className="detail-grid"><div><span>Data</span><strong>{new Date(`${selectedMonitoring.date}T12:00:00`).toLocaleDateString("pt-BR")}</strong></div><div><span>Setor</span><strong>{account.sectors.find((item) => item.id === selectedMonitoring.sectorId)?.name || "Setor removido"}</strong></div><div><span>Duração</span><strong>{selectedMonitoring.duration || "Não informada"}</strong></div><div><span>Tipo</span><strong>{selectedMonitoring.type}</strong></div></div>{selectedMonitoring.note && <div className="detail-note">{selectedMonitoring.note}</div>}{selectedMonitoring.occurrence && <div className="info-strip">Ocorrência: {selectedMonitoring.occurrence}</div>}{(selectedMonitoring.photoUrls?.length ?? 0) > 0 && <div className="monitoring-photos">{selectedMonitoring.photoUrls!.map((url, index) => <img src={url} alt={`Foto do monitoramento ${index + 1}`} key={url} />)}</div>}<div className="animal-photo-actions"><button className="secondary-button" onClick={() => void addMonitoringPhoto()} disabled={photoBusy}>{photoBusy ? <LoaderCircle size={17} className="spin" /> : <Camera size={17} />} Câmera</button><button className="secondary-button" onClick={() => photoRef.current?.click()} disabled={photoBusy}>Galeria</button><input ref={photoRef} className="hidden-file" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void addMonitoringPhoto(event.target.files?.[0])} /></div>{error && <p className="form-error" role="alert">{error}</p>}<button className="danger-button full" onClick={() => removeMonitoring(selectedMonitoring)}><Trash2 size={17} /> Excluir monitoramento</button></div>}
       </Modal>
+      <ConfirmDialog open={Boolean(deleteTarget)} title={deleteTarget?.kind === "sector" ? "Excluir setor?" : "Excluir monitoramento?"} text={deleteTarget?.kind === "sector" ? `O setor ${deleteTarget.item.name} será removido. Atividades e monitoramentos existentes serão preservados sem o vínculo do setor.` : "O registro e suas referências de foto serão removidos do histórico de monitoramento."} confirmLabel="Confirmar exclusão" busy={saving === "delete"} error={deleteError} onCancel={() => { setDeleteTarget(null); setDeleteError(""); }} onConfirm={confirmDelete} />
     </div>
   );
 }

@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { BadgeCheck, Camera, ChevronRight, Beef as Cow, Filter, History, LoaderCircle, Nfc, Pencil, Plus, Search, Trash2, Weight } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
-import { makeId, type Animal, type HydraAccount } from "../../lib/hydra-types";
+import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader } from "../../components/ui";
+import { showAppToast } from "../../components/modal-system";
+import { makeId, type Animal, type HydraAccount, type UpdateAccount } from "../../lib/hydra-types";
 
 type Props = {
   account: HydraAccount;
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   openNfc: (animalId?: string) => void;
   focusAnimalId?: string;
   createRequest?: number;
@@ -29,6 +30,10 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
   const [animal, setAnimal] = useState(blankAnimal);
   const [error, setError] = useState("");
   const [photoBusy, setPhotoBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Animal | null>(null);
   const photoRef = useRef<HTMLInputElement>(null);
   const selected = account.animals.find((item) => item.id === selectedId) ?? null;
 
@@ -60,7 +65,7 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
     setFormOpen(true);
   }
 
-  function saveAnimal(event: FormEvent) {
+  async function saveAnimal(event: FormEvent) {
     event.preventDefault();
     if (!animal.identification.trim()) {
       setError("Informe a identificação do animal.");
@@ -80,27 +85,44 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
     const item: Animal = {
       id: editingId ?? makeId("animal"), identification: animal.identification.trim(), name: animal.name.trim() || undefined, species: animal.species, breed: animal.breed.trim() || undefined, sex: animal.sex || undefined, birthDate: animal.birthDate || undefined, weight: Number.isFinite(weight) ? weight : undefined, status: animal.status, electronicId: animal.electronicId.trim() || undefined, notes: animal.notes.trim() || undefined,
     };
-    updateAccount((current) => {
-      if (!editingId) return { ...current, animals: [{ ...item, history: [{ id: makeId("history"), date: new Date().toISOString(), type: "Cadastro", description: "Ficha criada no Hydra Agro" }] }, ...current.animals] };
-      return { ...current, animals: current.animals.map((existing) => existing.id === editingId ? { ...existing, ...item, history: [...(existing.history ?? []), { id: makeId("history"), date: new Date().toISOString(), type: "Edição", description: "Dados da ficha atualizados" }] } : existing) };
-    });
-    setAnimal(blankAnimal);
+    setSaving(true);
     setError("");
-    setEditingId(undefined);
-    setFormOpen(false);
+    try {
+      await updateAccount((current) => {
+        if (!editingId) return { ...current, animals: [{ ...item, history: [{ id: makeId("history"), date: new Date().toISOString(), type: "Cadastro", description: "Ficha criada no Hydra Agro" }] }, ...current.animals] };
+        return { ...current, animals: current.animals.map((existing) => existing.id === editingId ? { ...existing, ...item, history: [...(existing.history ?? []), { id: makeId("history"), date: new Date().toISOString(), type: "Edição", description: "Dados da ficha atualizados" }] } : existing) };
+      }, { requireRemote: true });
+      showAppToast(editingId ? "Animal atualizado com sucesso" : "Animal cadastrado com sucesso");
+      setAnimal(blankAnimal);
+      setEditingId(undefined);
+      setFormOpen(false);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Não foi possível salvar o animal.");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function removeAnimal(item: Animal) {
-    if (!window.confirm(`Excluir ${item.name || item.identification}? O registro será removido da sua conta.`)) return;
-    updateAccount((current) => ({ ...current, animals: current.animals.filter((animalItem) => animalItem.id !== item.id), activities: current.activities.map((activity) => activity.animalId === item.id ? { ...activity, animalId: undefined } : activity) }));
-    setSelectedId(undefined);
+  async function removeAnimal(item: Animal) {
+    setDeleteBusy(true);
+    setDeleteError("");
+    try {
+      await updateAccount((current) => ({ ...current, animals: current.animals.filter((animalItem) => animalItem.id !== item.id), activities: current.activities.map((activity) => activity.animalId === item.id ? { ...activity, animalId: undefined } : activity) }), { requireRemote: true });
+      setSelectedId(undefined);
+      setDeleteTarget(null);
+      showAppToast("Animal excluído com sucesso");
+    } catch (caught) {
+      setDeleteError(caught instanceof Error ? caught.message : "Não foi possível excluir o animal.");
+    } finally {
+      setDeleteBusy(false);
+    }
   }
 
   async function setPhoto(file?: File) {
     if (!selected) return;
     setPhotoBusy(true);
     setError("");
-    try { await saveAnimalPhoto(selected.id, file); }
+    try { if (await saveAnimalPhoto(selected.id, file)) showAppToast("Foto do animal atualizada"); }
     catch (caught) { setError(caught instanceof Error ? caught.message : "Não foi possível salvar a foto."); }
     finally { setPhotoBusy(false); if (photoRef.current) photoRef.current.value = ""; }
   }
@@ -116,7 +138,7 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
 
       {account.animals.length === 0 ? <EmptyState icon={<Cow size={27} />} title="Nenhum animal cadastrado" text="Crie a primeira ficha do rebanho sem preencher dados inventados." action={<button className="primary-button" onClick={openCreate}><Plus size={17} /> Cadastrar animal</button>} /> : filtered.length === 0 ? <EmptyState icon={<Search size={25} />} title="Nenhum resultado" text="Tente outro termo ou remova o filtro." /> : <div className="animal-list">{filtered.map((item) => <button key={item.id} className="animal-card" onClick={() => setSelectedId(item.id)}>{item.photoUrl ? <img className="animal-avatar image" src={item.photoUrl} alt={`Foto de ${item.name || item.identification}`} /> : <span className="animal-avatar"><Cow size={25} /></span>}<div className="animal-copy"><span className="animal-code">{item.identification}</span><strong>{item.name || "Animal sem nome"}</strong><small>{[item.species, item.breed, item.sex].filter(Boolean).join(" · ")}</small></div><div className="animal-side">{item.electronicId && <span className="tag-badge"><Nfc size={13} /> vinculado</span>}<ChevronRight size={19} /></div></button>)}</div>}
 
-      <Modal open={formOpen} onClose={() => { setFormOpen(false); setError(""); }} eyebrow={editingId ? "EDIÇÃO" : "NOVA FICHA"} title={editingId ? "Editar animal" : "Cadastrar animal"} wide>
+      <Modal open={formOpen} onClose={() => { setFormOpen(false); setError(""); }} eyebrow={editingId ? "EDIÇÃO" : "NOVA FICHA"} title={editingId ? "Editar animal" : "Cadastrar animal"} wide dismissible={!saving}>
         <form className="modal-form" onSubmit={saveAnimal}>
           <div className="field-combo"><Field label="Identificação"><input value={animal.identification} onChange={(event) => { setAnimal({ ...animal, identification: event.target.value }); setError(""); }} placeholder="Ex.: BOV-001" autoFocus /></Field><Field label="Nome (opcional)"><input value={animal.name} onChange={(event) => setAnimal({ ...animal, name: event.target.value })} placeholder="Ex.: Estrela" /></Field></div>
           <div className="field-combo"><Field label="Espécie"><select value={animal.species} onChange={(event) => setAnimal({ ...animal, species: event.target.value })}>{["Bovino", "Caprino", "Ovino", "Equino", "Suíno", "Ave", "Outra"].map((item) => <option key={item}>{item}</option>)}</select></Field><Field label="Raça"><input value={animal.breed} onChange={(event) => setAnimal({ ...animal, breed: event.target.value })} placeholder="Informe se souber" /></Field></div>
@@ -124,11 +146,11 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
           <div className="field-combo"><Field label="Peso (kg)"><input inputMode="decimal" value={animal.weight} onChange={(event) => setAnimal({ ...animal, weight: event.target.value })} placeholder="0" /></Field><Field label="Situação"><select value={animal.status} onChange={(event) => setAnimal({ ...animal, status: event.target.value })}><option>Ativo</option><option>Em observação</option><option>Vendido</option><option>Baixa</option></select></Field></div>
           <Field label="Código NFC/RFID (opcional)" hint="Você também pode usar a Central NFC para ler uma tag real."><input value={animal.electronicId} onChange={(event) => setAnimal({ ...animal, electronicId: event.target.value })} placeholder="Digite o código da tag" /></Field>
           <Field label="Observações"><textarea value={animal.notes} onChange={(event) => setAnimal({ ...animal, notes: event.target.value })} placeholder="Histórico ou informações importantes" /></Field>
-          {error && <p className="form-error">{error}</p>}<button className="primary-button full" type="submit">{editingId ? "Salvar alterações" : "Salvar animal"}</button>
+          {error && <p className="form-error" role="alert">{error}</p>}<div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setFormOpen(false)} disabled={saving}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving} loadingLabel="Salvando animal...">{editingId ? "Confirmar alterações" : "Confirmar animal"}</LoadingButton></div>
         </form>
       </Modal>
 
-      <Modal open={Boolean(selected)} onClose={() => { setSelectedId(undefined); setError(""); }} eyebrow="FICHA INDIVIDUAL" title={selected?.name || selected?.identification || "Animal"}>
+      <Modal open={Boolean(selected)} onClose={() => { setSelectedId(undefined); setError(""); }} eyebrow="FICHA INDIVIDUAL" title={selected?.name || selected?.identification || "Animal"} dismissible={!photoBusy}>
         {selected && <div className="animal-detail">
           <div className="animal-detail-hero">{selected.photoUrl ? <img src={selected.photoUrl} alt={`Foto de ${selected.name || selected.identification}`} /> : <span><Cow size={34} /></span>}<div><small>{selected.identification}</small><strong>{selected.name || "Animal sem nome"}</strong><em>{selected.status}</em></div></div>
           <div className="animal-photo-actions"><button className="secondary-button" onClick={() => void setPhoto()} disabled={photoBusy}>{photoBusy ? <LoaderCircle size={17} className="spin" /> : <Camera size={17} />} Câmera</button><button className="secondary-button" onClick={() => photoRef.current?.click()} disabled={photoBusy}>Galeria</button><input ref={photoRef} className="hidden-file" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void setPhoto(event.target.files?.[0])} /></div>
@@ -137,10 +159,11 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
           {selected.weight && <div className="detail-line"><Weight size={19} /><div><span>Último peso informado</span><strong>{selected.weight} kg</strong></div></div>}
           {selected.notes && <div className="detail-note">{selected.notes}</div>}
           {(selected.history?.length ?? 0) > 0 && <div className="animal-history"><h3><History size={17} /> Histórico</h3>{selected.history!.slice().reverse().map((entry) => <div key={entry.id}><span /><p><strong>{entry.type}</strong>{entry.description}<small>{new Date(entry.date).toLocaleString("pt-BR")}</small></p></div>)}</div>}
-          {error && <p className="form-error">{error}</p>}
-          <div className="detail-actions three"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="secondary-button" onClick={() => openNfc(selected.id)}><Nfc size={17} /> Vincular tag</button><button className="danger-button" onClick={() => removeAnimal(selected)}><Trash2 size={17} /> Excluir</button></div>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <div className="detail-actions three"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="secondary-button" onClick={() => openNfc(selected.id)}><Nfc size={17} /> Vincular tag</button><button className="danger-button" onClick={() => { setDeleteError(""); setDeleteTarget(selected); }}><Trash2 size={17} /> Excluir</button></div>
         </div>}
       </Modal>
+      <ConfirmDialog open={Boolean(deleteTarget)} title="Excluir animal?" text={`${deleteTarget?.name || deleteTarget?.identification || "Este animal"} e seu histórico serão removidos da conta. Atividades vinculadas perderão apenas a referência ao animal.`} confirmLabel="Confirmar exclusão" busy={deleteBusy} error={deleteError} onCancel={() => { setDeleteTarget(null); setDeleteError(""); }} onConfirm={() => deleteTarget ? removeAnimal(deleteTarget) : Promise.resolve()} />
     </div>
   );
 }

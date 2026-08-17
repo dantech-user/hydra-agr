@@ -23,18 +23,18 @@ export function PasswordRecoveryScreen({ save, logout }: { save: (password: stri
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [show, setShow] = useState(false);
-  const [message, setMessage] = useState("");
+  const [feedback, setFeedback] = useState<{ message: string; ok: boolean } | null>(null);
   const [working, setWorking] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (password.length < 8) { setMessage("A senha precisa ter pelo menos 8 caracteres."); return; }
-    if (password !== confirm) { setMessage("As senhas não coincidem."); return; }
+    if (password.length < 8) { setFeedback({ message: "A senha precisa ter pelo menos 8 caracteres.", ok: false }); return; }
+    if (password !== confirm) { setFeedback({ message: "As senhas não coincidem.", ok: false }); return; }
     setWorking(true);
     const result = await save(password);
     setWorking(false);
-    setMessage(result.message);
+    setFeedback({ message: result.message, ok: result.ok });
   }
 
-  return <main className="system-screen"><section className="system-card recovery-card"><span className="system-icon"><LockKeyhole size={29} /></span><span className="eyebrow">RECUPERAÇÃO SEGURA</span><h1>Crie sua nova senha</h1><p>O link foi validado. Escolha uma senha exclusiva para o Hydra Agro.</p><form className="modal-form" onSubmit={submit}><label className="field"><span>Nova senha</span><div className="input-with-action"><input type={show ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="new-password" /><button type="button" onClick={() => setShow((value) => !value)} aria-label={show ? "Ocultar senha" : "Mostrar senha"}>{show ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></label><label className="field"><span>Confirmar senha</span><input type={show ? "text" : "password"} value={confirm} onChange={(event) => setConfirm(event.target.value)} autoComplete="new-password" /></label>{message && <p className="form-notice"><CheckCircle2 size={15} /> {message}</p>}<button className="primary-button full" type="submit" disabled={working}>{working ? "Salvando…" : "Atualizar senha"}</button></form><button className="text-button" onClick={() => void logout()}>Sair desta conta</button></section></main>;
+  return <main className="system-screen"><section className="system-card recovery-card"><span className="system-icon"><LockKeyhole size={29} /></span><span className="eyebrow">RECUPERAÇÃO SEGURA</span><h1>Crie sua nova senha</h1><p>O link foi validado. Escolha uma senha exclusiva para o Hydra Agro.</p><form className="modal-form" onSubmit={submit}><label className="field"><span>Nova senha</span><div className="input-with-action"><input type={show ? "text" : "password"} value={password} onChange={(event) => { setPassword(event.target.value); setFeedback(null); }} autoComplete="new-password" /><button type="button" onClick={() => setShow((value) => !value)} aria-label={show ? "Ocultar senha" : "Mostrar senha"}>{show ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></label><label className="field"><span>Confirmar senha</span><input type={show ? "text" : "password"} value={confirm} onChange={(event) => { setConfirm(event.target.value); setFeedback(null); }} autoComplete="new-password" /></label>{feedback && (feedback.ok ? <p className="form-notice" role="status"><CheckCircle2 size={15} /> {feedback.message}</p> : <p className="form-error" role="alert">{feedback.message}</p>)}<button className="primary-button full" type="submit" disabled={working}>{working ? "Salvando…" : "Atualizar senha"}</button></form><button className="text-button" onClick={() => void logout()}>Sair desta conta</button></section></main>;
 }

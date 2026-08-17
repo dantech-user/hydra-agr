@@ -2,12 +2,13 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { CalendarDays, Check, ChevronRight, ClipboardCheck, Pencil, Plus, Trash2 } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
-import { makeId, type Activity, type HydraAccount } from "../../lib/hydra-types";
+import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader } from "../../components/ui";
+import { showAppToast } from "../../components/modal-system";
+import { makeId, type Activity, type HydraAccount, type UpdateAccount } from "../../lib/hydra-types";
 
 type Props = {
   account: HydraAccount;
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   onBack: () => void;
   createRequest?: number;
   onRequestHandled?: () => void;
@@ -19,8 +20,12 @@ export function ActivitiesScreen({ account, updateAccount, onBack, createRequest
   const [editingId, setEditingId] = useState<string>();
   const [form, setForm] = useState({ title: "", category: "Manejo", customCategory: "", date: new Date().toISOString().slice(0, 10), sectorId: "", animalId: "", note: "" });
   const [error, setError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Activity | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
-  function save(event: FormEvent) {
+  async function save(event: FormEvent) {
     event.preventDefault();
     if (!form.title.trim()) {
       setError("Informe o título da atividade.");
@@ -32,21 +37,38 @@ export function ActivitiesScreen({ account, updateAccount, onBack, createRequest
       return;
     }
     const next = { id: editingId ?? makeId("activity"), title: form.title.trim(), category, date: form.date, sectorId: form.sectorId || undefined, animalId: form.animalId || undefined, note: form.note.trim() || undefined, done: editingId ? account.activities.find((item) => item.id === editingId)?.done ?? false : false };
-    updateAccount((current) => ({ ...current, activities: editingId ? current.activities.map((item) => item.id === editingId ? next : item) : [next, ...current.activities] }));
-    setForm({ title: "", category: "Manejo", customCategory: "", date: new Date().toISOString().slice(0, 10), sectorId: "", animalId: "", note: "" });
+    setSaving(true);
     setError("");
-    setEditingId(undefined);
-    setOpen(false);
+    try {
+      await updateAccount((current) => ({ ...current, activities: editingId ? current.activities.map((item) => item.id === editingId ? next : item) : [next, ...current.activities] }), { requireRemote: true });
+      setForm({ title: "", category: "Manejo", customCategory: "", date: new Date().toISOString().slice(0, 10), sectorId: "", animalId: "", note: "" });
+      setEditingId(undefined);
+      setOpen(false);
+      showAppToast(editingId ? "Atividade atualizada" : "Atividade registrada com sucesso");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Não foi possível salvar a atividade.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   function toggle(item: Activity) {
     updateAccount((current) => ({ ...current, activities: current.activities.map((activity) => activity.id === item.id ? { ...activity, done: !activity.done } : activity) }));
   }
 
-  function remove(item: Activity) {
-    if (!window.confirm(`Excluir a atividade ${item.title}?`)) return;
-    updateAccount((current) => ({ ...current, activities: current.activities.filter((activity) => activity.id !== item.id) }));
-    setSelected(null);
+  async function remove(item: Activity) {
+    setDeleteBusy(true);
+    setDeleteError("");
+    try {
+      await updateAccount((current) => ({ ...current, activities: current.activities.filter((activity) => activity.id !== item.id) }), { requireRemote: true });
+      setSelected(null);
+      setDeleteTarget(null);
+      showAppToast("Atividade excluída");
+    } catch (caught) {
+      setDeleteError(caught instanceof Error ? caught.message : "Não foi possível excluir a atividade.");
+    } finally {
+      setDeleteBusy(false);
+    }
   }
 
   function openCreate() {
@@ -86,7 +108,7 @@ export function ActivitiesScreen({ account, updateAccount, onBack, createRequest
         </div>
       )}
 
-      <Modal open={open} onClose={() => { setOpen(false); setEditingId(undefined); setError(""); }} eyebrow={editingId ? "EDIÇÃO" : "NOVA ATIVIDADE"} title={editingId ? "Editar atividade" : "Registrar atividade"}>
+      <Modal open={open} onClose={() => { setOpen(false); setEditingId(undefined); setError(""); }} eyebrow={editingId ? "EDIÇÃO" : "NOVA ATIVIDADE"} title={editingId ? "Editar atividade" : "Registrar atividade"} dismissible={!saving}>
         <form className="modal-form" onSubmit={save}>
           <Field label="Título"><input value={form.title} onChange={(e) => { setForm({ ...form, title: e.target.value }); setError(""); }} placeholder="Ex.: Vacinar lote do Pasto 1" autoFocus /></Field>
           <div className="field-combo">
@@ -97,14 +119,15 @@ export function ActivitiesScreen({ account, updateAccount, onBack, createRequest
           <Field label="Setor (opcional)"><select value={form.sectorId} onChange={(e) => setForm({ ...form, sectorId: e.target.value })}><option value="">Toda a propriedade</option>{account.sectors.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></Field>
           <Field label="Animal (opcional)"><select value={form.animalId} onChange={(e) => setForm({ ...form, animalId: e.target.value })}><option value="">Nenhum animal específico</option>{account.animals.map((item) => <option key={item.id} value={item.id}>{item.name || item.identification}</option>)}</select></Field>
           <Field label="Observação"><textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Detalhes da atividade" /></Field>
-          {error && <p className="form-error">{error}</p>}
-          <button className="primary-button full" type="submit">{editingId ? "Salvar alterações" : "Salvar atividade"}</button>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setOpen(false)} disabled={saving}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving} loadingLabel="Salvando atividade...">{editingId ? "Confirmar alterações" : "Confirmar atividade"}</LoadingButton></div>
         </form>
       </Modal>
 
       <Modal open={Boolean(selected)} onClose={() => setSelected(null)} eyebrow="ATIVIDADE" title={selected?.title || "Detalhes"}>
-        {selected && <div className="activity-detail"><span>{selected.category}</span><p>{selected.note || "Sem observações cadastradas."}</p><small>{new Date(`${selected.date}T12:00:00`).toLocaleDateString("pt-BR")}</small><div className="detail-actions"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => remove(selected)}><Trash2 size={17} /> Excluir atividade</button></div></div>}
+        {selected && <div className="activity-detail"><span>{selected.category}</span><p>{selected.note || "Sem observações cadastradas."}</p><small>{new Date(`${selected.date}T12:00:00`).toLocaleDateString("pt-BR")}</small><div className="detail-actions"><button className="secondary-button" onClick={() => openEdit(selected)}><Pencil size={17} /> Editar</button><button className="danger-button" onClick={() => { setDeleteError(""); setDeleteTarget(selected); }}><Trash2 size={17} /> Excluir atividade</button></div></div>}
       </Modal>
+      <ConfirmDialog open={Boolean(deleteTarget)} title="Excluir atividade?" text={`A atividade ${deleteTarget?.title || "selecionada"} será removida da rotina e não poderá ser recuperada.`} confirmLabel="Confirmar exclusão" busy={deleteBusy} error={deleteError} onCancel={() => { setDeleteTarget(null); setDeleteError(""); }} onConfirm={() => deleteTarget ? remove(deleteTarget) : Promise.resolve()} />
     </div>
   );
 }

@@ -30,7 +30,7 @@ export const supabase: SupabaseClient | null = backendConfigured
         detectSessionInUrl: false,
       },
       global: {
-        headers: { "x-hydra-client": "hydra-agro-mobile/1.0.0" },
+        headers: { "x-hydra-client": "hydra-agro-mobile/1.2.2" },
       },
     })
   : null;
@@ -61,6 +61,24 @@ export async function handleAuthCallbackUrl(url: string) {
   }
 
   return hash.get("type") === "recovery" || parsed.searchParams.get("type") === "recovery" || parsed.pathname.includes("recovery");
+}
+
+export function isAuthCallbackUrl(url: string) {
+  try {
+    const parsed = new URL(url);
+    const hash = new URLSearchParams(parsed.hash.replace(/^#/, ""));
+    const hasCredentials = Boolean(
+      parsed.searchParams.get("code") ||
+      (hash.get("access_token") && hash.get("refresh_token")),
+    );
+    const isRecovery =
+      hash.get("type") === "recovery" ||
+      parsed.searchParams.get("type") === "recovery" ||
+      parsed.pathname.includes("/auth/recovery");
+    return hasCredentials && isRecovery;
+  } catch {
+    return false;
+  }
 }
 
 export function publicMediaUrl(bucket: "avatars" | "community-media", path?: string | null) {

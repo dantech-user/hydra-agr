@@ -1,12 +1,13 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { AlertCircle, Beef as Cow, CheckCircle2, ChevronRight, Keyboard, LoaderCircle, Nfc, Radio, ScanLine, Settings, Smartphone } from "lucide-react";
-import { EmptyState, Field, Modal, ScreenHeader } from "../../components/ui";
-import type { Animal, HydraAccount } from "../../lib/hydra-types";
+import { EmptyState, Field, LoadingButton, Modal, ScreenHeader } from "../../components/ui";
+import { showAppToast } from "../../components/modal-system";
+import type { Animal, HydraAccount, UpdateAccount } from "../../lib/hydra-types";
 import { getNfcAvailability, openNfcSettings, readNfcTag, stopNfcRead, type NfcAvailability } from "../../services/nfc-service";
 
 type Props = {
   account: HydraAccount;
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   onBack: () => void;
   onFound: (animal: Animal) => void;
   initialAnimalId?: string;
@@ -22,6 +23,7 @@ export function NfcScreen({ account, updateAccount, onBack, onFound, initialAnim
   const [nativeInfo, setNativeInfo] = useState(false);
   const [availability, setAvailability] = useState<NfcAvailability>("web");
   const [scanning, setScanning] = useState(false);
+  const [linking, setLinking] = useState(false);
 
   useEffect(() => {
     void getNfcAvailability().then(setAvailability).catch(() => setAvailability("unsupported"));
@@ -45,7 +47,7 @@ export function NfcScreen({ account, updateAccount, onBack, onFound, initialAnim
     if (found) window.setTimeout(() => onFound(found), 350);
   }
 
-  function link(event: FormEvent) {
+  async function link(event: FormEvent) {
     event.preventDefault();
     const normalized = code.trim();
     if (!animalId || !normalized) {
@@ -58,9 +60,18 @@ export function NfcScreen({ account, updateAccount, onBack, onFound, initialAnim
       return;
     }
     const linked = account.animals.find((animal) => animal.id === animalId) || null;
-    updateAccount((current) => ({ ...current, animals: current.animals.map((animal) => animal.id === animalId ? { ...animal, electronicId: normalized, history: [...(animal.history ?? []), { id: `history-${Date.now()}`, date: new Date().toISOString(), type: "Identificação eletrônica", description: `Tag ${normalized} vinculada` }] } : animal) }));
-    setResult(linked ? { ...linked, electronicId: normalized } : null);
-    setMessage("Identificação vinculada com sucesso.");
+    setLinking(true);
+    setMessage("");
+    try {
+      await updateAccount((current) => ({ ...current, animals: current.animals.map((animal) => animal.id === animalId ? { ...animal, electronicId: normalized, history: [...(animal.history ?? []), { id: `history-${Date.now()}`, date: new Date().toISOString(), type: "Identificação eletrônica", description: `Tag ${normalized} vinculada` }] } : animal) }), { requireRemote: true });
+      setResult(linked ? { ...linked, electronicId: normalized } : null);
+      setMessage("Identificação vinculada com sucesso.");
+      showAppToast("Identificação NFC/RFID vinculada");
+    } catch (caught) {
+      setMessage(caught instanceof Error ? caught.message : "Não foi possível vincular a identificação.");
+    } finally {
+      setLinking(false);
+    }
   }
 
   async function startNativeRead() {
@@ -125,7 +136,7 @@ export function NfcScreen({ account, updateAccount, onBack, onFound, initialAnim
           {mode === "link" && <Field label="Animal"><select value={animalId} onChange={(event) => { setAnimalId(event.target.value); setMessage(""); }}><option value="">Selecione</option>{account.animals.map((animal) => <option key={animal.id} value={animal.id}>{animal.name || animal.identification} · {animal.identification}</option>)}</select></Field>}
           <Field label="Código da identificação"><input value={code} onChange={(event) => { setCode(event.target.value); setMessage(""); setResult(null); }} placeholder="Digite o código NFC/RFID" /></Field>
           {message && <p className={`nfc-message ${result ? "success" : ""}`}>{result ? <CheckCircle2 size={17} /> : <AlertCircle size={17} />}{message}</p>}
-          <button className="primary-button full" type="submit">{mode === "locate" ? <><ScanLine size={18} /> Localizar animal</> : <><Nfc size={18} /> Confirmar vínculo</>}</button>
+          <LoadingButton className="primary-button full" type="submit" loading={linking} loadingLabel="Vinculando...">{mode === "locate" ? <><ScanLine size={18} /> Localizar animal</> : <><Nfc size={18} /> Confirmar vínculo</>}</LoadingButton>
         </form>
       )}
 

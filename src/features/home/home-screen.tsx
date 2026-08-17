@@ -4,7 +4,6 @@ import {
   Bell,
   ChevronRight,
   ClipboardCheck,
-  CloudSun,
   Beef as Cow,
   Droplets,
   Leaf,
@@ -20,6 +19,7 @@ import {
 import { HydraWordmark } from "../../components/brand";
 import { SectionHeader } from "../../components/ui";
 import type { Announcement, AppRoute, HydraAccount } from "../../lib/hydra-types";
+import { WeatherWidget } from "./weather-widget";
 
 type Props = {
   account: HydraAccount;
@@ -79,10 +79,7 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
           <h1>{greeting()}, {firstName}</h1>
           <p className="capitalize">{today}</p>
         </div>
-        <div className="climate-chip" aria-label="Clima não conectado">
-          <CloudSun size={25} />
-          <span><strong>—</strong> Clima não conectado</span>
-        </div>
+        <WeatherWidget municipality={account.property.municipality} onCompleteProperty={() => navigate("property")} />
       </section>
 
       {announcements.length > 0 && <section className="home-announcements" aria-label="Avisos do Hydra Agro">{announcements.slice(0, 3).map((announcement) => <article key={announcement.id} className={announcement.level}><span>{announcement.level === "critical" ? "IMPORTANTE" : announcement.level === "attention" ? "ATENÇÃO" : "AVISO"}</span><strong>{announcement.title}</strong><p>{announcement.body}</p></article>)}</section>}

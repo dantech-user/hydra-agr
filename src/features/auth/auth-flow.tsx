@@ -12,9 +12,10 @@ import {
   UserRound,
 } from "lucide-react";
 import { HydraWordmark } from "../../components/brand";
+import { MunicipalityPicker } from "../../components/municipality-picker";
 import { Field } from "../../components/ui";
 import { emptyProperty, type AuthResult, type Property, type SignupPayload } from "../../lib/hydra-types";
-import { isSupportedMunicipality, supportedMunicipalities } from "../../lib/municipalities";
+import { isSupportedMunicipality } from "../../lib/municipalities";
 
 const activities = [
   "Pecuária",
@@ -45,7 +46,7 @@ type Props = {
 
 export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const [loginStep, setLoginStep] = useState<"email" | "password">("email");
+  const [loginStep, setLoginStep] = useState<"email" | "password" | "recovery">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -154,8 +155,14 @@ export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
     }
   }
 
-  async function forgotPassword() {
+  async function submitPasswordReset(event: FormEvent) {
+    event.preventDefault();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("Digite o e-mail cadastrado para recuperar o acesso.");
+      return;
+    }
     setError("");
+    setNotice("");
     setSubmitting(true);
     const result = await onResetPassword(email);
     setSubmitting(false);
@@ -212,7 +219,7 @@ export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
                   <button type="button" onClick={() => switchMode("signup")}>Criar conta</button>
                 </p>
               </form>
-            ) : (
+            ) : loginStep === "password" ? (
               <form onSubmit={submitLogin}>
                 <button
                   className="auth-back"
@@ -252,7 +259,7 @@ export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
                 <button
                   className="text-button align-left"
                   type="button"
-                  onClick={forgotPassword}
+                  onClick={() => { setLoginStep("recovery"); setError(""); setNotice(""); }}
                   disabled={submitting}
                 >
                   Esqueci minha senha
@@ -260,6 +267,37 @@ export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
                 {notice && <p className="form-notice" role="status">{notice}</p>}
                 {error && <p className="form-error" role="alert">{error}</p>}
                 <button className="primary-button full" type="submit" disabled={submitting}>{submitting ? "Entrando…" : "Entrar"}</button>
+              </form>
+            ) : (
+              <form onSubmit={submitPasswordReset}>
+                <button
+                  className="auth-back"
+                  type="button"
+                  onClick={() => { setLoginStep("password"); setError(""); setNotice(""); }}
+                >
+                  <ArrowLeft size={17} /> Voltar
+                </button>
+                <div className="auth-icon"><LockKeyhole size={22} /></div>
+                <h1>Recuperar acesso</h1>
+                <p className="auth-subtitle">Enviaremos um link seguro para você criar uma nova senha.</p>
+                <Field label="E-mail cadastrado">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(event) => { setEmail(event.target.value); setError(""); setNotice(""); }}
+                    placeholder="voce@email.com"
+                    autoComplete="email"
+                    autoFocus
+                  />
+                </Field>
+                {notice && <p className="form-notice" role="status">{notice}</p>}
+                {error && <p className="form-error" role="alert">{error}</p>}
+                <button className="primary-button full" type="submit" disabled={submitting}>
+                  {submitting ? "Enviando link…" : "Enviar link de recuperação"}
+                </button>
+                <p className="auth-switch">
+                  Lembrou a senha? <button type="button" onClick={() => { setLoginStep("password"); setError(""); setNotice(""); }}>Voltar para entrar</button>
+                </p>
               </form>
             )}
           </div>
@@ -315,18 +353,17 @@ export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
                   <Field label="Nome da propriedade">
                     <input value={property.name} onChange={(e) => changeProperty("name", e.target.value)} placeholder="Ex.: Fazenda Boa Vista" />
                   </Field>
-                  <Field label="Município">
-                    <input list="municipios-atendidos" value={property.municipality} onChange={(e) => changeProperty("municipality", e.target.value)} placeholder="Pesquise Brejões ou cidade vizinha" />
-                    <datalist id="municipios-atendidos">
-                      {supportedMunicipalities.map((city) => <option key={city} value={city} />)}
-                    </datalist>
-                    <small>Atendimento inicial: Brejões e municípios limítrofes.</small>
-                  </Field>
-                  <Field label="Estado">
-                    <select value={property.state} onChange={(e) => changeProperty("state", e.target.value)}>
-                      <option value="BA">Bahia</option>
-                    </select>
-                  </Field>
+                  <div className="municipality-field-grid">
+                    <Field label="Município">
+                      <MunicipalityPicker value={property.municipality} onChange={(municipality) => changeProperty("municipality", municipality)} />
+                    </Field>
+                    <Field label="Estado">
+                      <div className="state-readonly" aria-label="Estado Bahia">
+                        <span>BA</span>
+                        <strong>Bahia</strong>
+                      </div>
+                    </Field>
+                  </div>
                   <div className="field-combo">
                     <Field label="Área">
                       <input inputMode="decimal" value={property.area} onChange={(e) => changeProperty("area", e.target.value)} placeholder="0" />
@@ -441,7 +478,7 @@ export function AuthFlow({ onLogin, onSignup, onResetPassword }: Props) {
                 {error && <p className="form-error" role="alert">{error}</p>}
                 <div className="form-actions">
                   <button className="secondary-button" type="button" onClick={() => setSignupStep(2)}>Voltar</button>
-                  <button className="primary-button" type="button" onClick={finishSignup} disabled={submitting}>{submitting ? "Criando conta…" : "Entrar no Hydra Agro"}</button>
+                  <button className="primary-button" type="button" onClick={finishSignup} disabled={submitting}>{submitting ? "Criando conta…" : "Confirmar e criar conta"}</button>
                 </div>
               </div>
             )}

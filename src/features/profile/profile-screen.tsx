@@ -1,8 +1,10 @@
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
+import { Capacitor } from "@capacitor/core";
 import {
   Bell,
   BellRing,
   Camera,
+  CheckCircle2,
   ChevronRight,
   CircleHelp,
   ClipboardList,
@@ -10,6 +12,7 @@ import {
   Droplets,
   ExternalLink,
   FileText,
+  HeartHandshake,
   Instagram,
   LoaderCircle,
   LockKeyhole,
@@ -18,23 +21,51 @@ import {
   Nfc,
   Pencil,
   ShieldCheck,
+  Sparkles,
   Sprout,
   UserRound,
   UsersRound,
 } from "lucide-react";
-import { Field, Modal, Toggle } from "../../components/ui";
-import type { AppLink, AppRoute, AuthResult, HydraAccount } from "../../lib/hydra-types";
+import { Field, LoadingButton, Modal, Toggle } from "../../components/ui";
+import { MunicipalityPicker } from "../../components/municipality-picker";
+import { showAppToast } from "../../components/modal-system";
+import type { AppLink, AppRoute, AuthResult, HydraAccount, UpdateAccount } from "../../lib/hydra-types";
+import { isSupportedMunicipality } from "../../lib/municipalities";
 import { hydraSupport } from "../../lib/support";
+import { ProfileInformation, type ProfileInformationKind } from "./profile-information";
 
 type Props = {
   account: HydraAccount;
   links: AppLink[];
-  updateAccount: (updater: (current: HydraAccount) => HydraAccount) => void;
+  updateAccount: UpdateAccount;
   navigate: (route: AppRoute) => void;
   logout: () => Promise<void>;
   saveAvatar: (file?: File) => Promise<boolean>;
+  savePropertyCover: (file?: File) => Promise<boolean>;
   changeCredentials: (values: { email?: string; password?: string }) => Promise<AuthResult>;
 };
+
+type ProfileDraft = {
+  name: string;
+  phone: string;
+  bio: string;
+  propertyName: string;
+  municipality: string;
+  state: string;
+  locationDetails: string;
+};
+
+function draftFromAccount(account: HydraAccount): ProfileDraft {
+  return {
+    name: account.profile.name,
+    phone: account.phone,
+    bio: account.profile.bio || "",
+    propertyName: account.property.name,
+    municipality: account.property.municipality,
+    state: account.property.state || "BA",
+    locationDetails: account.property.locationDetails || "",
+  };
+}
 
 function MenuRow({ icon, title, subtitle, onClick, end }: { icon: ReactNode; title: string; subtitle?: string; onClick?: () => void; end?: ReactNode }) {
   const content = <><span className="profile-menu-icon">{icon}</span><div><strong>{title}</strong>{subtitle && <small>{subtitle}</small>}</div>{end || <ChevronRight size={19} />}</>;
@@ -42,91 +73,194 @@ function MenuRow({ icon, title, subtitle, onClick, end }: { icon: ReactNode; tit
   return <button className="profile-menu-row" onClick={onClick}>{content}</button>;
 }
 
-export function ProfileScreen({ account, links, updateAccount, navigate, logout, saveAvatar, changeCredentials }: Props) {
+export function ProfileScreen({ account, links, updateAccount, navigate, logout, saveAvatar, savePropertyCover, changeCredentials }: Props) {
   const [editOpen, setEditOpen] = useState(false);
-  const [planOpen, setPlanOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [securityOpen, setSecurityOpen] = useState(false);
-  const [info, setInfo] = useState<"terms" | "privacy" | "about" | null>(null);
-  const [profile, setProfile] = useState({ name: account.profile.name, phone: account.phone, bio: account.profile.bio || "" });
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [logoutConfirm, setLogoutConfirm] = useState(false);
+  const [info, setInfo] = useState<ProfileInformationKind | null>(null);
+  const [profile, setProfile] = useState<ProfileDraft>(() => draftFromAccount(account));
+  const [notificationDraft, setNotificationDraft] = useState({ pushNotifications: account.settings.pushNotifications, waterAlerts: account.settings.waterAlerts });
   const [security, setSecurity] = useState({ email: account.email, password: "", confirmPassword: "" });
-  const [message, setMessage] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [securityFeedback, setSecurityFeedback] = useState<{ tone: "error" | "notice"; message: string } | null>(null);
+  const [preferenceError, setPreferenceError] = useState("");
+  const [error, setError] = useState("");
+  const [uploading, setUploading] = useState<"avatar" | "cover" | null>(null);
+  const [saving, setSaving] = useState<"profile" | "notifications" | "security" | "logout" | null>(null);
+  const avatarFileRef = useRef<HTMLInputElement>(null);
+  const coverFileRef = useRef<HTMLInputElement>(null);
   const initials = account.profile.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "HA";
+  const isPlus = account.profile.plan === "Hydra Agro+";
+  const heroStyle = account.property.coverUrl
+    ? { backgroundImage: `linear-gradient(145deg, rgba(9,58,40,.89), rgba(5,38,26,.94)), url("${account.property.coverUrl}")` } as CSSProperties
+    : undefined;
 
-  function saveProfile(event: FormEvent) {
+  function openEditor() {
+    setProfile(draftFromAccount(account));
+    setError("");
+    setEditOpen(true);
+  }
+
+  async function saveProfile(event: FormEvent) {
     event.preventDefault();
-    if (!profile.name.trim()) return;
-    updateAccount((current) => ({ ...current, phone: profile.phone, profile: { ...current.profile, name: profile.name.trim(), bio: profile.bio.trim() || undefined } }));
-    setEditOpen(false);
+    if (!profile.name.trim()) { setError("Informe o seu nome."); return; }
+    if (!profile.propertyName.trim()) { setError("Informe o nome da propriedade."); return; }
+    if (!isSupportedMunicipality(profile.municipality)) { setError("Escolha Brejões ou um município vizinho atendido."); return; }
+    setSaving("profile");
+    setError("");
+    try {
+      await updateAccount((current) => ({
+        ...current,
+        phone: profile.phone.trim(),
+        profile: { ...current.profile, name: profile.name.trim(), bio: profile.bio.trim() || undefined },
+        property: {
+          ...current.property,
+          name: profile.propertyName.trim(),
+          municipality: profile.municipality,
+          state: "BA",
+          locationDetails: profile.locationDetails.trim() || undefined,
+        },
+      }), { requireRemote: true });
+      setEditOpen(false);
+      showAppToast("Perfil e propriedade atualizados");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Não foi possível salvar o perfil.");
+    } finally {
+      setSaving(null);
+    }
   }
 
   async function chooseAvatar(file?: File) {
-    setUploading(true);
-    setMessage("");
+    setUploading("avatar");
+    setError("");
     try {
       const changed = await saveAvatar(file);
-      if (changed) setMessage("Foto do perfil atualizada.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Não foi possível atualizar a foto.");
+      if (changed) showAppToast("Foto do perfil atualizada");
+    } catch (caught) {
+      const reason = caught instanceof Error ? caught.message : "Não foi possível atualizar a foto.";
+      setError(reason);
+      showAppToast(reason, "error");
     } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
+      setUploading(null);
+      if (avatarFileRef.current) avatarFileRef.current.value = "";
+    }
+  }
+
+  async function chooseCover(file?: File) {
+    setUploading("cover");
+    setError("");
+    try {
+      const changed = await savePropertyCover(file);
+      if (changed) showAppToast("Capa da propriedade atualizada");
+    } catch (caught) {
+      const reason = caught instanceof Error ? caught.message : "Não foi possível atualizar a capa.";
+      setError(reason);
+      showAppToast(reason, "error");
+    } finally {
+      setUploading(null);
+      if (coverFileRef.current) coverFileRef.current.value = "";
     }
   }
 
   async function saveSecurity(event: FormEvent) {
     event.preventDefault();
-    setMessage("");
-    if (security.password && security.password.length < 8) {
-      setMessage("A senha precisa ter pelo menos 8 caracteres.");
-      return;
-    }
-    if (security.password !== security.confirmPassword) {
-      setMessage("As senhas não coincidem.");
-      return;
-    }
+    setSecurityFeedback(null);
+    if (!/^\S+@\S+\.\S+$/.test(security.email.trim())) { setSecurityFeedback({ tone: "error", message: "Informe um e-mail válido." }); return; }
+    if (security.password && security.password.length < 8) { setSecurityFeedback({ tone: "error", message: "A nova senha precisa ter pelo menos 8 caracteres." }); return; }
+    if (security.password !== security.confirmPassword) { setSecurityFeedback({ tone: "error", message: "As senhas não coincidem." }); return; }
     const values: { email?: string; password?: string } = {};
     if (security.email.trim().toLowerCase() !== account.email.toLowerCase()) values.email = security.email.trim();
     if (security.password) values.password = security.password;
-    if (!values.email && !values.password) {
-      setMessage("Nenhuma alteração para salvar.");
-      return;
+    if (!values.email && !values.password) { setSecurityFeedback({ tone: "error", message: "Altere o e-mail ou informe uma nova senha antes de confirmar." }); return; }
+    setSaving("security");
+    try {
+      const result = await changeCredentials(values);
+      if (!result.ok) { setSecurityFeedback({ tone: "error", message: result.message }); return; }
+      setSecurityOpen(false);
+      showAppToast(result.message);
+    } finally {
+      setSaving(null);
     }
-    const result = await changeCredentials(values);
-    setMessage(result.message);
-    if (result.ok) setSecurityOpen(false);
   }
 
-  const infoContent = {
-    terms: { title: "Termos de uso", text: "O Hydra Agro organiza informações fornecidas pelo produtor. O usuário é responsável pela veracidade dos registros e pelo uso seguro do aparelho. Recursos de drone, pagamento e hardware só operam quando a integração correspondente estiver contratada e configurada." },
-    privacy: { title: "Política de privacidade", text: "Dados pessoais e rurais ficam vinculados à conta autenticada e protegidos por regras de acesso no servidor. Fotos são armazenadas em áreas controladas. O Hydra Agro não vende dados pessoais e permite solicitar correção ou exclusão pelos canais oficiais cadastrados pelo administrador." },
-    about: { title: "Sobre o Hydra Agro", text: "Plataforma de tecnologia rural para gestão da propriedade, água, rebanho, identificação NFC/RFID, setores, comunidade e monitoramento inteligente. Desenvolvida inicialmente para Brejões e municípios vizinhos." },
-  } as const;
+  function openNotificationPreferences() {
+    setNotificationDraft({ pushNotifications: account.settings.pushNotifications, waterAlerts: account.settings.waterAlerts });
+    setPreferenceError("");
+    setNotificationsOpen(true);
+  }
+
+  async function saveNotificationPreferences() {
+    setSaving("notifications");
+    setPreferenceError("");
+    try {
+      await updateAccount((current) => ({
+        ...current,
+        settings: {
+          ...current.settings,
+          pushNotifications: notificationDraft.pushNotifications,
+          waterAlerts: notificationDraft.waterAlerts,
+        },
+      }), { requireRemote: true });
+      setNotificationsOpen(false);
+      showAppToast("Preferências de notificação salvas");
+    } catch (caught) {
+      setPreferenceError(caught instanceof Error ? caught.message : "Não foi possível salvar as preferências.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  async function confirmLogout() {
+    setSaving("logout");
+    try { await logout(); }
+    catch (caught) { setError(caught instanceof Error ? caught.message : "Não foi possível sair da conta."); setSaving(null); }
+  }
+
+  function openInstagram(subject: "plus" | "support") {
+    const text = subject === "plus"
+      ? "Olá! Quero ativar o Hydra Agro+ por R$ 6/mês."
+      : "Olá! Quero apoiar voluntariamente o desenvolvimento do Hydra Agro.";
+    void navigator.clipboard?.writeText(text).catch(() => undefined);
+    window.open(hydraSupport.instagramUrl, "_blank", "noopener,noreferrer");
+  }
+
+  function openSupportEmail(subject = "Suporte Hydra Agro") {
+    window.location.href = `mailto:${hydraSupport.email}?subject=${encodeURIComponent(subject)}`;
+  }
+
+  async function copySupportMessage() {
+    const text = "Olá! Quero apoiar voluntariamente o desenvolvimento do Hydra Agro.";
+    try {
+      await navigator.clipboard.writeText(text);
+      showAppToast("Mensagem de apoio copiada");
+    } catch {
+      showAppToast("Não foi possível copiar. Use o Instagram ou e-mail.", "error");
+    }
+  }
 
   const isAdmin = ["moderator", "admin", "owner"].includes(account.role);
 
   return (
     <div className="screen profile-screen page-enter">
-      <section className="profile-hero">
+      <section className="profile-hero" style={heroStyle}>
         <div className="profile-rings" />
+        <button className="profile-top-edit" onClick={openEditor} aria-label="Editar perfil"><Pencil size={18} /></button>
         <div className="profile-avatar-wrap">
           {account.profile.avatarUrl ? <img className="profile-avatar image" src={account.profile.avatarUrl} alt={`Foto de ${account.profile.name}`} /> : <span className="profile-avatar">{initials}</span>}
-          <button className="avatar-edit-button" onClick={() => void chooseAvatar()} aria-label="Tirar ou escolher foto" disabled={uploading}>{uploading ? <LoaderCircle size={17} className="spin" /> : <Camera size={17} />}</button>
-          <input ref={fileRef} className="hidden-file" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void chooseAvatar(event.target.files?.[0])} />
+          <button className="avatar-edit-button" onClick={() => Capacitor.isNativePlatform() ? void chooseAvatar() : avatarFileRef.current?.click()} aria-label="Alterar foto do perfil" disabled={uploading === "avatar"}>{uploading === "avatar" ? <LoaderCircle size={17} className="spin" /> : <Camera size={17} />}</button>
+          <input ref={avatarFileRef} className="hidden-file" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void chooseAvatar(event.target.files?.[0])} />
         </div>
         <h1>{account.profile.name}</h1>
         <strong>{account.property.name || "Propriedade não cadastrada"}</strong>
-        <p>{account.property.municipality ? `${account.property.municipality}, ${account.property.state}` : "Localização não informada"}</p>
-        <div className="profile-hero-actions"><button onClick={() => setEditOpen(true)}><Pencil size={16} /> Editar perfil</button><button onClick={() => fileRef.current?.click()}><Camera size={16} /> Galeria</button></div>
+        <p>{account.property.municipality ? `${account.property.locationDetails ? `${account.property.locationDetails} · ` : ""}${account.property.municipality}, ${account.property.state}` : "Localização não informada"}</p>
+        {account.profile.bio && <small className="profile-bio">{account.profile.bio}</small>}
       </section>
 
-      {message && <div className="profile-message" role="status">{message}</div>}
-
-      <section className="plan-card">
-        <div className="plan-mark"><Crown size={24} /></div>
-        <div><span>PLANO ATUAL</span><strong>{account.profile.plan}</strong><small>{account.profile.plan === "Gratuito" ? "Conheça o Hydra Agro+" : "Recursos premium ativos"}</small></div>
-        <button onClick={() => setPlanOpen(true)}>Gerenciar</button>
+      <section className={`plan-card ${isPlus ? "is-plus" : "is-free"}`}>
+        <div className="plan-mark">{isPlus ? <Crown size={24} /> : <Sprout size={24} />}</div>
+        <div><span>PLANO ATUAL</span><strong>{account.profile.plan}</strong><small>{isPlus ? "Membro Hydra Agro+ · painel premium ativo" : "Conheça o Hydra Agro+ · R$ 6 por mês"}</small></div>
+        <button onClick={() => navigate("plus")}>{isPlus ? "Abrir painel" : "Conhecer"}</button>
       </section>
 
       {isAdmin && <section className="profile-group"><span className="group-label">ADMINISTRAÇÃO</span><div className="profile-menu-card admin-access-card"><MenuRow icon={<ShieldCheck size={21} />} title="Painel administrativo" subtitle={`Acesso ${account.role} validado pelo servidor`} onClick={() => navigate("admin")} /></div></section>}
@@ -134,7 +268,8 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
       <section className="profile-group">
         <span className="group-label">MINHA CONTA</span>
         <div className="profile-menu-card">
-          <MenuRow icon={<UserRound size={21} />} title="Dados pessoais" subtitle={account.email} onClick={() => setEditOpen(true)} />
+          <MenuRow icon={<UserRound size={21} />} title="Dados pessoais" subtitle={account.email} onClick={openEditor} />
+          <MenuRow icon={<Sparkles size={21} />} title="Hydra Agro+" subtitle={isPlus ? "Abrir painel de recursos premium" : "Plano oficial por R$ 6/mês"} onClick={() => navigate("plus")} />
           <MenuRow icon={<UsersRound size={21} />} title="Comunidade" subtitle={`${account.posts.filter((post) => post.authorId === account.id).length} publicaç${account.posts.filter((post) => post.authorId === account.id).length === 1 ? "ão" : "ões"}`} onClick={() => navigate("community")} />
           <MenuRow icon={<ClipboardList size={21} />} title="Atividades" subtitle={`${account.activities.length} registro${account.activities.length === 1 ? "" : "s"}`} onClick={() => navigate("activities")} />
           <MenuRow icon={<Bell size={21} />} title="Notificações" subtitle={`${account.notifications.length} aviso${account.notifications.length === 1 ? "" : "s"}`} onClick={() => navigate("notifications")} />
@@ -153,8 +288,9 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
       <section className="profile-group">
         <span className="group-label">PREFERÊNCIAS E SEGURANÇA</span>
         <div className="profile-menu-card">
-          <MenuRow icon={<Bell size={21} />} title="Notificações do aplicativo" subtitle="Avisos da propriedade e administração" end={<Toggle checked={account.settings.pushNotifications} label="Notificações" onChange={(pushNotifications) => updateAccount((current) => ({ ...current, settings: { ...current.settings, pushNotifications } }))} />} />
-          <MenuRow icon={<LockKeyhole size={21} />} title="Segurança" subtitle="Alterar e-mail ou senha" onClick={() => { setSecurity({ email: account.email, password: "", confirmPassword: "" }); setSecurityOpen(true); }} />
+          <MenuRow icon={<Bell size={21} />} title="Notificações do aplicativo" subtitle={account.settings.pushNotifications ? "Avisos da propriedade e administração ativados" : "Avisos pausados nesta conta"} onClick={openNotificationPreferences} />
+          <MenuRow icon={<LockKeyhole size={21} />} title="Segurança" subtitle="Alterar e-mail ou senha" onClick={() => { setSecurity({ email: account.email, password: "", confirmPassword: "" }); setSecurityFeedback(null); setSecurityOpen(true); }} />
+          <MenuRow icon={<HeartHandshake size={21} />} title="Apoie o Hydra Agro" subtitle="Apoio voluntário, separado da assinatura" onClick={() => setSupportOpen(true)} />
           <MenuRow icon={<FileText size={21} />} title="Termos de uso" onClick={() => setInfo("terms")} />
           <MenuRow icon={<ShieldCheck size={21} />} title="Política de privacidade" onClick={() => setInfo("privacy")} />
           <MenuRow icon={<CircleHelp size={21} />} title="Sobre o Hydra Agro" onClick={() => setInfo("about")} />
@@ -163,35 +299,84 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
 
       <section className="profile-group"><span className="group-label">SUPORTE E LINKS OFICIAIS</span><div className="profile-menu-card"><MenuRow icon={<Mail size={21} />} title="Suporte por e-mail" subtitle={hydraSupport.email} onClick={() => { window.location.href = `mailto:${hydraSupport.email}?subject=Suporte%20Hydra%20Agro`; }} /><MenuRow icon={<Instagram size={21} />} title="Instagram" subtitle={hydraSupport.instagramHandle} onClick={() => window.open(hydraSupport.instagramUrl, "_blank", "noopener,noreferrer")} />{links.map((link) => <MenuRow key={link.id} icon={<ExternalLink size={21} />} title={link.label} subtitle={link.description} onClick={() => window.open(link.url, "_blank", "noopener,noreferrer")} />)}</div></section>
 
-      <button className="logout-button" onClick={() => void logout()}><LogOut size={19} /> Sair desta conta</button>
-      <p className="profile-version">Hydra Agro · versão 1.0.0</p>
+      <button className="logout-button" onClick={() => setLogoutConfirm(true)}><LogOut size={19} /> Sair desta conta</button>
+      <p className="profile-version">Hydra Agro · versão 1.2.2</p>
 
-      <Modal open={editOpen} onClose={() => setEditOpen(false)} eyebrow="PERFIL" title="Editar dados pessoais">
+      <Modal open={editOpen} onClose={() => setEditOpen(false)} eyebrow="PERFIL" title="Editar seus dados" wide dismissible={saving !== "profile" && !uploading}>
         <form className="modal-form" onSubmit={saveProfile}>
+          <div className="profile-media-editor">
+            <button type="button" onClick={() => Capacitor.isNativePlatform() ? void chooseAvatar() : avatarFileRef.current?.click()} disabled={Boolean(uploading)}><span>{account.profile.avatarUrl ? <img src={account.profile.avatarUrl} alt="Foto atual" /> : initials}</span><div><strong>Foto de perfil</strong><small>JPG, PNG ou WebP</small></div><Camera size={18} /></button>
+            <button type="button" onClick={() => Capacitor.isNativePlatform() ? void chooseCover() : coverFileRef.current?.click()} disabled={Boolean(uploading)}><span className="cover-thumb">{account.property.coverUrl ? <img src={account.property.coverUrl} alt="Capa atual" /> : <Sprout size={21} />}</span><div><strong>Capa da propriedade</strong><small>Imagem privada da sua conta</small></div>{uploading === "cover" ? <LoaderCircle size={18} className="spin" /> : <Camera size={18} />}</button>
+            <input ref={coverFileRef} className="hidden-file" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => void chooseCover(event.target.files?.[0])} />
+          </div>
           <Field label="Nome"><input value={profile.name} onChange={(event) => setProfile({ ...profile, name: event.target.value })} /></Field>
-          <Field label="E-mail" hint="Altere o e-mail em Segurança."><input value={account.email} disabled /></Field>
-          <Field label="Telefone"><input type="tel" value={profile.phone} onChange={(event) => setProfile({ ...profile, phone: event.target.value })} placeholder="(75) 99999-9999" /></Field>
           <Field label="Sobre você (opcional)"><textarea value={profile.bio} onChange={(event) => setProfile({ ...profile, bio: event.target.value })} placeholder="Uma breve apresentação para a comunidade" maxLength={180} /></Field>
-          <button className="primary-button full" type="submit">Salvar alterações</button>
+          <Field label="Telefone (opcional)"><input type="tel" value={profile.phone} onChange={(event) => setProfile({ ...profile, phone: event.target.value })} placeholder="(75) 99999-9999" /></Field>
+          <Field label="Nome da propriedade"><input value={profile.propertyName} onChange={(event) => setProfile({ ...profile, propertyName: event.target.value })} /></Field>
+          <Field label="Localização ou referência (opcional)"><input value={profile.locationDetails} onChange={(event) => setProfile({ ...profile, locationDetails: event.target.value })} placeholder="Ex.: Comunidade Lagoa Nova" /></Field>
+          <div className="municipality-field-grid"><Field label="Cidade"><MunicipalityPicker value={profile.municipality} onChange={(municipality) => { setProfile({ ...profile, municipality }); setError(""); }} /></Field><Field label="Estado"><div className="state-readonly"><span>BA</span><strong>Bahia</strong></div></Field></div>
+          <Field label="E-mail" hint="Altere o e-mail em Segurança."><input value={account.email} disabled /></Field>
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setEditOpen(false)} disabled={saving === "profile" || Boolean(uploading)}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "profile"} loadingLabel="Salvando perfil..." disabled={Boolean(uploading)}>Confirmar alterações</LoadingButton></div>
         </form>
       </Modal>
 
-      <Modal open={securityOpen} onClose={() => setSecurityOpen(false)} eyebrow="SEGURANÇA" title="E-mail e senha">
+      <Modal open={notificationsOpen} onClose={() => setNotificationsOpen(false)} eyebrow="PREFERÊNCIAS" title="Notificações do aplicativo" dismissible={saving !== "notifications"}>
+        <div className="preference-modal">
+          <p className="preference-intro">Escolha quais avisos deseja acompanhar. A configuração fica vinculada à sua conta e é salva no servidor.</p>
+          <div className="preference-status"><CheckCircle2 size={19} /><span><strong>Central do Hydra Agro</strong><small>Os avisos reais continuam disponíveis na tela de notificações.</small></span></div>
+          <div className="preference-options">
+            <div>
+              <span className="preference-option-icon"><BellRing size={21} /></span>
+              <span><strong>Avisos do aplicativo</strong><small>Propriedade, administração, atividades e monitoramentos.</small></span>
+              <Toggle checked={notificationDraft.pushNotifications} label="Avisos do aplicativo" onChange={(pushNotifications) => setNotificationDraft({ ...notificationDraft, pushNotifications })} />
+            </div>
+            <div>
+              <span className="preference-option-icon"><Droplets size={21} /></span>
+              <span><strong>Alertas de consumo de água</strong><small>Disponíveis quando seus registros permitirem uma análise real.</small></span>
+              <Toggle checked={notificationDraft.waterAlerts} label="Alertas de consumo de água" onChange={(waterAlerts) => setNotificationDraft({ ...notificationDraft, waterAlerts })} />
+            </div>
+          </div>
+          <p className="preference-note">O Hydra Agro não inventa alertas. Sem dados suficientes, a central permanece em estado vazio.</p>
+          {preferenceError && <p className="form-error" role="alert">{preferenceError}</p>}
+          <button className="wide-outline-button" onClick={() => { setNotificationsOpen(false); window.setTimeout(() => navigate("notifications"), 240); }} disabled={saving === "notifications"}>Ver central de notificações</button>
+          <div className="modal-action-row"><button className="secondary-button" onClick={() => setNotificationsOpen(false)} disabled={saving === "notifications"}>Cancelar</button><LoadingButton className="primary-button" onClick={() => void saveNotificationPreferences()} loading={saving === "notifications"} loadingLabel="Salvando preferências...">Salvar preferências</LoadingButton></div>
+        </div>
+      </Modal>
+
+      <Modal open={securityOpen} onClose={() => setSecurityOpen(false)} eyebrow="SEGURANÇA" title="E-mail e senha" dismissible={saving !== "security"}>
         <form className="modal-form" onSubmit={saveSecurity}>
-          <Field label="E-mail"><input type="email" value={security.email} onChange={(event) => setSecurity({ ...security, email: event.target.value })} /></Field>
-          <Field label="Nova senha" hint="Deixe em branco para manter a atual."><input type="password" value={security.password} onChange={(event) => setSecurity({ ...security, password: event.target.value })} autoComplete="new-password" /></Field>
-          <Field label="Confirmar nova senha"><input type="password" value={security.confirmPassword} onChange={(event) => setSecurity({ ...security, confirmPassword: event.target.value })} autoComplete="new-password" /></Field>
-          {message && <p className="form-notice">{message}</p>}
-          <button className="primary-button full" type="submit">Salvar com segurança</button>
+          <div className="security-session"><ShieldCheck size={22} /><span><strong>Conta autenticada</strong><small>{account.email}</small></span></div>
+          <p className="security-intro">Você pode alterar somente o e-mail, somente a senha ou os dois. O Supabase poderá solicitar confirmação no novo endereço.</p>
+          <Field label="Novo e-mail"><input type="email" value={security.email} onChange={(event) => { setSecurity({ ...security, email: event.target.value }); setSecurityFeedback(null); }} autoComplete="email" /></Field>
+          <Field label="Nova senha" hint="Deixe em branco para manter a atual. Use no mínimo 8 caracteres."><input type="password" value={security.password} onChange={(event) => { setSecurity({ ...security, password: event.target.value }); setSecurityFeedback(null); }} autoComplete="new-password" /></Field>
+          <Field label="Confirmar nova senha"><input type="password" value={security.confirmPassword} onChange={(event) => { setSecurity({ ...security, confirmPassword: event.target.value }); setSecurityFeedback(null); }} autoComplete="new-password" /></Field>
+          {securityFeedback && <p className={securityFeedback.tone === "error" ? "form-error" : "form-notice"} role={securityFeedback.tone === "error" ? "alert" : "status"}>{securityFeedback.message}</p>}
+          <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setSecurityOpen(false)} disabled={saving === "security"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "security"} loadingLabel="Atualizando segurança...">Confirmar com segurança</LoadingButton></div>
         </form>
       </Modal>
 
-      <Modal open={planOpen} onClose={() => setPlanOpen(false)} eyebrow="ASSINATURA" title="Hydra Agro+">
-        <div className="plan-modal"><span className="plan-modal-icon"><Crown size={31} /></span><h3>Recursos premium preparados</h3><p>O plano Hydra Agro+ será ativado somente por um provedor de pagamento real e validação no servidor.</p><div><BellRing size={18} /> Nenhuma cobrança é simulada pelo aplicativo.</div><button className="primary-button full" onClick={() => setPlanOpen(false)}>Entendi</button></div>
+      <Modal open={supportOpen} onClose={() => setSupportOpen(false)} eyebrow="APOIO VOLUNTÁRIO" title="Apoie o Hydra Agro">
+        <div className="support-modal">
+          <span><HeartHandshake size={31} /></span>
+          <h3>Tecnologia feita para a nossa região</h3>
+          <p>O Hydra Agro aproxima gestão, sustentabilidade e inovação da rotina do produtor. O apoio voluntário ajuda na manutenção, nos testes de campo e na criação de novas ferramentas.</p>
+          <div className="support-separation-note"><Crown size={18} /><span><strong>Apoio não é assinatura</strong><small>A contribuição é opcional, não libera o Hydra Agro+ e não bloqueia nenhuma função gratuita.</small></span></div>
+          <div className="support-channel-grid">
+            <button onClick={() => openInstagram("support")}><Instagram size={21} /><span><strong>Quero apoiar o projeto</strong><small>Conversar no Instagram · {hydraSupport.instagramHandle}</small></span><ExternalLink size={16} /></button>
+            <button onClick={() => openSupportEmail("Quero apoiar o Hydra Agro")}><Mail size={21} /><span><strong>Falar por e-mail</strong><small>{hydraSupport.email}</small></span><ExternalLink size={16} /></button>
+          </div>
+          <button className="wide-outline-button" onClick={() => void copySupportMessage()}>Copiar mensagem de apoio</button>
+          <button className="secondary-button full" onClick={() => setSupportOpen(false)}>Agora não</button>
+        </div>
       </Modal>
 
-      <Modal open={Boolean(info)} onClose={() => setInfo(null)} title={info ? infoContent[info].title : "Informações"}>
-        {info && <div className="legal-copy"><p>{infoContent[info].text}</p><button className="primary-button full" onClick={() => setInfo(null)}>Fechar</button></div>}
+      <Modal open={Boolean(info)} onClose={() => setInfo(null)} eyebrow="HYDRA AGRO" title={info === "terms" ? "Termos de uso" : info === "privacy" ? "Política de privacidade" : "Sobre o Hydra Agro"} wide>
+        {info && <ProfileInformation kind={info} onClose={() => setInfo(null)} onEmail={() => openSupportEmail(info === "privacy" ? "Privacidade e dados — Hydra Agro" : "Informações — Hydra Agro")} onInstagram={() => openInstagram("support")} />}
+      </Modal>
+
+      <Modal open={logoutConfirm} onClose={() => setLogoutConfirm(false)} eyebrow="CONFIRMAÇÃO" title="Sair desta conta?" dismissible={saving !== "logout"}>
+        <div className="confirm-action"><span><LogOut size={27} /></span><p>A sessão local será encerrada e os dados derivados desta conta serão removidos da tela. Seus registros já sincronizados permanecem no servidor.</p>{error && <p className="form-error" role="alert">{error}</p>}<div className="modal-action-row"><button className="secondary-button" onClick={() => setLogoutConfirm(false)} disabled={saving === "logout"}>Continuar no app</button><LoadingButton className="danger-button" onClick={() => void confirmLogout()} loading={saving === "logout"} loadingLabel="Saindo...">Confirmar saída</LoadingButton></div></div>
       </Modal>
     </div>
   );

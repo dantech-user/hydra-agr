@@ -3,12 +3,14 @@ import { App as CapacitorApp } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { ClipboardCheck, Beef as Cow, Droplets, Home, MapPin, Nfc, Plus, RadioTower, Send, UserRound, X } from "lucide-react";
 import { SplashBrand } from "./components/brand";
+import { requestCloseTopOverlay, useAppOverlay, useModalNavigation } from "./components/modal-system";
 import { BackendSetupScreen, BannedScreen, PasswordRecoveryScreen, SyncBanner } from "./components/system-state";
+import { AppToastRegion } from "./components/ui";
 import { AuthFlow } from "./features/auth/auth-flow";
 import { HomeScreen } from "./features/home/home-screen";
 import { useHydraStore } from "./hooks/use-hydra-store";
 import type { AppRoute, MainTab } from "./lib/hydra-types";
-import { handleAuthCallbackUrl } from "./services/supabase";
+import { handleAuthCallbackUrl, isAuthCallbackUrl } from "./services/supabase";
 
 const WaterScreen = lazy(() => import("./features/water/water-screen").then((module) => ({ default: module.WaterScreen })));
 const HerdScreen = lazy(() => import("./features/herd/herd-screen").then((module) => ({ default: module.HerdScreen })));
@@ -20,6 +22,7 @@ const PropertyScreen = lazy(() => import("./features/property/property-screen").
 const ActivitiesScreen = lazy(() => import("./features/activities/activities-screen").then((module) => ({ default: module.ActivitiesScreen })));
 const NfcScreen = lazy(() => import("./features/nfc/nfc-screen").then((module) => ({ default: module.NfcScreen })));
 const NotificationsScreen = lazy(() => import("./features/notifications/notifications-screen").then((module) => ({ default: module.NotificationsScreen })));
+const PlusScreen = lazy(() => import("./features/premium/plus-screen").then((module) => ({ default: module.PlusScreen })));
 const AdminScreen = lazy(() => import("./features/admin/admin-screen").then((module) => ({ default: module.AdminScreen })));
 
 const mainTabs: { id: MainTab; label: string; icon: typeof Home }[] = [
@@ -43,6 +46,9 @@ export default function HydraApp() {
   const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [quickIntent, setQuickIntent] = useState<{ kind: "water" | "animal" | "activity" | "sector" | "post"; request: number }>();
   const quickTimer = useRef<number | null>(null);
+  const modalNavigationOpen = useModalNavigation();
+
+  useAppOverlay(quickOpen, () => closeQuick());
 
   useEffect(() => {
     const timer = window.setTimeout(() => setSplash(false), 1650);
@@ -91,13 +97,14 @@ export default function HydraApp() {
     let handle: { remove: () => Promise<void> } | undefined;
     void CapacitorApp.addListener("backButton", () => {
       if (quickOpen) { closeQuick(); return; }
+      if (modalNavigationOpen) { requestCloseTopOverlay(); return; }
       if (!store.account) { void CapacitorApp.exitApp(); return; }
       if (!["home", "water", "herd", "monitor", "profile"].includes(route)) { goBack(); return; }
       if (route !== "home") { navigate("home"); return; }
       void CapacitorApp.exitApp();
     }).then((listener) => { handle = listener; });
     return () => { void handle?.remove(); };
-  }, [quickOpen, route, store.account]);
+  }, [quickOpen, modalNavigationOpen, route, store.account]);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform() || !store.configured) return;
@@ -115,6 +122,19 @@ export default function HydraApp() {
     void CapacitorApp.getLaunchUrl().then((result) => void receive(result?.url));
     void CapacitorApp.addListener("appUrlOpen", ({ url }) => { void receive(url); }).then((listener) => { handle = listener; });
     return () => { active = false; void handle?.remove(); };
+  }, [store.configured]);
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform() || !store.configured || !isAuthCallbackUrl(window.location.href)) return;
+    let active = true;
+    void handleAuthCallbackUrl(window.location.href)
+      .then((recovery) => {
+        if (!active || !recovery) return;
+        setPasswordRecovery(true);
+        window.history.replaceState({}, document.title, "/");
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
   }, [store.configured]);
 
   function navigate(next: AppRoute) {
@@ -182,13 +202,14 @@ export default function HydraApp() {
       case "water": return <WaterScreen account={account} updateAccount={store.updateAccount} createRecordRequest={quickIntent?.kind === "water" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "herd": return <HerdScreen account={account} updateAccount={store.updateAccount} openNfc={openNfc} focusAnimalId={animalToOpen} saveAnimalPhoto={store.saveAnimalPhoto} createRequest={quickIntent?.kind === "animal" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "monitor": return <MonitorScreen account={account} updateAccount={store.updateAccount} saveMonitoringPhoto={store.saveMonitoringPhoto} createSectorRequest={quickIntent?.kind === "sector" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
-      case "profile": return <ProfileScreen account={account} links={store.links} updateAccount={store.updateAccount} navigate={navigate} logout={store.logout} saveAvatar={store.saveAvatar} changeCredentials={store.changeCredentials} />;
+      case "profile": return <ProfileScreen account={account} links={store.links} updateAccount={store.updateAccount} navigate={navigate} logout={store.logout} saveAvatar={store.saveAvatar} savePropertyCover={store.savePropertyCover} changeCredentials={store.changeCredentials} />;
       case "community": return <CommunityScreen account={account} onBack={goBack} publishPost={store.publishPost} likePost={store.likePost} commentPost={store.commentPost} deletePost={store.deletePost} refreshCommunity={store.refreshCommunity} createRequest={quickIntent?.kind === "post" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "challenges": return <ChallengesScreen account={account} onBack={goBack} />;
       case "property": return <PropertyScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "activities": return <ActivitiesScreen account={account} updateAccount={store.updateAccount} onBack={goBack} createRequest={quickIntent?.kind === "activity" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "nfc": return <NfcScreen account={account} updateAccount={store.updateAccount} onBack={goBack} initialAnimalId={nfcAnimalId} onRealRead={store.registerNfcRead} onFound={(animal) => { setAnimalToOpen(animal.id); navigate("herd"); }} />;
       case "notifications": return <NotificationsScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
+      case "plus": return <PlusScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "admin": return ["moderator", "admin", "owner"].includes(account.role) ? <AdminScreen account={account} onBack={goBack} /> : <HomeScreen account={account} announcements={store.announcements} navigate={navigate} onQuickAction={openQuick} />;
       default: return null;
     }
@@ -196,7 +217,7 @@ export default function HydraApp() {
 
   const activeTab: MainTab = (["home", "water", "herd", "monitor", "profile"] as string[]).includes(route)
     ? route as MainTab
-    : route === "property" || route === "admin" ? "profile"
+    : route === "property" || route === "plus" || route === "admin" ? "profile"
     : route === "nfc" ? "herd"
     : "home";
   const activeIndex = mainTabs.findIndex((tab) => tab.id === activeTab);
@@ -204,11 +225,11 @@ export default function HydraApp() {
 
   return (
     <main className="app-shell">
-      <div className="phone-app">
+      <div className={`phone-app ${modalNavigationOpen ? "is-overlay-open" : ""}`}>
         <SyncBanner status={store.syncStatus} error={store.lastError} retry={store.retrySync} />
         <div key={route} className={`app-content route-motion-${routeMotion}`}><Suspense fallback={<div className="route-loading"><span /><small>Carregando módulo…</small></div>}>{mainContent()}</Suspense></div>
 
-        <nav className="bottom-nav" aria-label="Navegação principal" style={navStyle}>
+        <nav className={`bottom-nav ${modalNavigationOpen ? "is-hidden" : ""}`} aria-label="Navegação principal" aria-hidden={modalNavigationOpen} style={navStyle}>
           <span className="bottom-nav-indicator" aria-hidden="true" />
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
@@ -217,6 +238,7 @@ export default function HydraApp() {
         </nav>
 
         {quickOpen && <div className={`quick-layer ${quickClosing ? "is-closing" : ""}`} onMouseDown={() => closeQuick()}><section className="quick-sheet" onMouseDown={(event) => event.stopPropagation()}><div className="sheet-handle" /><header><div><span className="eyebrow orange">AÇÃO RÁPIDA</span><h2>O que deseja fazer?</h2></div><button className="icon-button" onClick={() => closeQuick()} aria-label="Fechar ações rápidas"><X size={22} /></button></header><div className="quick-grid"><QuickAction index={0} icon={<Droplets size={22} />} title="Registrar água" subtitle="Adicionar uma leitura" onClick={() => closeQuick(() => launchQuick("water", "water"))} /><QuickAction index={1} icon={<Cow size={22} />} title="Cadastrar animal" subtitle="Adicionar ao rebanho" onClick={() => closeQuick(() => launchQuick("animal", "herd"))} /><QuickAction index={2} icon={<Nfc size={22} />} title="Ler identificação" subtitle="NFC/RFID ou código" onClick={() => closeQuick(() => openNfc())} /><QuickAction index={3} icon={<ClipboardCheck size={22} />} title="Nova atividade" subtitle="Organizar a rotina" onClick={() => closeQuick(() => launchQuick("activity", "activities"))} /><QuickAction index={4} icon={<MapPin size={22} />} title="Criar setor" subtitle="Mapear a propriedade" onClick={() => closeQuick(() => launchQuick("sector", "monitor"))} /><QuickAction index={5} icon={<Send size={22} />} title="Nova publicação" subtitle="Compartilhar no feed" onClick={() => closeQuick(() => launchQuick("post", "community"))} /></div></section></div>}
+        <AppToastRegion />
       </div>
     </main>
   );

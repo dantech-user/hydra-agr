@@ -46,9 +46,12 @@ describe("contratos do Hydra Agro+ e confirmações", () => {
   });
 
   it("corrige globalmente altura e scroll dos modais", () => {
-    expect(styles).toContain("max-height: min(90dvh, 860px)");
-    expect(styles).toContain("height: min(89dvh, 840px)");
+    expect(styles).toContain("height: 100dvh");
+    expect(styles).toContain("height: min(94dvh, 920px)");
+    expect(styles).toContain("max-height: calc(100dvh");
     expect(styles).toContain("overflow-y: auto");
     expect(styles).toContain("env(safe-area-inset-bottom)");
+    expect(styles).toContain(".bottom-nav.is-hidden");
+    expect(styles).toContain("translate3d(-50%, calc(100% + 28px), 0)");
   });
 });
