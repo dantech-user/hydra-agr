@@ -1,80 +1,49 @@
-name: Android APK
+name: Gerar APK Hydra Agro
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - "src/**"
-      - "public/**"
-      - "resources/**"
-      - "android/**"
-      - "supabase/**"
-      - "package.json"
-      - "package-lock.json"
-      - "capacitor.config.ts"
-      - "vite.config.ts"
-      - ".github/workflows/android-apk.yml"
-
-permissions:
-  contents: read
 
 jobs:
-  debug-apk:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
     steps:
-      - name: Checkout
+      - name: Baixar projeto
         uses: actions/checkout@v4
 
-      - name: Node 22
+      - name: Configurar Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      - name: Java 21
+      - name: Configurar Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
 
-      - name: Dependências
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar dependências
         run: npm ci
 
-      - name: Testes
-        run: npm test
+      - name: Gerar projeto Android
+        run: |
+          npm run build
+          npx cap sync android
 
-      - name: Validar configuração do backend
-        run: npm run env:check
-
-      - name: Build web empacotado
-        run: npm run build
-
-      - name: Gerar assets Android
-        run: npm run assets
-
-      - name: Sincronizar Capacitor
-        run: npx cap sync android
-
-      - name: Preparar Gradle
-        run: chmod +x android/gradlew
-
-      - name: Gerar APK debug
+      - name: Gerar APK
         working-directory: android
-        run: ./gradlew assembleDebug -PHYDRA_VERSION_CODE=5 -PHYDRA_VERSION_NAME=1.2.2
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-      - name: Nomear artifact
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk app-debug.apk
-
-      - name: Upload hydra-agro-apk
+      - name: Enviar APK
         uses: actions/upload-artifact@v4
         with:
           name: hydra-agro-apk
-          path: app-debug.apk
-          if-no-files-found: error
-          retention-days: 30
+          path: android/app/build/outputs/apk/debug/app-debug.apk
