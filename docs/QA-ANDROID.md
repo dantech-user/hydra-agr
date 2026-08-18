@@ -30,8 +30,6 @@ Registre aparelho, versão Android, versão do APK, data, responsável e evidên
 - [ ] Setor: criar, editar, abrir detalhes e excluir.
 - [ ] Atividade: criar, editar, concluir/reabrir e excluir.
 - [ ] Monitoramento: criar, abrir detalhes, anexar foto e excluir.
-- [ ] Estado Drone Pastor não simula missão sem hardware/API.
-- [ ] Aviso informa que a integração do Drone Pastor está prevista para a próxima atualização.
 - [ ] Clima usa o município cadastrado e exibe temperatura, sensação, umidade, chuva e vento reais.
 - [ ] Sem internet, clima mostra erro ou dado salvo identificado, sem inventar valores.
 

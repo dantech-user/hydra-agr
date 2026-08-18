@@ -28,12 +28,6 @@ Uma das propostas do Hydra Agro é facilitar a identificação e organização d
 
 O projeto trabalha com a ideia de utilização de tecnologias como NFC e RFID para tornar esse processo mais rápido e organizado.
 
-## Drone
-
-Também existe uma área dedicada à integração com drones.
-
-Essa função ainda não está disponível nesta versão e está planejada para uma atualização futura do Hydra Agro.
-
 ## Versão atual
 
 O Hydra Agro ainda está em fase de testes.

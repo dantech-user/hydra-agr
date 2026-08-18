@@ -11,7 +11,7 @@ const information = {
     sections: [
       ["1. Finalidade da plataforma", "O Hydra Agro auxilia na organização de dados da propriedade, água, rebanho, atividades, setores, comunidade, NFC/RFID e monitoramento. Ele não substitui orientação veterinária, agronômica, ambiental, jurídica ou de segurança."],
       ["2. Responsabilidade pelos registros", "O usuário deve informar dados verdadeiros, manter suas credenciais protegidas e revisar as informações antes de salvar. Decisões sobre manejo, consumo e operação da propriedade continuam sendo responsabilidade do produtor."],
-      ["3. Recursos conectados", "Leitura NFC/RFID, drones, clima, notificações externas e pagamentos dependem de aparelho, internet, permissões ou integração compatível. O aplicativo não simula hardware nem confirma uma operação que não aconteceu."],
+      ["3. Recursos conectados", "Leitura NFC/RFID, clima, notificações externas e pagamentos dependem de aparelho, internet, permissões ou integração compatível. O aplicativo não confirma uma operação que não aconteceu."],
       ["4. Comunidade", "É proibido publicar conteúdo ilegal, ofensivo, enganoso ou que viole direitos de terceiros. Conteúdos podem ser moderados e contas podem ser restringidas quando houver abuso comprovado."],
       ["5. Disponibilidade e evolução", "O projeto pode receber melhorias, correções e períodos de manutenção. Sempre que possível, dados já sincronizados permanecem vinculados à conta do usuário."],
     ],
@@ -35,9 +35,9 @@ const information = {
     icon: <Sprout size={28} />,
     introduction: "O Hydra Agro é uma plataforma regional de tecnologia para o agronegócio, criada para aproximar gestão, sustentabilidade e inovação da rotina do produtor.",
     sections: [
-      ["O que o aplicativo reúne", "Gestão hídrica, rebanho, identificação NFC/RFID, atividades, setores da propriedade, comunidade, monitoramento e arquitetura preparada para o futuro Drone Pastor."],
+      ["O que o aplicativo reúne", "Gestão hídrica, rebanho, identificação NFC/RFID, atividades, setores da propriedade, comunidade e monitoramento."],
       ["Atuação inicial", "O lançamento regional atende Brejões e municípios vizinhos na Bahia. A cidade cadastrada personaliza a propriedade e a consulta meteorológica."],
-      ["Compromisso com dados reais", "O aplicativo mostra estados vazios quando não existem registros. Voos, leituras NFC, economia de água e cobranças nunca são inventados."],
+      ["Compromisso com dados reais", "O aplicativo mostra estados vazios quando não existem registros. Leituras NFC, economia de água e cobranças nunca são inventadas."],
       ["Desenvolvimento", "Produto independente em evolução contínua. Recursos que dependem de hardware, API ou pagamento somente são liberados quando a integração correspondente está disponível."],
     ],
   },

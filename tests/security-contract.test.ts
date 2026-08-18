@@ -27,7 +27,7 @@ describe("contratos de segurança e empacotamento", () => {
     for (const table of [
       "profiles", "roles", "properties", "property_sectors", "animals",
       "animal_identifications", "nfc_tags", "water_sources", "water_records",
-      "activities", "monitoring_records", "drones", "drone_missions", "posts",
+      "activities", "monitoring_records", "posts",
       "comments", "likes", "subscriptions", "notifications",
     ]) expect(migration).toContain(`public.${table}`);
   });

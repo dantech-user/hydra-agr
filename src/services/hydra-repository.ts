@@ -138,19 +138,18 @@ export async function loadAccount(user: User): Promise<HydraAccount> {
     waterKinds: (property?.water_kinds as string[] | undefined) ?? [],
   };
 
-  const [sources, records, animals, sectors, activities, monitoring, drones, tags, notifications, posts] = await Promise.all([
+  const [sources, records, animals, sectors, activities, monitoring, tags, notifications, posts] = await Promise.all([
     client.from("water_sources").select("*").eq("owner_user_id", user.id).order("created_at"),
     client.from("water_records").select("*").eq("owner_user_id", user.id).order("recorded_on", { ascending: false }),
     client.from("animals").select("*").eq("owner_user_id", user.id).order("created_at", { ascending: false }),
     client.from("property_sectors").select("*").eq("owner_user_id", user.id).order("created_at"),
     client.from("activities").select("*").eq("owner_user_id", user.id).order("activity_date", { ascending: false }),
     client.from("monitoring_records").select("*").eq("owner_user_id", user.id).order("monitored_on", { ascending: false }),
-    client.from("drones").select("*").eq("owner_user_id", user.id).order("created_at"),
     client.from("nfc_tags").select("read_count").eq("owner_user_id", user.id),
     client.from("notifications").select("*").eq("recipient_user_id", user.id).order("created_at", { ascending: false }),
     loadCommunityFeed(),
   ]);
-  [sources, records, animals, sectors, activities, monitoring, drones, tags, notifications].forEach((result) => throwIfError(result.error));
+  [sources, records, animals, sectors, activities, monitoring, tags, notifications].forEach((result) => throwIfError(result.error));
 
   base.waterSources = ((sources.data ?? []) as Row[]).map((row) => ({
     id: String(row.id), name: String(row.name), type: String(row.source_type), status: row.status as "ativa" | "atenção" | "inativa",
@@ -187,9 +186,6 @@ export async function loadAccount(user: User): Promise<HydraAccount> {
       photoPaths,
       photoUrls: (await Promise.all(photoPaths.map(signedPrivateUrl))).filter(Boolean) as string[],
     };
-  }));
-  base.drones = ((drones.data ?? []) as Row[]).map((row) => ({
-    id: String(row.id), identifier: String(row.identifier), status: row.status as "offline" | "ready" | "mission" | "maintenance", battery: row.battery === null ? undefined : Number(row.battery), sectorId: row.sector_id ? String(row.sector_id) : undefined, lastSeenAt: row.last_seen_at ? String(row.last_seen_at) : undefined,
   }));
   base.nfcReadCount = ((tags.data ?? []) as Row[]).reduce((total, row) => total + Number(row.read_count ?? 0), 0);
   base.notifications = ((notifications.data ?? []) as Row[]).map((row) => `${String(row.title)} — ${String(row.body)}`);
@@ -268,7 +264,6 @@ export async function syncAccountDelta(previous: HydraAccount, next: HydraAccoun
   await syncCollection("water_records", previous.waterRecords, next.waterRecords, (item) => ({ ...common, id: item.id, source_id: item.sourceId, recorded_on: item.date, amount: item.amount, purpose: item.purpose, note: item.note ?? null }));
   await syncCollection("activities", previous.activities, next.activities, (item) => ({ ...common, id: item.id, title: item.title, category: item.category, activity_date: item.date, sector_id: item.sectorId ?? null, animal_id: item.animalId ?? null, note: item.note ?? null, done: item.done }));
   await syncCollection("monitoring_records", previous.monitoring, next.monitoring, (item) => ({ ...common, id: item.id, monitored_on: item.date, sector_id: item.sectorId ?? null, monitoring_type: item.type, duration: item.duration ?? null, note: item.note ?? null, occurrence: item.occurrence ?? null, photo_paths: item.photoPaths ?? [] }));
-  await syncCollection("drones", previous.drones, next.drones, (item) => ({ ...common, id: item.id, identifier: item.identifier, status: item.status, battery: item.battery ?? null, sector_id: item.sectorId ?? null, last_seen_at: item.lastSeenAt ?? null }));
 
   const previousLinked = previous.animals.filter((item) => item.electronicId).map((item) => ({ id: `${item.id}-electronic`, animalId: item.id, code: item.electronicId! }));
   const nextLinked = next.animals.filter((item) => item.electronicId).map((item) => ({ id: `${item.id}-electronic`, animalId: item.id, code: item.electronicId! }));

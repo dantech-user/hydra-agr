@@ -86,15 +86,6 @@ export type MonitoringRecord = {
   photoUrls?: string[];
 };
 
-export type Drone = {
-  id: string;
-  identifier: string;
-  status: "offline" | "ready" | "mission" | "maintenance";
-  battery?: number;
-  sectorId?: string;
-  lastSeenAt?: string;
-};
-
 export type CommunityComment = {
   id: string;
   authorId: string;
@@ -160,7 +151,6 @@ export type HydraAccount = {
   sectors: Sector[];
   activities: Activity[];
   monitoring: MonitoringRecord[];
-  drones: Drone[];
   nfcReadCount: number;
   posts: CommunityPost[];
   notifications: string[];
@@ -295,7 +285,6 @@ export function createEmptyAccount(user: {
     sectors: [],
     activities: [],
     monitoring: [],
-    drones: [],
     nfcReadCount: 0,
     posts: [],
     notifications: [],

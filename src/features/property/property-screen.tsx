@@ -87,7 +87,6 @@ export function PropertyScreen({ account, updateAccount, onBack }: Props) {
         <div className="tech-list">
           <div><span><Nfc size={21} /></span><div><strong>NFC / RFID</strong><small>{account.animals.filter((animal) => animal.electronicId).length} animais identificados</small></div></div>
           <div><span><RadioTower size={21} /></span><div><strong>Monitoramento</strong><small>{account.monitoring.length} registros em {account.sectors.length} setores</small></div></div>
-          <div className="muted"><span><Tractor size={21} /></span><div><strong>Drone Pastor</strong><small>Requer hardware e API compatíveis</small></div></div>
         </div>
       </section>
 

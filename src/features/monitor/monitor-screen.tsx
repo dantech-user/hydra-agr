@@ -2,20 +2,15 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
-  BatteryMedium,
-  CalendarClock,
   Camera,
   ChevronRight,
   Clock3,
-  Cpu,
   Map,
   MapPin,
   LoaderCircle,
   Pencil,
-  PlaneTakeoff,
   Plus,
   RadioTower,
-  Satellite,
   Trash2,
 } from "lucide-react";
 import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader, SectionHeader } from "../../components/ui";
@@ -33,7 +28,6 @@ type Props = {
 export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, createSectorRequest, onRequestHandled }: Props) {
   const [tab, setTab] = useState<"sectors" | "history">("sectors");
   const [sectorOpen, setSectorOpen] = useState(false);
-  const [hardwareOpen, setHardwareOpen] = useState(false);
   const [recordOpen, setRecordOpen] = useState(false);
   const [selected, setSelected] = useState<Sector | null>(null);
   const [selectedMonitoringId, setSelectedMonitoringId] = useState<string>();
@@ -152,33 +146,11 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
   return (
     <div className="screen page-enter">
       <ScreenHeader
-        eyebrow="CENTRAL TECNOLÓGICA"
+        eyebrow="GESTÃO DA PROPRIEDADE"
         title="Monitorar"
-        subtitle="Drone Pastor e setores da propriedade."
+        subtitle="Setores, inspeções e ocorrências da propriedade."
         action={<button className="icon-button accent" onClick={openNewSector} aria-label="Criar setor"><Plus size={21} /></button>}
       />
-
-      <section className="drone-card">
-        <div className="drone-status-line">
-          <span className="drone-visual"><PlaneTakeoff size={34} /></span>
-          <div><small>DRONE PASTOR</small><h2>Drone em espera</h2><p>Nenhum dispositivo conectado.</p></div>
-          <span className="offline-pill">OFFLINE</span>
-        </div>
-        <div className="drone-data-row">
-          <div><BatteryMedium size={18} /><span>Bateria<strong>—</strong></span></div>
-          <div><Satellite size={18} /><span>Sinal<strong>—</strong></span></div>
-          <div><MapPin size={18} /><span>Setor<strong>—</strong></span></div>
-        </div>
-        <button className="drone-action" onClick={() => setHardwareOpen(true)}>
-          <PlaneTakeoff size={19} /> Iniciar sobrevoo
-        </button>
-        <p className="hardware-note"><Cpu size={15} /> A ação real será liberada com hardware e API compatíveis.</p>
-      </section>
-
-      <aside className="drone-roadmap-notice" role="note">
-        <span><CalendarClock size={21} /></span>
-        <div><small>PRÓXIMA ATUALIZAÇÃO</small><strong>Integração do Drone Pastor</strong><p>A conexão com drone e API compatíveis está prevista para a próxima versão. Até lá, nenhum voo é iniciado pelo aplicativo.</p></div>
-      </aside>
 
       <div className="segmented-control">
         <button className={tab === "sectors" ? "active" : ""} onClick={() => setTab("sectors")}>Setores <span>{account.sectors.length}</span></button>
@@ -219,7 +191,7 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
         <section className="content-section monitor-section">
           <SectionHeader title="Histórico de monitoramento" action={account.sectors.length > 0 ? <button className="text-button" onClick={() => setRecordOpen(true)}>Registrar</button> : undefined} />
           {account.monitoring.length === 0 ? (
-            <EmptyState icon={<RadioTower size={26} />} title="Nenhum monitoramento" text="Registros reais aparecerão aqui após inspeções ou missões conectadas." />
+            <EmptyState icon={<RadioTower size={26} />} title="Nenhum monitoramento" text="Registros reais aparecerão aqui após as inspeções da propriedade." />
           ) : (
             <div className="monitoring-list">
               {account.monitoring.map((item) => {
@@ -270,18 +242,6 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
           {error && <p className="form-error" role="alert">{error}</p>}
           <div className="modal-action-row"><button className="secondary-button" type="button" onClick={() => setRecordOpen(false)} disabled={saving === "monitoring"}>Cancelar</button><LoadingButton className="primary-button" type="submit" loading={saving === "monitoring"} loadingLabel="Salvando monitoramento...">Confirmar monitoramento</LoadingButton></div>
         </form>
-      </Modal>
-
-      <Modal open={hardwareOpen} onClose={() => setHardwareOpen(false)} eyebrow="DRONE PASTOR" title="Integração necessária">
-        <div className="hardware-message">
-          <span><PlaneTakeoff size={30} /></span>
-          <div className="hardware-release-tag"><CalendarClock size={16} /> Previsto para a próxima atualização</div>
-          <p>O Hydra Agro não vai simular um voo. A próxima versão será preparada para conectar um drone compatível e sua API; a marca e o modelo ainda precisam ser definidos.</p>
-          <div className="future-data-list">
-            <div><Cpu size={17} /> Identificação e estado</div><div><BatteryMedium size={17} /> Bateria e sinal</div><div><MapPin size={17} /> Setor e missão</div>
-          </div>
-          <button className="primary-button full" onClick={() => setHardwareOpen(false)}>Entendi</button>
-        </div>
       </Modal>
 
       <Modal open={Boolean(selected)} onClose={() => setSelected(null)} eyebrow="SETOR" title={selected?.name || "Setor"}>
