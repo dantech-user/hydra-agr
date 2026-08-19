@@ -8,7 +8,6 @@ import {
   Droplets,
   Leaf,
   Map,
-  Nfc,
   Plus,
   RadioTower,
   ScanLine,
@@ -93,9 +92,9 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
           <span><Droplets size={23} /></span>
           <small>Água</small>
         </button>
-        <button onClick={() => navigate("nfc")}>
-          <span><Nfc size={23} /></span>
-          <small>NFC/RFID</small>
+        <button onClick={() => navigate("monitor")}>
+          <span><RadioTower size={23} /></span>
+          <small>Monitorar</small>
         </button>
         <button onClick={() => navigate("activities")}>
           <span><ClipboardCheck size={23} /></span>
