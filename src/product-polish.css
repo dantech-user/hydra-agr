@@ -97,6 +97,15 @@
   border-radius: 10px !important;
 }
 
+/* Atalhos superiores da Home: ícones circulares, simples e consistentes. */
+.phone-app .shortcut-row button > span {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
 .phone-app .eyebrow,
 .phone-app .property-kicker,
 .phone-app [class*="-kicker"] {
