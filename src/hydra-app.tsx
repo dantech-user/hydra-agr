@@ -9,7 +9,7 @@ import { AppToastRegion } from "./components/ui";
 import { AuthFlow } from "./features/auth/auth-flow";
 import { HomeScreen } from "./features/home/home-screen";
 import { useHydraStore } from "./hooks/use-hydra-store";
-import type { AppRoute, MainTab } from "./lib/hydra-types";
+import type { AppRoute } from "./lib/hydra-types";
 import { handleAuthCallbackUrl, isAuthCallbackUrl } from "./services/supabase";
 
 const WaterScreen = lazy(() => import("./features/water/water-screen").then((module) => ({ default: module.WaterScreen })));
@@ -26,13 +26,16 @@ const NotificationsScreen = lazy(() => import("./features/notifications/notifica
 const PlusScreen = lazy(() => import("./features/premium/plus-screen").then((module) => ({ default: module.PlusScreen })));
 const AdminScreen = lazy(() => import("./features/admin/admin-screen").then((module) => ({ default: module.AdminScreen })));
 
-const mainTabs: { id: MainTab; label: string; icon: typeof Home }[] = [
+const mainTabs: { id: AppRoute; label: string; icon: typeof Home }[] = [
   { id: "home", label: "Início", icon: Home },
   { id: "water", label: "Água", icon: Droplets },
   { id: "herd", label: "Rebanho", icon: Cow },
+  { id: "community", label: "Comunidade", icon: UsersRound },
   { id: "monitor", label: "Monitorar", icon: RadioTower },
   { id: "profile", label: "Perfil", icon: UserRound },
 ];
+
+const mainRouteIds: AppRoute[] = mainTabs.map((tab) => tab.id);
 
 export default function HydraApp() {
   const store = useHydraStore();
@@ -108,7 +111,7 @@ export default function HydraApp() {
       if (quickOpen) { closeQuick(); return; }
       if (modalNavigationOpen) { requestCloseTopOverlay(); return; }
       if (!store.account) { void CapacitorApp.exitApp(); return; }
-      if (!["home", "water", "herd", "monitor", "profile"].includes(route)) { goBack(); return; }
+      if (!mainRouteIds.includes(route)) { goBack(); return; }
       if (route !== "home") { navigate("home"); return; }
       void CapacitorApp.exitApp();
     }).then((listener) => { handle = listener; });
@@ -152,7 +155,7 @@ export default function HydraApp() {
     const currentIndex = mainTabs.findIndex((tab) => tab.id === route);
     const nextIndex = mainTabs.findIndex((tab) => tab.id === next);
     setRouteMotion(currentIndex >= 0 && nextIndex >= 0 && nextIndex < currentIndex ? "back" : "forward");
-    if (!["home", "water", "herd", "monitor", "profile"].includes(next)) setBackRoute(route);
+    if (!mainRouteIds.includes(next)) setBackRoute(route);
     setRoute(next);
   }
 
@@ -219,8 +222,8 @@ export default function HydraApp() {
     }
   }
 
-  const activeTab: MainTab = (["home", "water", "herd", "monitor", "profile"] as string[]).includes(route)
-    ? route as MainTab
+  const activeTab: AppRoute = mainRouteIds.includes(route)
+    ? route
     : route === "property" || route === "plus" || route === "admin" || route === "operations" ? "profile"
     : route === "nfc" ? "herd"
     : "home";
@@ -233,7 +236,7 @@ export default function HydraApp() {
         <SyncBanner status={store.syncStatus} error={store.lastError} retry={store.retrySync} />
         <div key={route} className={`app-content route-motion-${routeMotion}`}><Suspense fallback={<div className="route-loading"><span /><small>Carregando módulo…</small></div>}>{mainContent()}</Suspense></div>
 
-        <nav className={`bottom-nav ${modalNavigationOpen ? "is-hidden" : ""}`} aria-label="Navegação principal" aria-hidden={modalNavigationOpen} style={navStyle}>
+        <nav className={`bottom-nav bottom-nav-six ${modalNavigationOpen ? "is-hidden" : ""}`} aria-label="Navegação principal" aria-hidden={modalNavigationOpen} style={navStyle}>
           <span className="bottom-nav-indicator" aria-hidden="true" />
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
