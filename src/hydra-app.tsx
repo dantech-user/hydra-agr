@@ -8,6 +8,7 @@ import { BackendSetupScreen, BannedScreen, PasswordRecoveryScreen, SyncBanner } 
 import { AppToastRegion } from "./components/ui";
 import { AuthFlow } from "./features/auth/auth-flow";
 import { HomeScreen } from "./features/home/home-screen";
+import { PublicAnimalScreen, clearPublicAnimalParams, readPublicAnimalSnapshot } from "./features/herd/public-animal-card";
 import { useHydraStore } from "./hooks/use-hydra-store";
 import type { AppRoute } from "./lib/hydra-types";
 import { handleAuthCallbackUrl, isAuthCallbackUrl } from "./services/supabase";
@@ -47,6 +48,7 @@ export default function HydraApp() {
   const [animalToOpen, setAnimalToOpen] = useState<string>();
   const [nfcAnimalId, setNfcAnimalId] = useState<string>();
   const [passwordRecovery, setPasswordRecovery] = useState(false);
+  const [publicAnimal] = useState(() => !Capacitor.isNativePlatform() ? readPublicAnimalSnapshot() : null);
   const [quickIntent, setQuickIntent] = useState<{ kind: "water" | "animal" | "activity" | "sector" | "post"; request: number }>();
   const quickTimer = useRef<number | null>(null);
   const modalNavigationOpen = useModalNavigation();
@@ -149,7 +151,7 @@ export default function HydraApp() {
   }, [store.configured]);
 
   useEffect(() => {
-    if (Capacitor.isNativePlatform() || !store.account) return;
+    if (Capacitor.isNativePlatform() || !store.account || publicAnimal) return;
     const url = new URL(window.location.href);
     const animalId = url.searchParams.get("animal");
     const nfcCode = url.searchParams.get("nfc")?.trim().toLowerCase();
@@ -167,7 +169,7 @@ export default function HydraApp() {
     url.searchParams.delete("animal");
     url.searchParams.delete("nfc");
     window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
-  }, [store.account?.id, store.account?.animals]);
+  }, [store.account?.id, store.account?.animals, publicAnimal]);
 
   function navigate(next: AppRoute) {
     if (next === route) return;
@@ -208,6 +210,10 @@ export default function HydraApp() {
   function launchQuick(kind: NonNullable<typeof quickIntent>["kind"], next: AppRoute) {
     setQuickIntent((current) => ({ kind, request: (current?.request ?? 0) + 1 }));
     navigate(next);
+  }
+
+  if (publicAnimal) {
+    return <PublicAnimalScreen animal={publicAnimal} onOpenApp={() => window.location.assign(clearPublicAnimalParams())} />;
   }
 
   if (!store.configured) return <BackendSetupScreen />;
