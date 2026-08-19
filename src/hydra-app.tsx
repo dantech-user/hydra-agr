@@ -24,6 +24,7 @@ const ActivitiesScreen = lazy(() => import("./features/activities/activities-scr
 const OperationsScreen = lazy(() => import("./features/operations/operations-screen").then((module) => ({ default: module.OperationsScreen })));
 const HydraAssistantScreen = lazy(() => import("./features/assistant").then((module) => ({ default: module.HydraAssistantScreen })));
 const TodayScreen = lazy(() => import("./features/today").then((module) => ({ default: module.TodayScreen })));
+const PropertyHistoryScreen = lazy(() => import("./features/history").then((module) => ({ default: module.PropertyHistoryScreen })));
 const NfcScreen = lazy(() => import("./features/nfc/nfc-screen").then((module) => ({ default: module.NfcScreen })));
 const NotificationsScreen = lazy(() => import("./features/notifications/notifications-screen").then((module) => ({ default: module.NotificationsScreen })));
 const PlusScreen = lazy(() => import("./features/premium/plus-screen").then((module) => ({ default: module.PlusScreen })));
@@ -221,7 +222,7 @@ export default function HydraApp() {
   if (!store.configured) return <BackendSetupScreen />;
 
   if (!store.ready || splash) {
-    return <main className="splash-screen"><div className="splash-glow" /><SplashBrand /><div className="splash-loader"><span /></div><p>TECNOLOGIA QUE NASCE DO CAMPO</p></main>;
+    return <main className="splash-screen"><div className="splash-glow" /><SplashBrand /><div className="splash-loader"><span /></div><p>HYDRA AGRO</p></main>;
   }
 
   if (!store.account) return <AuthFlow onLogin={store.login} onSignup={store.createAccount} onResetPassword={store.resetPassword} />;
@@ -244,6 +245,7 @@ export default function HydraApp() {
       case "operations": return <OperationsScreen account={account} updateAccount={store.updateAccount} onBack={goBack} openNfc={() => openNfc()} />;
       case "assistant": return <HydraAssistantScreen account={account} onBack={goBack} />;
       case "today": return <TodayScreen account={account} syncStatus={store.syncStatus} lastError={store.lastError} onBack={goBack} navigate={navigate} retrySync={store.retrySync} />;
+      case "history": return <PropertyHistoryScreen account={account} onBack={goBack} navigate={navigate} />;
       case "nfc": return <NfcScreen account={account} updateAccount={store.updateAccount} onBack={goBack} initialAnimalId={nfcAnimalId} onRealRead={store.registerNfcRead} onFound={(animal) => { setAnimalToOpen(animal.id); navigate("herd"); }} />;
       case "notifications": return <NotificationsScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "plus": return <PlusScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
@@ -264,7 +266,7 @@ export default function HydraApp() {
     <main className="app-shell">
       <div className={`phone-app ${modalNavigationOpen ? "is-overlay-open" : ""}`}>
         <SyncBanner status={store.syncStatus} error={store.lastError} retry={store.retrySync} />
-        <div key={route} className={`app-content route-motion-${routeMotion}`}><Suspense fallback={<div className="route-loading"><span /><small>Carregando módulo…</small></div>}>{mainContent()}</Suspense></div>
+        <div key={route} className={`app-content route-motion-${routeMotion}`}><Suspense fallback={<div className="route-loading"><span /><small>Carregando…</small></div>}>{mainContent()}</Suspense></div>
 
         <nav className={`bottom-nav ${modalNavigationOpen ? "is-hidden" : ""}`} aria-label="Navegação principal" aria-hidden={modalNavigationOpen} style={navStyle}>
           <span className="bottom-nav-indicator" aria-hidden="true" />
@@ -274,7 +276,7 @@ export default function HydraApp() {
           })}
         </nav>
 
-        {quickOpen && <div className={`quick-layer ${quickClosing ? "is-closing" : ""}`} onMouseDown={() => closeQuick()}><section className="quick-sheet" onMouseDown={(event) => event.stopPropagation()}><div className="sheet-handle" /><header><div><span className="eyebrow orange">AÇÃO RÁPIDA</span><h2>O que deseja fazer?</h2></div><button className="icon-button" onClick={() => closeQuick()} aria-label="Fechar ações rápidas"><X size={22} /></button></header><div className="quick-grid"><QuickAction index={0} icon={<Droplets size={22} />} title="Registrar água" subtitle="Adicionar uma leitura" onClick={() => closeQuick(() => launchQuick("water", "water"))} /><QuickAction index={1} icon={<Cow size={22} />} title="Cadastrar animal" subtitle="Adicionar ao rebanho" onClick={() => closeQuick(() => launchQuick("animal", "herd"))} /><QuickAction index={2} icon={<Nfc size={22} />} title="Ler identificação" subtitle="NFC/RFID ou código" onClick={() => closeQuick(() => openNfc())} /><QuickAction index={3} icon={<ClipboardCheck size={22} />} title="Nova atividade" subtitle="Organizar a rotina" onClick={() => closeQuick(() => launchQuick("activity", "activities"))} /><QuickAction index={4} icon={<MapPin size={22} />} title="Criar setor" subtitle="Mapear a propriedade" onClick={() => closeQuick(() => launchQuick("sector", "monitor"))} /><QuickAction index={5} icon={<UsersRound size={22} />} title="Equipe e operações" subtitle="Relatórios e ocorrências" onClick={() => closeQuick(() => navigate("operations"))} /><QuickAction index={6} icon={<Send size={22} />} title="Nova publicação" subtitle="Compartilhar no feed" onClick={() => closeQuick(() => launchQuick("post", "community"))} /></div></section></div>}
+        {quickOpen && <div className={`quick-layer ${quickClosing ? "is-closing" : ""}`} onMouseDown={() => closeQuick()}><section className="quick-sheet" onMouseDown={(event) => event.stopPropagation()}><div className="sheet-handle" /><header><div><span className="eyebrow orange">Nova ação</span><h2>O que você quer registrar?</h2></div><button className="icon-button" onClick={() => closeQuick()} aria-label="Fechar ações rápidas"><X size={22} /></button></header><div className="quick-grid"><QuickAction index={0} icon={<Droplets size={22} />} title="Registrar água" subtitle="Adicionar uma leitura" onClick={() => closeQuick(() => launchQuick("water", "water"))} /><QuickAction index={1} icon={<Cow size={22} />} title="Cadastrar animal" subtitle="Adicionar ao rebanho" onClick={() => closeQuick(() => launchQuick("animal", "herd"))} /><QuickAction index={2} icon={<Nfc size={22} />} title="Ler identificação" subtitle="NFC/RFID ou código" onClick={() => closeQuick(() => openNfc())} /><QuickAction index={3} icon={<ClipboardCheck size={22} />} title="Nova atividade" subtitle="Adicionar à rotina" onClick={() => closeQuick(() => launchQuick("activity", "activities"))} /><QuickAction index={4} icon={<MapPin size={22} />} title="Criar setor" subtitle="Organizar a propriedade" onClick={() => closeQuick(() => launchQuick("sector", "monitor"))} /><QuickAction index={5} icon={<UsersRound size={22} />} title="Equipe e operações" subtitle="Relatórios e ocorrências" onClick={() => closeQuick(() => navigate("operations"))} /><QuickAction index={6} icon={<Send size={22} />} title="Nova publicação" subtitle="Publicar na comunidade" onClick={() => closeQuick(() => launchQuick("post", "community"))} /></div></section></div>}
         <AppToastRegion />
       </div>
     </main>
