@@ -9,6 +9,7 @@ export type AppRoute =
   | "operations"
   | "assistant"
   | "today"
+  | "history"
   | "nfc"
   | "notifications"
   | "plus"
@@ -218,80 +219,19 @@ export type AdminUser = {
   id: string;
   email: string;
   name: string;
-  propertyName?: string;
-  municipality?: string;
   role: UserRole;
-  plan: "Gratuito" | "Hydra Agro+";
-  subscriptionStatus: string;
-  subscriptionCreatedAt?: string;
-  premiumStartedAt?: string;
-  premiumExpiresAt?: string;
-  premiumDeactivatedAt?: string;
-  createdAt: string;
   bannedAt?: string;
   banReason?: string;
 };
 
-export type AdminMetrics = {
-  users: number;
-  properties: number;
-  animals: number;
-  waterRecords: number;
-  posts: number;
+export type AdminStats = {
+  totalUsers: number;
   activeSubscriptions: number;
+  totalAnimals: number;
+  totalWaterRecords: number;
 };
 
-export type AdminData = {
-  users: AdminUser[];
+export type AdminContent = {
   announcements: Announcement[];
   links: AppLink[];
-  metrics: AdminMetrics;
 };
-
-export function makeId(prefix: string) {
-  const random =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : Math.random().toString(36).slice(2);
-  return `${prefix}-${random}`;
-}
-
-export const emptyProperty: Property = {
-  name: "",
-  municipality: "",
-  state: "BA",
-  area: "",
-  areaUnit: "hectares",
-  type: "",
-  mainActivity: "",
-  otherActivities: [],
-  approximateAnimals: "",
-  waterKinds: [],
-};
-
-export function createEmptyAccount(user: {
-  id: string;
-  email: string;
-  name?: string;
-  phone?: string;
-}): HydraAccount {
-  return {
-    id: user.id,
-    email: user.email,
-    phone: user.phone ?? "",
-    profile: { name: user.name?.trim() || "Produtor", plan: "Gratuito" },
-    subscription: { status: "active" },
-    property: { ...emptyProperty, otherActivities: [], waterKinds: [] },
-    waterSources: [],
-    waterRecords: [],
-    animals: [],
-    sectors: [],
-    activities: [],
-    monitoring: [],
-    nfcReadCount: 0,
-    posts: [],
-    notifications: [],
-    settings: { waterAlerts: true, pushNotifications: true, premiumGoals: {} },
-    role: "user",
-  };
-}
