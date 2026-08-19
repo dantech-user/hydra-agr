@@ -148,6 +148,27 @@ export default function HydraApp() {
     return () => { active = false; };
   }, [store.configured]);
 
+  useEffect(() => {
+    if (Capacitor.isNativePlatform() || !store.account) return;
+    const url = new URL(window.location.href);
+    const animalId = url.searchParams.get("animal");
+    const nfcCode = url.searchParams.get("nfc")?.trim().toLowerCase();
+    if (!animalId && !nfcCode) return;
+
+    const found = store.account.animals.find((animal) =>
+      (animalId && animal.id === animalId) ||
+      (nfcCode && animal.electronicId?.trim().toLowerCase() === nfcCode),
+    );
+    if (!found) return;
+
+    setAnimalToOpen(found.id);
+    setRouteMotion("forward");
+    setRoute("herd");
+    url.searchParams.delete("animal");
+    url.searchParams.delete("nfc");
+    window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+  }, [store.account?.id, store.account?.animals]);
+
   function navigate(next: AppRoute) {
     if (next === route) return;
     if (next === "admin" && !["moderator", "admin", "owner"].includes(store.account?.role ?? "user")) return;
