@@ -73,7 +73,9 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
 
       <button className="nfc-banner" onClick={() => navigate("nfc")}><span className="nfc-banner-icon"><ScanLine size={27} /></span><span className="nfc-banner-copy"><small>NFC / RFID</small><strong>Ler identificação do animal</strong><em>{account.animals.filter((animal) => animal.electronicId).length} identificados · {account.nfcReadCount} leituras</em></span><ChevronRight size={22} /></button>
 
-      <button className="assistant-home-card" onClick={() => navigate("assistant")}><span><MessageSquareText size={22} /></span><div><small>Assistente</small><strong>Consultar registros da propriedade</strong><em>Pergunte sobre rebanho, água, atividades ou monitoramentos.</em></div><ChevronRight size={19} /></button>
+      <div className="home-compact-actions">
+        <button className="assistant-home-button" onClick={() => navigate("assistant")}><MessageSquareText size={16} /><span>Assistente</span></button>
+      </div>
 
       <section className="property-hero">
         <div className="property-hero-top"><div><span className="property-kicker">Propriedade</span><h2>{account.property.name || "Propriedade não cadastrada"}</h2><p>{propertyReady ? `${account.property.mainActivity} · ${account.property.municipality}, ${account.property.state}` : "Complete a ficha da propriedade"}</p></div><button onClick={() => navigate("property")} aria-label="Editar propriedade"><Sprout size={20} /></button></div>
