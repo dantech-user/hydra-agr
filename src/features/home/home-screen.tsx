@@ -11,6 +11,7 @@ import {
   Plus,
   RadioTower,
   ScanLine,
+  Sparkles,
   Sprout,
   Trophy,
   UsersRound,
@@ -110,6 +111,16 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
           <em>{account.animals.filter((animal) => animal.electronicId).length} identificados · {account.nfcReadCount} leituras reais</em>
         </span>
         <ChevronRight size={22} />
+      </button>
+
+      <button className="assistant-home-card" onClick={() => navigate("assistant")}>
+        <span><Sparkles size={23} /></span>
+        <div>
+          <small>ASSISTENTE HYDRA</small>
+          <strong>Ajuda inteligente para a propriedade</strong>
+          <em>Analisa seus registros e ajuda a definir prioridades.</em>
+        </div>
+        <ChevronRight size={19} />
       </button>
 
       <section className="property-hero">
