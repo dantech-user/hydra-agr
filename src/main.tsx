@@ -31,8 +31,10 @@ import "./notifications-theme.css";
 import "./herd-highlight.css";
 import "./herd-weight-history.css";
 import "./demo-mode.css";
+import "./project-results.css";
 import "./public-animal.css";
 import HydraApp from "./hydra-app";
+import { ProjectResultsPanel } from "./features/demo/project-results-panel";
 import { supabase } from "./services/supabase";
 
 type ThemeMode = "light" | "dark";
@@ -214,6 +216,8 @@ function HydraThemeRoot() {
               <div className="demo-check-grid">{demoChecks.map((item) => <div key={item.label} className={item.ready ? "ready" : ""}>{item.ready ? <CheckCircle2 size={18} /> : <Circle size={18} />}<span><strong>{item.label}</strong><small>{item.detail}</small></span></div>)}</div>
               {demoReadiness.error && <p className="demo-readiness-error">{demoReadiness.error}</p>}
             </div>
+
+            <ProjectResultsPanel userId={signedInUserId} />
 
             <div className="demo-guide-title"><strong>Roteiro de aproximadamente 1 minuto</strong><span>5 etapas</span></div>
             <div className="demo-step-list">
