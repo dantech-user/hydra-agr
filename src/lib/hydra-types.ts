@@ -7,6 +7,7 @@ export type AppRoute =
   | "property"
   | "activities"
   | "operations"
+  | "assistant"
   | "nfc"
   | "notifications"
   | "plus"
