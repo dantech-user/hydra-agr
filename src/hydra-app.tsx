@@ -33,8 +33,8 @@ const AdminScreen = lazy(() => import("./features/admin/admin-screen").then((mod
 const mainTabs: { id: AppRoute; label: string; icon: typeof Home }[] = [
   { id: "home", label: "Início", icon: Home },
   { id: "water", label: "Água", icon: Droplets },
+  { id: "nfc", label: "NFC", icon: Nfc },
   { id: "herd", label: "Rebanho", icon: Cow },
-  { id: "community", label: "Comunidade", icon: UsersRound },
   { id: "profile", label: "Perfil", icon: UserRound },
 ];
 
@@ -206,8 +206,14 @@ export default function HydraApp() {
   }
 
   function openNfc(animalId?: string) {
+    setBackRoute(route);
     setNfcAnimalId(animalId);
     navigate("nfc");
+  }
+
+  function openMainTab(tab: AppRoute) {
+    if (tab === "nfc") setNfcAnimalId(undefined);
+    navigate(tab);
   }
 
   function launchQuick(kind: NonNullable<typeof quickIntent>["kind"], next: AppRoute) {
@@ -257,7 +263,6 @@ export default function HydraApp() {
   const activeTab: AppRoute = mainRouteIds.includes(route)
     ? route
     : route === "monitor" || route === "property" || route === "plus" || route === "admin" || route === "operations" ? "profile"
-    : route === "nfc" ? "herd"
     : "home";
   const activeIndex = mainTabs.findIndex((tab) => tab.id === activeTab);
   const navStyle = { "--active-index": activeIndex } as CSSProperties;
@@ -272,7 +277,7 @@ export default function HydraApp() {
           <span className="bottom-nav-indicator" aria-hidden="true" />
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
-            return <button key={tab.id} className={activeTab === tab.id ? "active" : ""} onClick={() => navigate(tab.id)} aria-current={activeTab === tab.id ? "page" : undefined}><span><Icon size={21} strokeWidth={activeTab === tab.id ? 2.5 : 2} /></span><small>{tab.label}</small></button>;
+            return <button key={tab.id} className={activeTab === tab.id ? "active" : ""} onClick={() => openMainTab(tab.id)} aria-current={activeTab === tab.id ? "page" : undefined}><span><Icon size={21} strokeWidth={activeTab === tab.id ? 2.5 : 2} /></span><small>{tab.label}</small></button>;
           })}
         </nav>
 
