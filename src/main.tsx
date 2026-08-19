@@ -12,6 +12,7 @@ import "@fontsource/sora/latin-700.css";
 import "@fontsource/sora/latin-800.css";
 import "./globals.css";
 import "./hydra-dark-mode.css";
+import "./hydra-dark-polish.css";
 import HydraApp from "./hydra-app";
 
 type ThemeMode = "light" | "dark";
