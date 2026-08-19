@@ -1,5 +1,6 @@
 import { BadgeCheck, Beef as Cow, ExternalLink, ShieldCheck, Weight } from "lucide-react";
 import type { Animal } from "../../lib/hydra-types";
+import { publicMediaUrl } from "../../services/supabase";
 
 export type PublicAnimalSnapshot = {
   identification: string;
@@ -8,11 +9,12 @@ export type PublicAnimalSnapshot = {
   breed?: string;
   weight?: number;
   status?: string;
+  photoPath?: string;
 };
 
-const PUBLIC_KEYS = ["pa", "i", "n", "s", "b", "w", "st"] as const;
+const PUBLIC_KEYS = ["pa", "i", "n", "s", "b", "w", "st", "ph"] as const;
 
-export function buildPublicAnimalUrl(animal: Animal) {
+export function buildPublicAnimalUrl(animal: Animal, photoPath?: string) {
   const url = new URL(window.location.origin);
   url.searchParams.set("pa", "1");
   url.searchParams.set("i", animal.identification.slice(0, 40));
@@ -21,6 +23,7 @@ export function buildPublicAnimalUrl(animal: Animal) {
   if (animal.breed) url.searchParams.set("b", animal.breed.slice(0, 28));
   if (animal.weight && Number.isFinite(animal.weight)) url.searchParams.set("w", String(animal.weight));
   if (animal.status) url.searchParams.set("st", animal.status.slice(0, 20));
+  if (photoPath) url.searchParams.set("ph", photoPath.slice(0, 180));
   return url.toString();
 }
 
@@ -32,6 +35,8 @@ export function readPublicAnimalSnapshot(href = window.location.href): PublicAni
     const species = url.searchParams.get("s")?.trim() ?? "";
     if (!identification || !species) return null;
     const parsedWeight = Number(url.searchParams.get("w"));
+    const rawPhotoPath = url.searchParams.get("ph")?.trim() ?? "";
+    const photoPath = rawPhotoPath && !rawPhotoPath.includes("..") && !rawPhotoPath.startsWith("/") ? rawPhotoPath.slice(0, 180) : undefined;
     return {
       identification: identification.slice(0, 40),
       name: url.searchParams.get("n")?.trim().slice(0, 32) || undefined,
@@ -39,6 +44,7 @@ export function readPublicAnimalSnapshot(href = window.location.href): PublicAni
       breed: url.searchParams.get("b")?.trim().slice(0, 28) || undefined,
       weight: Number.isFinite(parsedWeight) && parsedWeight > 0 ? parsedWeight : undefined,
       status: url.searchParams.get("st")?.trim().slice(0, 20) || undefined,
+      photoPath,
     };
   } catch {
     return null;
@@ -52,6 +58,8 @@ export function clearPublicAnimalParams() {
 }
 
 export function PublicAnimalScreen({ animal, onOpenApp }: { animal: PublicAnimalSnapshot; onOpenApp: () => void }) {
+  const photoUrl = animal.photoPath ? publicMediaUrl("community-media", animal.photoPath) : undefined;
+
   return (
     <main className="public-animal-page">
       <section className="public-animal-shell">
@@ -61,11 +69,15 @@ export function PublicAnimalScreen({ animal, onOpenApp }: { animal: PublicAnimal
           <span className="public-animal-safe"><ShieldCheck size={16} /> público</span>
         </header>
 
-        <div className="public-animal-hero">
-          <span className="public-animal-icon"><Cow size={42} /></span>
-          <span className="public-animal-kicker"><BadgeCheck size={15} /> FICHA COMPARTILHADA</span>
-          <h1>{animal.name || "Animal identificado"}</h1>
-          <p>{animal.identification}</p>
+        <div className={`public-animal-hero ${photoUrl ? "has-photo" : ""}`}>
+          {photoUrl && <img className="public-animal-photo" src={photoUrl} alt={`Foto de ${animal.name || animal.identification}`} />}
+          <div className="public-animal-hero-shade" />
+          {!photoUrl && <span className="public-animal-icon"><Cow size={42} /></span>}
+          <div className="public-animal-hero-copy">
+            <span className="public-animal-kicker"><BadgeCheck size={15} /> FICHA COMPARTILHADA</span>
+            <h1>{animal.name || "Animal identificado"}</h1>
+            <p>{animal.identification}</p>
+          </div>
         </div>
 
         <div className="public-animal-data">
@@ -79,7 +91,7 @@ export function PublicAnimalScreen({ animal, onOpenApp }: { animal: PublicAnimal
 
         <div className="public-animal-privacy">
           <ShieldCheck size={20} />
-          <p><strong>Ficha pública limitada</strong><small>Este link mostra somente dados básicos escolhidos para identificação. Dados da conta, propriedade, equipe e observações privadas não são compartilhados.</small></p>
+          <p><strong>Ficha pública limitada</strong><small>Este link mostra somente dados básicos escolhidos para identificação e, quando disponível, uma cópia pública da foto do animal. Dados da conta, propriedade, equipe e observações privadas não são compartilhados.</small></p>
         </div>
 
         <button className="public-animal-open" onClick={onOpenApp}><ExternalLink size={18} /> Abrir Hydra Agro</button>
