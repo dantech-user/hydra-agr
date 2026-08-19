@@ -8,35 +8,61 @@ import { isWebNfcSupported, writeWebNfcUrl } from "../../services/nfc-service";
 import { requireSupabase } from "../../services/supabase";
 import { buildPublicAnimalUrl } from "./public-animal-card";
 
+function mimeFromPath(path?: string) {
+  const normalized = path?.toLowerCase() ?? "";
+  if (normalized.endsWith(".png")) return "image/png";
+  if (normalized.endsWith(".webp")) return "image/webp";
+  return "image/jpeg";
+}
+
 export function AnimalPublicShare({ animal }: { animal: Animal }) {
   const [open, setOpen] = useState(false);
   const [writing, setWriting] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoError, setPhotoError] = useState("");
   const [publicPhotoPath, setPublicPhotoPath] = useState<string>();
   const publicUrl = useMemo(() => buildPublicAnimalUrl(animal, publicPhotoPath), [animal, publicPhotoPath]);
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(publicUrl)}`;
   const canWriteWebNfc = isWebNfcSupported();
+  const hasPhoto = Boolean(animal.photoPath || animal.photoUrl);
 
   async function preparePublicPhoto() {
     if (publicPhotoPath) return publicPhotoPath;
-    if (!animal.photoUrl) return undefined;
+    if (!hasPhoto) return undefined;
 
     setPhotoBusy(true);
+    setPhotoError("");
     try {
       const client = requireSupabase();
-      const { data, error } = await client.auth.getUser();
-      if (error || !data.user) throw error ?? new Error("Sessão não encontrada.");
+      const { data: userData, error: userError } = await client.auth.getUser();
+      if (userError || !userData.user) throw userError ?? new Error("Sessão não encontrada.");
 
-      const response = await fetch(animal.photoUrl);
-      if (!response.ok) throw new Error("Não foi possível preparar a foto do animal.");
-      const blob = await response.blob();
-      const type = blob.type || "image/jpeg";
-      const file = new File([blob], `animal-${animal.id}.jpg`, { type });
-      const path = await uploadPublicImage("community-media", data.user.id, file, `public-animal-${animal.id}`);
+      let blob: Blob;
+      let contentType = mimeFromPath(animal.photoPath);
+
+      if (animal.photoPath) {
+        const { data, error } = await client.storage.from("farm-media").download(animal.photoPath);
+        if (error || !data) throw error ?? new Error("Não foi possível acessar a foto privada do animal.");
+        blob = data;
+        if (blob.type?.startsWith("image/")) contentType = blob.type;
+      } else if (animal.photoUrl) {
+        const response = await fetch(animal.photoUrl);
+        if (!response.ok) throw new Error("Não foi possível preparar a foto do animal.");
+        blob = await response.blob();
+        if (blob.type?.startsWith("image/")) contentType = blob.type;
+      } else {
+        return undefined;
+      }
+
+      const extension = contentType.includes("png") ? "png" : contentType.includes("webp") ? "webp" : "jpg";
+      const file = new File([blob], `animal-${animal.id}.${extension}`, { type: contentType });
+      const path = await uploadPublicImage("community-media", userData.user.id, file, `public-animal-${animal.id}`);
       setPublicPhotoPath(path);
       return path;
     } catch (caught) {
-      showAppToast(caught instanceof Error ? caught.message : "Não foi possível incluir a foto na ficha pública.", "error");
+      const message = caught instanceof Error ? caught.message : "Não foi possível incluir a foto na ficha pública.";
+      setPhotoError(message);
+      showAppToast(message, "error");
       return undefined;
     } finally {
       setPhotoBusy(false);
@@ -44,9 +70,9 @@ export function AnimalPublicShare({ animal }: { animal: Animal }) {
   }
 
   useEffect(() => {
-    if (!open || !animal.photoUrl || publicPhotoPath) return;
+    if (!open || !hasPhoto || publicPhotoPath || photoBusy) return;
     void preparePublicPhoto();
-  }, [open, animal.photoUrl, publicPhotoPath]);
+  }, [open, hasPhoto, publicPhotoPath]);
 
   async function currentPublicUrl() {
     const photoPath = await preparePublicPhoto();
@@ -106,7 +132,7 @@ export function AnimalPublicShare({ animal }: { animal: Animal }) {
         <div className="public-share-modal">
           <p className="public-share-intro">Este link contém somente uma cópia dos dados básicos mostrados abaixo. Se houver foto, uma cópia dela também é publicada para aparecer na ficha. Informações privadas da conta e da propriedade não entram no link.</p>
 
-          {animal.photoUrl && <div className={`public-share-photo-status ${publicPhotoPath ? "ready" : ""}`}>{photoBusy ? <LoaderCircle size={18} className="spin" /> : <ImageIcon size={18} />}<span><strong>{publicPhotoPath ? "Foto incluída" : "Preparando foto"}</strong><small>{publicPhotoPath ? "Ela aparecerá ao abrir o NFC ou QR." : "Criando uma cópia pública somente desta imagem."}</small></span></div>}
+          {hasPhoto && <div className={`public-share-photo-status ${publicPhotoPath ? "ready" : photoError ? "error" : ""}`}>{photoBusy ? <LoaderCircle size={18} className="spin" /> : <ImageIcon size={18} />}<span><strong>{publicPhotoPath ? "Foto incluída" : photoError ? "Foto não incluída" : "Preparando foto"}</strong><small>{publicPhotoPath ? "Ela aparecerá ao abrir o NFC ou QR." : photoError ? "O link continuará funcionando sem a imagem." : "Criando uma cópia pública somente desta imagem."}</small></span></div>}
 
           <div className="public-share-qr-wrap"><img src={qrUrl} alt={`QR Code da ficha pública de ${animal.name || animal.identification}`} /></div>
           <div className="public-share-link">{publicUrl}</div>
