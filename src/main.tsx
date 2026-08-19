@@ -31,6 +31,7 @@ import "./notifications-theme.css";
 import "./herd-highlight.css";
 import "./herd-weight-history.css";
 import "./demo-mode.css";
+import "./public-animal.css";
 import HydraApp from "./hydra-app";
 import { supabase } from "./services/supabase";
 
