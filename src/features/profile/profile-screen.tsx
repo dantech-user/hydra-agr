@@ -375,8 +375,8 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
         {info && <ProfileInformation kind={info} onClose={() => setInfo(null)} onEmail={() => openSupportEmail(info === "privacy" ? "Privacidade e dados — Hydra Agro" : "Informações — Hydra Agro")} onInstagram={() => openInstagram("support")} />}
       </Modal>
 
-      <Modal open={logoutConfirm} onClose={() => setLogoutConfirm(false)} eyebrow="CONFIRMAÇÃO" title="Sair desta conta?" dismissible={saving !== "logout"}>
-        <div className="confirm-action"><span><LogOut size={27} /></span><p>A sessão local será encerrada e os dados derivados desta conta serão removidos da tela. Seus registros já sincronizados permanecem no servidor.</p>{error && <p className="form-error" role="alert">{error}</p>}<div className="modal-action-row"><button className="secondary-button" onClick={() => setLogoutConfirm(false)} disabled={saving === "logout"}>Continuar no app</button><LoadingButton className="danger-button" onClick={() => void confirmLogout()} loading={saving === "logout"} loadingLabel="Saindo...">Confirmar saída</LoadingButton></div></div>
+      <Modal open={logoutConfirm} onClose={() => setLogoutConfirm(false)} eyebrow="CONFIRMAÇÃO" title="Finalizar sessão" centered dismissible={saving !== "logout"}>
+        <div className="confirm-action"><span><LogOut size={27} /></span><p>Deseja realmente finalizar sua sessão?</p>{error && <p className="form-error" role="alert">{error}</p>}<div className="modal-action-row"><button className="secondary-button" onClick={() => setLogoutConfirm(false)} disabled={saving === "logout"}>Cancelar</button><LoadingButton className="danger-button" onClick={() => void confirmLogout()} loading={saving === "logout"} loadingLabel="Saindo...">Sair</LoadingButton></div></div>
       </Modal>
     </div>
   );

@@ -73,8 +73,16 @@ describe("ações de preferências e segurança", () => {
   it("abre a confirmação e conclui a saída da conta", async () => {
     const { logout } = setup();
     fireEvent.click(screen.getByRole("button", { name: "Sair desta conta" }));
-    expect(screen.getByRole("dialog", { name: "Sair desta conta?" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar saída" }));
+    expect(screen.getByRole("dialog", { name: "Finalizar sessão" })).toBeInTheDocument();
+    expect(screen.getByText("Deseja realmente finalizar sua sessão?")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Sair" }));
     await waitFor(() => expect(logout).toHaveBeenCalledTimes(1));
+  });
+
+  it("cancela a saída sem encerrar a sessão", () => {
+    const { logout } = setup();
+    fireEvent.click(screen.getByRole("button", { name: "Sair desta conta" }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    expect(logout).not.toHaveBeenCalled();
   });
 });

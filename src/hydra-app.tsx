@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { ClipboardCheck, Beef as Cow, Droplets, Home, MapPin, Nfc, Plus, RadioTower, Send, UserRound, X } from "lucide-react";
@@ -79,6 +79,14 @@ export default function HydraApp() {
 
   useEffect(() => () => { if (quickTimer.current) window.clearTimeout(quickTimer.current); }, []);
 
+  useLayoutEffect(() => {
+    const scrollingElement = document.scrollingElement;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    if (scrollingElement) scrollingElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }, [route, store.account?.id]);
+
   useEffect(() => {
     if (!store.account) {
       setRoute("home");
@@ -145,13 +153,11 @@ export default function HydraApp() {
     setRouteMotion(currentIndex >= 0 && nextIndex >= 0 && nextIndex < currentIndex ? "back" : "forward");
     if (!["home", "water", "herd", "monitor", "profile"].includes(next)) setBackRoute(route);
     setRoute(next);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function goBack() {
     setRouteMotion("back");
     setRoute(backRoute === route ? "home" : backRoute);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function openQuick() {

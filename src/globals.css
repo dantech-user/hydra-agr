@@ -26,8 +26,8 @@
 }
 
 * { box-sizing: border-box; }
-html { background: var(--forest-950); scroll-behavior: smooth; }
-body { margin: 0; min-height: 100vh; color: var(--ink); background: var(--forest-950); font-family: var(--font-manrope), "Avenir Next", system-ui, sans-serif; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+html { min-height: 100%; background: var(--forest-950); scroll-behavior: auto; scroll-padding-top: env(safe-area-inset-top); }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; color: var(--ink); background: var(--forest-950); font-family: var(--font-manrope), "Avenir Next", system-ui, sans-serif; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
 button, input, select, textarea { font: inherit; }
 button { color: inherit; position: relative; isolation: isolate; overflow: hidden; }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -337,10 +337,14 @@ h1, h2, h3, p { margin-top: 0; }
 .status-pill.ativa { color: var(--forest-700); background: var(--sage-soft); }
 .status-pill.atenção { color: #996000; background: #fff3d4; }
 .status-pill.inativa, .offline-pill { color: #887d78; background: #ece9e6; }
-.modal-layer, .quick-layer { position: fixed; z-index: 100; inset: 0; width: 100%; height: 100dvh; overflow: hidden; padding-top: max(10px, calc(env(safe-area-inset-top) + 8px)); background: rgba(4, 29, 20, .72); backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); display: flex; align-items: flex-end; justify-content: center; overscroll-behavior: none; animation: fadeIn 220ms ease both; }
+.modal-layer, .quick-layer { position: fixed; z-index: 100; inset: 0; width: 100%; height: 100vh; height: 100dvh; overflow: hidden; padding: max(10px, calc(env(safe-area-inset-top) + 8px)) max(0px, env(safe-area-inset-right)) 0 max(0px, env(safe-area-inset-left)); background: rgba(4, 29, 20, .72); backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); display: flex; align-items: flex-end; justify-content: center; overscroll-behavior: none; animation: fadeIn 220ms ease both; }
 .modal-sheet, .quick-sheet { position: relative; z-index: 110; width: min(100%, 540px); overscroll-behavior: contain; border-radius: 30px 30px 0 0; padding: 8px 20px 0; background: var(--paper); box-shadow: 0 -24px 80px rgba(0,0,0,.28); animation: sheetUp 260ms var(--ease-product) both; }
 .modal-sheet { min-height: min(58dvh, 610px); max-height: calc(100dvh - max(10px, calc(env(safe-area-inset-top) + 8px))); overflow: hidden; display: flex; flex-direction: column; }
 .modal-sheet:has(.modal-form), .modal-sheet.modal-wide, .modal-sheet.modal-tall { height: min(94dvh, 920px); max-height: calc(100dvh - max(10px, calc(env(safe-area-inset-top) + 8px))); }
+.modal-layer:has(.modal-centered) { align-items: center; padding-bottom: max(10px, calc(env(safe-area-inset-bottom) + 8px)); }
+.modal-sheet.modal-centered { width: min(calc(100% - 28px), 500px); min-height: 0; height: auto; max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px); border-radius: 26px; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+.modal-centered .sheet-handle { display: none; }
+.modal-centered .modal-body { flex: 0 1 auto; }
 .quick-sheet { max-height: min(88dvh, 820px); overflow-y: auto; padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
 .modal-layer.is-closing, .quick-layer.is-closing { pointer-events: none; animation: fadeOut 220ms ease both; }
 .modal-layer.is-closing .modal-sheet, .quick-layer.is-closing .quick-sheet { animation: sheetDown 230ms var(--ease-soft) both; }

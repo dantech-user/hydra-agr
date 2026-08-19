@@ -343,14 +343,27 @@ export function useHydraStore() {
   }, [applyAccount]);
 
   const logout = useCallback(async () => {
+    const userId = userRef.current?.id ?? accountRef.current?.id;
     bootId.current += 1;
-    userRef.current = null;
-    applyAccount(null);
-    setAnnouncements([]);
-    setLinks([]);
-    setLastError("");
-    setSyncStatus("saved");
-    if (supabase) await supabase.auth.signOut({ scope: "local" });
+    try {
+      if (supabase) {
+        const { error } = await supabase.auth.signOut({ scope: "local" });
+        if (error) throw error;
+      }
+    } finally {
+      userRef.current = null;
+      applyAccount(null);
+      setAnnouncements([]);
+      setLinks([]);
+      setLastError("");
+      setSyncStatus("saved");
+      if (userId) {
+        await Promise.all([
+          Preferences.remove({ key: accountCacheKey(userId) }),
+          Preferences.remove({ key: accountPendingKey(userId) }),
+        ]);
+      }
+    }
   }, [applyAccount]);
 
   const saveAvatar = useCallback(async (file?: File) => {

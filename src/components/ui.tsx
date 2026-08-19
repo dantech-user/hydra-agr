@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { AlertCircle, CheckCircle2, ChevronLeft, Info, X } from "lucide-react";
+import { createPortal } from "react-dom";
 import { useAppOverlay, useAppToasts } from "./modal-system";
 
 export function ScreenHeader({
@@ -80,6 +81,7 @@ export function Modal({
   onClose,
   wide = false,
   tall = false,
+  centered = false,
   dismissible = true,
 }: {
   open: boolean;
@@ -89,6 +91,7 @@ export function Modal({
   onClose: () => void;
   wide?: boolean;
   tall?: boolean;
+  centered?: boolean;
   dismissible?: boolean;
 }) {
   const titleId = useId();
@@ -96,6 +99,7 @@ export function Modal({
   const [closing, setClosing] = useState(false);
   const closeTimer = useRef<number | null>(null);
   const closeRequested = useRef(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   const requestClose = useCallback(() => {
     if (closing || closeRequested.current || !dismissible) return;
@@ -139,11 +143,16 @@ export function Modal({
 
   useAppOverlay(present, requestClose);
 
+  useLayoutEffect(() => {
+    if (!open || !present) return;
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [open, present]);
+
   if (!present) return null;
-  return (
+  return createPortal(
     <div className={`modal-layer ${closing ? "is-closing" : ""}`} role="presentation" onMouseDown={() => { if (dismissible) requestClose(); }}>
       <section
-        className={`modal-sheet ${wide ? "modal-wide" : ""} ${tall ? "modal-tall" : ""}`}
+        className={`modal-sheet ${wide ? "modal-wide" : ""} ${tall ? "modal-tall" : ""} ${centered ? "modal-centered" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -160,9 +169,10 @@ export function Modal({
             <X size={22} />
           </button>
         </div>
-        <div className="modal-body">{children}</div>
+        <div className="modal-body" ref={bodyRef}>{children}</div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

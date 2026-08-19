@@ -3,7 +3,6 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const root = resolve(process.cwd());
-const preview = readFileSync(resolve(root, "hydra-agro-modal-preview.html"), "utf8");
 const app = readFileSync(resolve(root, "src/hydra-app.tsx"), "utf8");
 const modalSystem = readFileSync(resolve(root, "src/components/modal-system.ts"), "utf8");
 const ui = readFileSync(resolve(root, "src/components/ui.tsx"), "utf8");
@@ -28,13 +27,11 @@ describe("contrato global de modais e feedback", () => {
     expect(styles).toContain("z-index: 200");
   });
 
-  it("entrega a prévia navegável com todos os fluxos solicitados", () => {
-    for (const label of ["Registrar água", "Cadastrar animal", "Criar setor", "Excluir publicação", "Hydra Agro+"]) {
-      expect(preview).toContain(label);
-    }
-    expect(preview).toContain("const stack = []");
-    expect(preview).toContain("data-loading");
-    expect(preview).toContain("backdrop-filter: blur");
-    expect(preview).toContain("100dvh");
+  it("mantém os modais fora de ancestrais transformados e dentro da viewport segura", () => {
+    expect(ui).toContain("createPortal");
+    expect(ui).toContain("document.body");
+    expect(styles).toContain("backdrop-filter: blur");
+    expect(styles).toContain("env(safe-area-inset-top)");
+    expect(styles).toContain("env(safe-area-inset-bottom)");
   });
 });
