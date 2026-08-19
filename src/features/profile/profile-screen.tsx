@@ -280,6 +280,7 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
         <span className="group-label">MINHA PROPRIEDADE</span>
         <div className="profile-menu-card">
           <MenuRow icon={<Sprout size={21} />} title="Ver todos os dados cadastrados" subtitle="Visão geral, produção, água e tecnologia" onClick={() => navigate("property")} />
+          <MenuRow icon={<UsersRound size={21} />} title="Equipe e operações" subtitle="Funcionários, relatórios, ocorrências e tarefas" onClick={() => navigate("operations" as AppRoute)} />
           <MenuRow icon={<Nfc size={21} />} title="Central NFC/RFID" subtitle={`${account.animals.filter((animal) => animal.electronicId).length} identificações · ${account.nfcReadCount} leituras reais`} onClick={() => navigate("nfc")} />
           <MenuRow icon={<Droplets size={21} />} title="Alertas de consumo de água" subtitle="Análises dependem dos seus registros" end={<Toggle checked={account.settings.waterAlerts} label="Alertas de água" onChange={(waterAlerts) => updateAccount((current) => ({ ...current, settings: { ...current.settings, waterAlerts } }))} />} />
         </div>
