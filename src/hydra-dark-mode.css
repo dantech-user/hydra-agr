@@ -1,193 +1,210 @@
-/* Hydra Agro — modo escuro mantendo o design original.
-   Escopado somente ao app autenticado (.phone-app), sem alterar splash/auth. */
-.phone-app {
-  --forest-950: #06110d;
-  --forest-900: #0a1a12;
-  --forest-800: #123523;
-  --forest-700: #1c5137;
-  --forest-100: #173324;
-  --sage: #78ad58;
-  --sage-soft: #173425;
-  --orange-soft: #3a2616;
-  --cream: #08150f;
-  --paper: #0d2017;
-  --ink: #eef3ee;
-  --muted: #94a39a;
-  --line: #203c2c;
-  --blue-soft: #122b30;
-  --blue: #67a9bc;
-  --danger: #e67e74;
-  --shadow: 0 18px 44px rgba(0, 0, 0, .22);
+/* Hydra Agro — modo escuro opcional mantendo o design original.
+   O modo claro continua usando apenas globals.css. */
+
+.global-theme-choice {
+  display: none;
+  position: fixed;
+  z-index: 95;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--nav-height, 84px) + 18px + env(safe-area-inset-bottom));
+  width: min(360px, calc(100% - 32px));
+  padding: 8px;
+  border: 1px solid #dfe4df;
+  border-radius: 16px;
+  background: rgba(255, 254, 251, .96);
+  box-shadow: 0 14px 34px rgba(17, 43, 32, .13);
+  backdrop-filter: blur(18px);
+  align-items: center;
+  gap: 6px;
+}
+
+.hydra-root:has(.profile-screen) .global-theme-choice { display: flex; }
+.global-theme-choice > span { margin: 0 5px 0 3px; color: #66726b; font-size: 11px; font-weight: 800; }
+.global-theme-choice button {
+  min-height: 36px;
+  flex: 1;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: #657168;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.global-theme-choice button.active { background: #e9f1ea; color: #174c36; }
+
+.hydra-root.theme-dark .global-theme-choice {
+  border-color: #283a30;
+  background: rgba(14, 24, 18, .96);
+  box-shadow: 0 16px 36px rgba(0,0,0,.34);
+}
+.hydra-root.theme-dark .global-theme-choice > span { color: #9aa69f; }
+.hydra-root.theme-dark .global-theme-choice button { color: #8f9a93; }
+.hydra-root.theme-dark .global-theme-choice button.active { background: #203d2b; color: #c4e0bf; }
+
+.hydra-root.theme-dark .phone-app {
+  --forest-950: #07110c;
+  --forest-900: #0b1710;
+  --forest-800: #173526;
+  --forest-700: #24543b;
+  --forest-100: #18281e;
+  --sage: #78a86e;
+  --sage-soft: #17271d;
+  --orange-soft: #332419;
+  --cream: #08120d;
+  --paper: #0f1b14;
+  --ink: #eef2ee;
+  --muted: #96a199;
+  --line: #26372c;
+  --blue-soft: #10242a;
+  --blue: #6aa7b8;
+  --danger: #e1847b;
+  --shadow: 0 16px 38px rgba(0, 0, 0, .26);
   color-scheme: dark;
-  background: #06110d;
+  background: #07110c;
   color: var(--ink);
 }
 
-.phone-app .app-content,
-.phone-app .screen,
-.phone-app .extra-screen {
-  background: #06110d !important;
+.hydra-root.theme-dark .phone-app .app-content,
+.hydra-root.theme-dark .phone-app .screen,
+.hydra-root.theme-dark .phone-app .extra-screen {
+  background: #07110c !important;
   color: var(--ink);
 }
 
-.phone-app .screen-header,
-.phone-app .section-header,
-.phone-app .profile-group,
-.phone-app .water-screen,
-.phone-app .herd-screen,
-.phone-app .monitor-screen,
-.phone-app .profile-screen {
+.hydra-root.theme-dark .phone-app .screen-header,
+.hydra-root.theme-dark .phone-app .section-header,
+.hydra-root.theme-dark .phone-app .profile-group,
+.hydra-root.theme-dark .phone-app .water-screen,
+.hydra-root.theme-dark .phone-app .herd-screen,
+.hydra-root.theme-dark .phone-app .monitor-screen,
+.hydra-root.theme-dark .phone-app .profile-screen {
   color: var(--ink);
 }
 
-/* Superfícies originais, apenas convertidas para verde escuro */
-.phone-app .home-card,
-.phone-app .summary-card,
-.phone-app .metric-card,
-.phone-app .animal-card,
-.phone-app .water-card,
-.phone-app .profile-menu-card,
-.phone-app .plan-card,
-.phone-app .empty-state,
-.phone-app .detail-grid > div,
-.phone-app .detail-line,
-.phone-app .detail-note,
-.phone-app .community-card,
-.phone-app .activity-card,
-.phone-app .monitor-card,
-.phone-app .property-card,
-.phone-app .notification-card,
-.phone-app .operations-panel,
-.phone-app .operations-summary > div,
-.phone-app .operations-actions button,
-.phone-app .operations-list article,
-.phone-app .guide-card,
-.phone-app .modal-card,
-.phone-app .sheet,
-.phone-app .dialog-card {
-  background: #0d2017 !important;
-  border-color: #203c2c !important;
+/* Superfícies: verde só como subtom, sem deixar tudo saturado. */
+.hydra-root.theme-dark .phone-app .home-card,
+.hydra-root.theme-dark .phone-app .summary-card,
+.hydra-root.theme-dark .phone-app .metric-card,
+.hydra-root.theme-dark .phone-app .animal-card,
+.hydra-root.theme-dark .phone-app .water-card,
+.hydra-root.theme-dark .phone-app .profile-menu-card,
+.hydra-root.theme-dark .phone-app .plan-card,
+.hydra-root.theme-dark .phone-app .empty-state,
+.hydra-root.theme-dark .phone-app .detail-grid > div,
+.hydra-root.theme-dark .phone-app .detail-line,
+.hydra-root.theme-dark .phone-app .detail-note,
+.hydra-root.theme-dark .phone-app .community-card,
+.hydra-root.theme-dark .phone-app .activity-card,
+.hydra-root.theme-dark .phone-app .monitor-card,
+.hydra-root.theme-dark .phone-app .property-card,
+.hydra-root.theme-dark .phone-app .notification-card,
+.hydra-root.theme-dark .phone-app .operations-panel,
+.hydra-root.theme-dark .phone-app .operations-summary > div,
+.hydra-root.theme-dark .phone-app .operations-actions button,
+.hydra-root.theme-dark .phone-app .operations-list article,
+.hydra-root.theme-dark .phone-app .guide-card,
+.hydra-root.theme-dark .phone-app .modal-card,
+.hydra-root.theme-dark .phone-app .sheet,
+.hydra-root.theme-dark .phone-app .dialog-card {
+  background: #0f1b14 !important;
+  border-color: #26372c !important;
   color: var(--ink) !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.14) !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.16) !important;
 }
 
-.phone-app .profile-menu-row,
-.phone-app .profile-menu-row strong,
-.phone-app .animal-card strong,
-.phone-app .water-card strong,
-.phone-app .operations-list strong,
-.phone-app h1,
-.phone-app h2,
-.phone-app h3 {
-  color: #f2f5f1;
+.hydra-root.theme-dark .phone-app .profile-menu-row,
+.hydra-root.theme-dark .phone-app .profile-menu-row strong,
+.hydra-root.theme-dark .phone-app .animal-card strong,
+.hydra-root.theme-dark .phone-app .water-card strong,
+.hydra-root.theme-dark .phone-app .operations-list strong,
+.hydra-root.theme-dark .phone-app h1,
+.hydra-root.theme-dark .phone-app h2,
+.hydra-root.theme-dark .phone-app h3 {
+  color: #f1f4f1;
 }
 
-.phone-app p,
-.phone-app small,
-.phone-app .subtle-label,
-.phone-app .profile-menu-row small,
-.phone-app .animal-card small,
-.phone-app .operations-list small {
-  color: var(--muted);
+.hydra-root.theme-dark .phone-app p,
+.hydra-root.theme-dark .phone-app small,
+.hydra-root.theme-dark .phone-app .subtle-label,
+.hydra-root.theme-dark .phone-app .profile-menu-row small,
+.hydra-root.theme-dark .phone-app .animal-card small,
+.hydra-root.theme-dark .phone-app .operations-list small {
+  color: #96a199;
 }
 
-.phone-app .icon-button,
-.phone-app .secondary-button,
-.phone-app .wide-outline-button,
-.phone-app .search-box,
-.phone-app .filter-button,
-.phone-app .nfc-manual-card,
-.phone-app .segmented-control,
-.phone-app .field input,
-.phone-app .field select,
-.phone-app .field textarea,
-.phone-app .operations-form input,
-.phone-app .operations-form select,
-.phone-app .operations-form textarea {
-  background: #10261a !important;
-  border-color: #294534 !important;
-  color: #edf3ee !important;
+.hydra-root.theme-dark .phone-app .icon-button,
+.hydra-root.theme-dark .phone-app .secondary-button,
+.hydra-root.theme-dark .phone-app .wide-outline-button,
+.hydra-root.theme-dark .phone-app .search-box,
+.hydra-root.theme-dark .phone-app .filter-button,
+.hydra-root.theme-dark .phone-app .nfc-manual-card,
+.hydra-root.theme-dark .phone-app .segmented-control,
+.hydra-root.theme-dark .phone-app .field input,
+.hydra-root.theme-dark .phone-app .field select,
+.hydra-root.theme-dark .phone-app .field textarea,
+.hydra-root.theme-dark .phone-app .operations-form input,
+.hydra-root.theme-dark .phone-app .operations-form select,
+.hydra-root.theme-dark .phone-app .operations-form textarea {
+  background: #142219 !important;
+  border-color: #2b3f32 !important;
+  color: #edf2ee !important;
 }
 
-.phone-app input::placeholder,
-.phone-app textarea::placeholder {
-  color: #74867a !important;
-}
+.hydra-root.theme-dark .phone-app input::placeholder,
+.hydra-root.theme-dark .phone-app textarea::placeholder { color: #718077 !important; }
+.hydra-root.theme-dark .phone-app .field > span,
+.hydra-root.theme-dark .phone-app .field small { color: #9da8a1; }
 
-.phone-app .field > span,
-.phone-app .field small {
-  color: #99aa9f;
-}
-
-.phone-app .primary-button,
-.phone-app .small-button {
-  background: #1f6145;
+.hydra-root.theme-dark .phone-app .primary-button,
+.hydra-root.theme-dark .phone-app .small-button {
+  background: #285d42;
   color: #fff;
+  box-shadow: 0 12px 28px -18px rgba(35, 92, 64, .95);
 }
+.hydra-root.theme-dark .phone-app .primary-button:hover,
+.hydra-root.theme-dark .phone-app .small-button:hover { background: #317151; }
+.hydra-root.theme-dark .phone-app .secondary-button { color: #bad0c0 !important; }
 
-.phone-app .primary-button:hover,
-.phone-app .small-button:hover {
-  background: #287456;
+.hydra-root.theme-dark .phone-app .bottom-nav {
+  background: rgba(8, 17, 12, .98) !important;
+  border-color: #23372b !important;
+  box-shadow: 0 -8px 28px rgba(0,0,0,.28) !important;
 }
+.hydra-root.theme-dark .phone-app .bottom-nav button { color: #7f8b84; }
+.hydra-root.theme-dark .phone-app .bottom-nav button.active { color: #8fbd80; }
+.hydra-root.theme-dark .phone-app .bottom-nav-indicator { background: #1b3626 !important; }
 
-.phone-app .secondary-button {
-  color: #b9d6bf !important;
+.hydra-root.theme-dark .phone-app .profile-hero { background-color: #102d20; }
+.hydra-root.theme-dark .phone-app .group-label,
+.hydra-root.theme-dark .phone-app .eyebrow { color: #89ad7e; }
+
+.hydra-root.theme-dark .phone-app .logout-button {
+  background: #261918 !important;
+  border-color: #4c302e !important;
+  color: #ee968d !important;
 }
-
-.phone-app .bottom-nav {
-  background: rgba(7, 22, 15, .97) !important;
-  border-color: #254332 !important;
-  box-shadow: 0 -8px 28px rgba(0,0,0,.22) !important;
+.hydra-root.theme-dark .phone-app .tag-badge,
+.hydra-root.theme-dark .phone-app .form-notice {
+  background: #1a3022 !important;
+  color: #a8c99e !important;
 }
+.hydra-root.theme-dark .phone-app .form-error { color: #f0958c; }
+.hydra-root.theme-dark .phone-app .modal-backdrop { background: rgba(0,0,0,.72) !important; }
 
-.phone-app .bottom-nav button {
-  color: #829289;
-}
+/* Água permanece azul; alertas continuam laranja/vermelho. */
+.hydra-root.theme-dark .phone-app .water-icon,
+.hydra-root.theme-dark .phone-app .metric-icon.water,
+.hydra-root.theme-dark .phone-app .droplet-icon { color: #6aa7b8; }
 
-.phone-app .bottom-nav button.active {
-  color: #91c66e;
-}
-
-.phone-app .bottom-nav-indicator {
-  background: #183d29 !important;
-}
-
-.phone-app .profile-hero {
-  background-color: #0c2d1e;
-}
-
-.phone-app .group-label,
-.phone-app .eyebrow {
-  color: #8fbe72;
-}
-
-.phone-app .logout-button {
-  background: #251918 !important;
-  border-color: #51302d !important;
-  color: #ef938a !important;
-}
-
-.phone-app .tag-badge,
-.phone-app .form-notice {
-  background: #173825 !important;
-  color: #9fce82 !important;
-}
-
-.phone-app .form-error {
-  color: #f18e84;
-}
-
-.phone-app .modal-backdrop {
-  background: rgba(0,0,0,.68) !important;
-}
-
-/* Mantém azul somente para água e laranja para alertas. */
-.phone-app .water-icon,
-.phone-app .metric-icon.water,
-.phone-app .droplet-icon {
-  color: #67a9bc;
+@media (max-width: 380px) {
+  .global-theme-choice > span { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phone-app * { transition-duration: .01ms !important; }
+  .hydra-root.theme-dark .phone-app * { transition-duration: .01ms !important; }
 }
