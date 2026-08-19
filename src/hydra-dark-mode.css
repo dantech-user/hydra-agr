@@ -1,0 +1,193 @@
+/* Hydra Agro — modo escuro mantendo o design original.
+   Escopado somente ao app autenticado (.phone-app), sem alterar splash/auth. */
+.phone-app {
+  --forest-950: #06110d;
+  --forest-900: #0a1a12;
+  --forest-800: #123523;
+  --forest-700: #1c5137;
+  --forest-100: #173324;
+  --sage: #78ad58;
+  --sage-soft: #173425;
+  --orange-soft: #3a2616;
+  --cream: #08150f;
+  --paper: #0d2017;
+  --ink: #eef3ee;
+  --muted: #94a39a;
+  --line: #203c2c;
+  --blue-soft: #122b30;
+  --blue: #67a9bc;
+  --danger: #e67e74;
+  --shadow: 0 18px 44px rgba(0, 0, 0, .22);
+  color-scheme: dark;
+  background: #06110d;
+  color: var(--ink);
+}
+
+.phone-app .app-content,
+.phone-app .screen,
+.phone-app .extra-screen {
+  background: #06110d !important;
+  color: var(--ink);
+}
+
+.phone-app .screen-header,
+.phone-app .section-header,
+.phone-app .profile-group,
+.phone-app .water-screen,
+.phone-app .herd-screen,
+.phone-app .monitor-screen,
+.phone-app .profile-screen {
+  color: var(--ink);
+}
+
+/* Superfícies originais, apenas convertidas para verde escuro */
+.phone-app .home-card,
+.phone-app .summary-card,
+.phone-app .metric-card,
+.phone-app .animal-card,
+.phone-app .water-card,
+.phone-app .profile-menu-card,
+.phone-app .plan-card,
+.phone-app .empty-state,
+.phone-app .detail-grid > div,
+.phone-app .detail-line,
+.phone-app .detail-note,
+.phone-app .community-card,
+.phone-app .activity-card,
+.phone-app .monitor-card,
+.phone-app .property-card,
+.phone-app .notification-card,
+.phone-app .operations-panel,
+.phone-app .operations-summary > div,
+.phone-app .operations-actions button,
+.phone-app .operations-list article,
+.phone-app .guide-card,
+.phone-app .modal-card,
+.phone-app .sheet,
+.phone-app .dialog-card {
+  background: #0d2017 !important;
+  border-color: #203c2c !important;
+  color: var(--ink) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.14) !important;
+}
+
+.phone-app .profile-menu-row,
+.phone-app .profile-menu-row strong,
+.phone-app .animal-card strong,
+.phone-app .water-card strong,
+.phone-app .operations-list strong,
+.phone-app h1,
+.phone-app h2,
+.phone-app h3 {
+  color: #f2f5f1;
+}
+
+.phone-app p,
+.phone-app small,
+.phone-app .subtle-label,
+.phone-app .profile-menu-row small,
+.phone-app .animal-card small,
+.phone-app .operations-list small {
+  color: var(--muted);
+}
+
+.phone-app .icon-button,
+.phone-app .secondary-button,
+.phone-app .wide-outline-button,
+.phone-app .search-box,
+.phone-app .filter-button,
+.phone-app .nfc-manual-card,
+.phone-app .segmented-control,
+.phone-app .field input,
+.phone-app .field select,
+.phone-app .field textarea,
+.phone-app .operations-form input,
+.phone-app .operations-form select,
+.phone-app .operations-form textarea {
+  background: #10261a !important;
+  border-color: #294534 !important;
+  color: #edf3ee !important;
+}
+
+.phone-app input::placeholder,
+.phone-app textarea::placeholder {
+  color: #74867a !important;
+}
+
+.phone-app .field > span,
+.phone-app .field small {
+  color: #99aa9f;
+}
+
+.phone-app .primary-button,
+.phone-app .small-button {
+  background: #1f6145;
+  color: #fff;
+}
+
+.phone-app .primary-button:hover,
+.phone-app .small-button:hover {
+  background: #287456;
+}
+
+.phone-app .secondary-button {
+  color: #b9d6bf !important;
+}
+
+.phone-app .bottom-nav {
+  background: rgba(7, 22, 15, .97) !important;
+  border-color: #254332 !important;
+  box-shadow: 0 -8px 28px rgba(0,0,0,.22) !important;
+}
+
+.phone-app .bottom-nav button {
+  color: #829289;
+}
+
+.phone-app .bottom-nav button.active {
+  color: #91c66e;
+}
+
+.phone-app .bottom-nav-indicator {
+  background: #183d29 !important;
+}
+
+.phone-app .profile-hero {
+  background-color: #0c2d1e;
+}
+
+.phone-app .group-label,
+.phone-app .eyebrow {
+  color: #8fbe72;
+}
+
+.phone-app .logout-button {
+  background: #251918 !important;
+  border-color: #51302d !important;
+  color: #ef938a !important;
+}
+
+.phone-app .tag-badge,
+.phone-app .form-notice {
+  background: #173825 !important;
+  color: #9fce82 !important;
+}
+
+.phone-app .form-error {
+  color: #f18e84;
+}
+
+.phone-app .modal-backdrop {
+  background: rgba(0,0,0,.68) !important;
+}
+
+/* Mantém azul somente para água e laranja para alertas. */
+.phone-app .water-icon,
+.phone-app .metric-icon.water,
+.phone-app .droplet-icon {
+  color: #67a9bc;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-app * { transition-duration: .01ms !important; }
+}
