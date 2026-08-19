@@ -1,0 +1,79 @@
+/* Correção visual: Assistente Hydra + Central Hoje.
+   Remove o aspecto cinza dessas duas telas sem alterar o restante do app. */
+
+.hydra-root.theme-light .assistant-screen,
+.hydra-root.theme-light .today-screen {
+  min-height: 100dvh;
+  background: var(--cream) !important;
+}
+
+/* Assistente Hydra — superfícies quentes/claras no tema claro. */
+.hydra-root.theme-light .assistant-conversation {
+  border-color: #dfe5dc !important;
+  background: var(--paper) !important;
+}
+
+.hydra-root.theme-light .assistant-conversation-head,
+.hydra-root.theme-light .assistant-composer,
+.hydra-root.theme-light .assistant-quick-grid button,
+.hydra-root.theme-light .assistant-bubble,
+.hydra-root.theme-light .assistant-data-strip span {
+  background: var(--paper) !important;
+}
+
+.hydra-root.theme-light .assistant-chat {
+  background: #fbfaf6 !important;
+}
+
+.hydra-root.theme-light .assistant-composer-field {
+  background: #fbfaf6 !important;
+}
+
+.hydra-root.theme-light .assistant-boundaries {
+  border-color: #dbe5da !important;
+  background: var(--sage-soft) !important;
+}
+
+.hydra-root.theme-light .assistant-section-title strong,
+.hydra-root.theme-light .assistant-message.assistant .assistant-bubble {
+  color: var(--ink) !important;
+}
+
+/* Central Hoje — usa as mesmas superfícies do Hydra Agro original. */
+.hydra-root.theme-light .today-hero,
+.hydra-root.theme-light .today-report-card,
+.hydra-root.theme-light .today-home-card {
+  border-color: #d8e3d8 !important;
+  background: var(--sage-soft) !important;
+}
+
+.hydra-root.theme-light .today-metrics article,
+.hydra-root.theme-light .today-sync-card,
+.hydra-root.theme-light .today-priority-list > button,
+.hydra-root.theme-light .today-activity-list {
+  border-color: #e2e5dd !important;
+  background: var(--paper) !important;
+}
+
+.hydra-root.theme-light .today-calm,
+.hydra-root.theme-light .today-empty {
+  border-color: #dbe6d9 !important;
+  background: #f2f7ed !important;
+}
+
+.hydra-root.theme-light .today-sync-card.offline {
+  border-color: #eadfc7 !important;
+  background: #fff9ed !important;
+}
+
+.hydra-root.theme-light .today-sync-card.error {
+  border-color: #ead4d0 !important;
+  background: #fff5f2 !important;
+}
+
+/* Tema escuro continua profundo, sem cair para cinza neutro. */
+.hydra-root.theme-dark .assistant-screen,
+.hydra-root.theme-dark .today-screen {
+  min-height: 100dvh;
+  background: #07110d !important;
+}
