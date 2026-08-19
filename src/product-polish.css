@@ -1,0 +1,158 @@
+/* Ajustes gerais para manter o Hydra Agro com aparência de produto funcional. */
+.phone-app .primary-button,
+.phone-app .secondary-button,
+.phone-app .preview-button,
+.phone-app .small-button,
+.phone-app .wide-outline-button,
+.phone-app .icon-button,
+.phone-app .home-fab-label {
+  box-shadow: none !important;
+}
+
+.phone-app .nfc-banner,
+.phone-app .assistant-home-card,
+.phone-app .property-hero,
+.phone-app .today-home-card,
+.phone-app .history-home-row,
+.phone-app .task-card,
+.phone-app .first-action-card,
+.phone-app .calm-state,
+.phone-app .feature-link-grid button,
+.phone-app .home-announcements article {
+  border-radius: 13px !important;
+  box-shadow: none !important;
+}
+
+.phone-app .property-hero {
+  background: #174c36 !important;
+}
+.phone-app .property-hero::after { display: none !important; }
+
+.phone-app .assistant-home-card {
+  border-color: #e0e4dd !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+.phone-app .assistant-home-card > span:first-child {
+  border-radius: 10px !important;
+  background: var(--sage-soft) !important;
+  color: var(--forest-700) !important;
+}
+.phone-app .assistant-home-card small:first-child {
+  color: #6b7a71 !important;
+  letter-spacing: .03em !important;
+  text-transform: none !important;
+}
+.phone-app .assistant-home-card em { color: #78837c !important; }
+
+.phone-app .today-home-card {
+  border-color: #e0e4dd !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+.phone-app .today-home-card > span {
+  border-radius: 9px !important;
+  background: var(--sage-soft) !important;
+  color: var(--forest-700) !important;
+}
+.phone-app .today-home-card > svg { color: #8b958f; }
+
+.history-home-row {
+  width: 100%;
+  min-height: 57px;
+  margin: -4px 0 12px;
+  padding: 9px 11px;
+  border: 1px solid #e0e4dd;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 9px;
+  align-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  text-align: left;
+}
+.history-home-row > span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #f1f2ed;
+  color: #5d6f64;
+}
+.history-home-row > div { min-width: 0; display: flex; flex-direction: column; }
+.history-home-row strong { font-size: 9.5px; }
+.history-home-row small { margin-top: 2px; color: #7c8780; font-size: 7.4px; }
+.history-home-row > svg { color: #949d97; }
+
+.phone-app .shortcut-row button > span,
+.phone-app .nfc-banner-icon,
+.phone-app .task-card-title > svg,
+.phone-app .first-action-card > span {
+  border-radius: 10px !important;
+}
+
+.phone-app .eyebrow,
+.phone-app .property-kicker,
+.phone-app [class*="-kicker"] {
+  letter-spacing: .06em !important;
+}
+
+.phone-app .section-heading h2,
+.phone-app .screen-heading h1 {
+  letter-spacing: -.015em !important;
+}
+
+.phone-app .feature-link-grid button {
+  background: var(--paper) !important;
+}
+.phone-app .feature-link-grid button > svg {
+  color: #557260 !important;
+}
+
+.phone-app .quick-grid > button,
+.phone-app .sector-board-row,
+.phone-app .monitoring-card {
+  box-shadow: none !important;
+}
+
+.today-history-link {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 2px;
+  border: 0;
+  border-top: 1px solid #e2e5df;
+  border-bottom: 1px solid #e2e5df;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: transparent;
+  color: #405c4a;
+  text-align: left;
+}
+.today-history-link > svg { flex: 0 0 auto; }
+.today-history-link > span { display: flex; flex-direction: column; }
+.today-history-link strong { font-size: 9px; }
+.today-history-link small { margin-top: 2px; color: #7d8881; font-size: 7.4px; }
+
+.hydra-root.theme-dark .phone-app .assistant-home-card,
+.hydra-root.theme-dark .phone-app .today-home-card,
+.hydra-root.theme-dark .history-home-row,
+.hydra-root.theme-dark .phone-app .feature-link-grid button {
+  border-color: #294235 !important;
+  background: #0e1d15 !important;
+  color: #eef3ef !important;
+}
+.hydra-root.theme-dark .phone-app .assistant-home-card > span:first-child,
+.hydra-root.theme-dark .phone-app .today-home-card > span,
+.hydra-root.theme-dark .history-home-row > span {
+  background: #173326 !important;
+  color: #9dc9a6 !important;
+}
+.hydra-root.theme-dark .history-home-row small,
+.hydra-root.theme-dark .today-history-link small { color: #91a098; }
+.hydra-root.theme-dark .today-history-link { border-color: #294235; color: #b3c7b8; }
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-app *, .phone-app *::before, .phone-app *::after { scroll-behavior: auto !important; }
+}
