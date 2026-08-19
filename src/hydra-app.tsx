@@ -22,6 +22,7 @@ const ChallengesScreen = lazy(() => import("./features/challenges/challenges-scr
 const PropertyScreen = lazy(() => import("./features/property/property-screen").then((module) => ({ default: module.PropertyScreen })));
 const ActivitiesScreen = lazy(() => import("./features/activities/activities-screen").then((module) => ({ default: module.ActivitiesScreen })));
 const OperationsScreen = lazy(() => import("./features/operations/operations-screen").then((module) => ({ default: module.OperationsScreen })));
+const HydraAssistantScreen = lazy(() => import("./features/assistant").then((module) => ({ default: module.HydraAssistantScreen })));
 const NfcScreen = lazy(() => import("./features/nfc/nfc-screen").then((module) => ({ default: module.NfcScreen })));
 const NotificationsScreen = lazy(() => import("./features/notifications/notifications-screen").then((module) => ({ default: module.NotificationsScreen })));
 const PlusScreen = lazy(() => import("./features/premium/plus-screen").then((module) => ({ default: module.PlusScreen })));
@@ -240,6 +241,7 @@ export default function HydraApp() {
       case "property": return <PropertyScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "activities": return <ActivitiesScreen account={account} updateAccount={store.updateAccount} onBack={goBack} createRequest={quickIntent?.kind === "activity" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "operations": return <OperationsScreen account={account} updateAccount={store.updateAccount} onBack={goBack} openNfc={() => openNfc()} />;
+      case "assistant": return <HydraAssistantScreen account={account} onBack={goBack} />;
       case "nfc": return <NfcScreen account={account} updateAccount={store.updateAccount} onBack={goBack} initialAnimalId={nfcAnimalId} onRealRead={store.registerNfcRead} onFound={(animal) => { setAnimalToOpen(animal.id); navigate("herd"); }} />;
       case "notifications": return <NotificationsScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "plus": return <PlusScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
