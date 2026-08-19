@@ -70,10 +70,10 @@ export function PublicAnimalScreen({ animal, onOpenApp }: { animal: PublicAnimal
         </header>
 
         <div className={`public-animal-hero ${photoUrl ? "has-photo" : ""}`}>
-          {photoUrl && <img className="public-animal-photo" src={photoUrl} alt={`Foto de ${animal.name || animal.identification}`} />}
-          <div className="public-animal-hero-shade" />
+          {photoUrl && <img className="public-animal-photo" src={photoUrl} alt={`Foto de ${animal.name || animal.identification}`} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }} />}
+          {photoUrl && <div className="public-animal-hero-shade" style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(180deg, rgba(5,24,16,.08) 15%, rgba(5,24,16,.28) 46%, rgba(5,24,16,.88) 100%)" }} />}
           {!photoUrl && <span className="public-animal-icon"><Cow size={42} /></span>}
-          <div className="public-animal-hero-copy">
+          <div className="public-animal-hero-copy" style={{ position: "relative", zIndex: 2 }}>
             <span className="public-animal-kicker"><BadgeCheck size={15} /> FICHA COMPARTILHADA</span>
             <h1>{animal.name || "Animal identificado"}</h1>
             <p>{animal.identification}</p>
