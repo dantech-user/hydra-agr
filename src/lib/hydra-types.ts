@@ -8,6 +8,7 @@ export type AppRoute =
   | "activities"
   | "operations"
   | "assistant"
+  | "today"
   | "nfc"
   | "notifications"
   | "plus"
