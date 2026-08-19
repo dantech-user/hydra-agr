@@ -11,6 +11,7 @@ import "@fontsource/sora/latin-800.css";
 import "./globals.css";
 import HydraApp from "./hydra-app";
 
+// Rebuild marker: classic Hydra Agro interface restored.
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HydraApp />
