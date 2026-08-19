@@ -6,6 +6,7 @@ export type AppRoute =
   | "challenges"
   | "property"
   | "activities"
+  | "operations"
   | "nfc"
   | "notifications"
   | "plus"
