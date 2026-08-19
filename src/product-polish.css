@@ -277,6 +277,67 @@
   background: transparent !important;
 }
 
+/* Arredondamento geral mais suave e consistente. */
+.phone-app .nfc-banner,
+.phone-app .property-hero,
+.phone-app .history-home-row,
+.phone-app .task-card,
+.phone-app .first-action-card,
+.phone-app .calm-state,
+.phone-app .feature-link-grid button,
+.phone-app .home-announcements article,
+.phone-app .monitoring-card,
+.phone-app .sector-board-row,
+.phone-app .animal-card,
+.phone-app .compact-row,
+.phone-app .profile-menu-card,
+.phone-app .assistant-hero,
+.phone-app .assistant-conversation,
+.phone-app .assistant-quick-grid,
+.phone-app .today-hero,
+.phone-app .today-sync-card,
+.phone-app .today-priority-list,
+.phone-app .today-activity-list,
+.phone-app .today-report-card,
+.phone-app .project-results-card {
+  border-radius: 20px !important;
+}
+
+.phone-app .primary-button,
+.phone-app .secondary-button,
+.phone-app .preview-button,
+.phone-app .small-button,
+.phone-app .wide-outline-button,
+.phone-app .home-fab-label,
+.phone-app .field input,
+.phone-app .field select,
+.phone-app .field textarea,
+.phone-app .search-box,
+.phone-app .filter-button,
+.phone-app .quick-grid > button,
+.phone-app .assistant-composer-field,
+.phone-app .assistant-composer > button {
+  border-radius: 16px !important;
+}
+
+.phone-app .icon-button,
+.phone-app .nfc-banner-icon,
+.phone-app .history-home-row > span,
+.phone-app .first-action-card > span,
+.phone-app .assistant-quick-icon,
+.phone-app .assistant-avatar,
+.phone-app .today-sync-card > span,
+.phone-app .today-report-card > span,
+.phone-app .today-priority-list > button > span,
+.phone-app .bottom-nav button span {
+  border-radius: 14px !important;
+}
+
+/* Atalhos principais continuam perfeitamente circulares. */
+.phone-app .shortcut-row button > span {
+  border-radius: 50% !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .phone-app *, .phone-app *::before, .phone-app *::after { scroll-behavior: auto !important; }
 }
