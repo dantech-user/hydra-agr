@@ -1,21 +1,62 @@
-import { ChevronRight, Copy, Nfc, QrCode, Radio, Share2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ChevronRight, Copy, Image as ImageIcon, LoaderCircle, Nfc, QrCode, Radio, Share2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Modal } from "../../components/ui";
 import { showAppToast } from "../../components/modal-system";
 import type { Animal } from "../../lib/hydra-types";
+import { uploadPublicImage } from "../../services/media-service";
 import { isWebNfcSupported, writeWebNfcUrl } from "../../services/nfc-service";
+import { requireSupabase } from "../../services/supabase";
 import { buildPublicAnimalUrl } from "./public-animal-card";
 
 export function AnimalPublicShare({ animal }: { animal: Animal }) {
   const [open, setOpen] = useState(false);
   const [writing, setWriting] = useState(false);
-  const publicUrl = useMemo(() => buildPublicAnimalUrl(animal), [animal]);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [publicPhotoPath, setPublicPhotoPath] = useState<string>();
+  const publicUrl = useMemo(() => buildPublicAnimalUrl(animal, publicPhotoPath), [animal, publicPhotoPath]);
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(publicUrl)}`;
   const canWriteWebNfc = isWebNfcSupported();
 
+  async function preparePublicPhoto() {
+    if (publicPhotoPath) return publicPhotoPath;
+    if (!animal.photoUrl) return undefined;
+
+    setPhotoBusy(true);
+    try {
+      const client = requireSupabase();
+      const { data, error } = await client.auth.getUser();
+      if (error || !data.user) throw error ?? new Error("Sessão não encontrada.");
+
+      const response = await fetch(animal.photoUrl);
+      if (!response.ok) throw new Error("Não foi possível preparar a foto do animal.");
+      const blob = await response.blob();
+      const type = blob.type || "image/jpeg";
+      const file = new File([blob], `animal-${animal.id}.jpg`, { type });
+      const path = await uploadPublicImage("community-media", data.user.id, file, `public-animal-${animal.id}`);
+      setPublicPhotoPath(path);
+      return path;
+    } catch (caught) {
+      showAppToast(caught instanceof Error ? caught.message : "Não foi possível incluir a foto na ficha pública.", "error");
+      return undefined;
+    } finally {
+      setPhotoBusy(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!open || !animal.photoUrl || publicPhotoPath) return;
+    void preparePublicPhoto();
+  }, [open, animal.photoUrl, publicPhotoPath]);
+
+  async function currentPublicUrl() {
+    const photoPath = await preparePublicPhoto();
+    return buildPublicAnimalUrl(animal, photoPath);
+  }
+
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(publicUrl);
+      const url = await currentPublicUrl();
+      await navigator.clipboard.writeText(url);
       showAppToast("Link público copiado");
     } catch {
       showAppToast("Não foi possível copiar o link.", "error");
@@ -23,12 +64,18 @@ export function AnimalPublicShare({ animal }: { animal: Animal }) {
   }
 
   async function shareLink() {
+    const url = await currentPublicUrl();
     if (!navigator.share) {
-      await copyLink();
+      try {
+        await navigator.clipboard.writeText(url);
+        showAppToast("Link público copiado");
+      } catch {
+        showAppToast("Não foi possível copiar o link.", "error");
+      }
       return;
     }
     try {
-      await navigator.share({ title: `${animal.name || animal.identification} · Hydra Agro`, text: "Ficha pública do animal no Hydra Agro", url: publicUrl });
+      await navigator.share({ title: `${animal.name || animal.identification} · Hydra Agro`, text: "Ficha pública do animal no Hydra Agro", url });
     } catch {
       // Cancelar o compartilhamento não precisa gerar erro.
     }
@@ -37,7 +84,8 @@ export function AnimalPublicShare({ animal }: { animal: Animal }) {
   async function writeTag() {
     setWriting(true);
     try {
-      await writeWebNfcUrl(publicUrl);
+      const url = await currentPublicUrl();
+      await writeWebNfcUrl(url);
       showAppToast("Link público gravado na etiqueta NFC");
     } catch (caught) {
       showAppToast(caught instanceof Error ? caught.message : "Não foi possível gravar a etiqueta.", "error");
@@ -54,17 +102,19 @@ export function AnimalPublicShare({ animal }: { animal: Animal }) {
         <ChevronRight size={18} />
       </button>
 
-      <Modal open={open} onClose={() => setOpen(false)} eyebrow="DEMONSTRAÇÃO" title="NFC e QR público" wide dismissible={!writing}>
+      <Modal open={open} onClose={() => setOpen(false)} eyebrow="DEMONSTRAÇÃO" title="NFC e QR público" wide dismissible={!writing && !photoBusy}>
         <div className="public-share-modal">
-          <p className="public-share-intro">Este link contém somente uma cópia dos dados básicos mostrados abaixo. Informações privadas da conta e da propriedade não entram no link.</p>
+          <p className="public-share-intro">Este link contém somente uma cópia dos dados básicos mostrados abaixo. Se houver foto, uma cópia dela também é publicada para aparecer na ficha. Informações privadas da conta e da propriedade não entram no link.</p>
+
+          {animal.photoUrl && <div className={`public-share-photo-status ${publicPhotoPath ? "ready" : ""}`}>{photoBusy ? <LoaderCircle size={18} className="spin" /> : <ImageIcon size={18} />}<span><strong>{publicPhotoPath ? "Foto incluída" : "Preparando foto"}</strong><small>{publicPhotoPath ? "Ela aparecerá ao abrir o NFC ou QR." : "Criando uma cópia pública somente desta imagem."}</small></span></div>}
 
           <div className="public-share-qr-wrap"><img src={qrUrl} alt={`QR Code da ficha pública de ${animal.name || animal.identification}`} /></div>
           <div className="public-share-link">{publicUrl}</div>
 
           <div className="public-share-actions">
-            <button className="secondary-button" onClick={() => void copyLink()}><Copy size={17} /> Copiar link</button>
-            <button className="secondary-button" onClick={() => void shareLink()}><Share2 size={17} /> Compartilhar</button>
-            {canWriteWebNfc && <button className="primary-button full" onClick={() => void writeTag()} disabled={writing}><Radio size={17} /> {writing ? "Aproxime a etiqueta…" : "Gravar link na etiqueta NFC"}</button>}
+            <button className="secondary-button" onClick={() => void copyLink()} disabled={photoBusy}><Copy size={17} /> Copiar link</button>
+            <button className="secondary-button" onClick={() => void shareLink()} disabled={photoBusy}><Share2 size={17} /> Compartilhar</button>
+            {canWriteWebNfc && <button className="primary-button full" onClick={() => void writeTag()} disabled={writing || photoBusy}><Radio size={17} /> {writing ? "Aproxime a etiqueta…" : "Gravar link na etiqueta NFC"}</button>}
           </div>
 
           <p className="public-share-note"><Nfc size={15} /> No iPhone, a etiqueta deve estar gravada como URL. Ao aproximar o aparelho, o sistema mostra a notificação e abre esta ficha no navegador. Para gravar pelo próprio site, use Android com Chrome e Web NFC compatível.</p>
