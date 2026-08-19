@@ -25,7 +25,12 @@
 .phone-app .property-hero {
   background: #174c36 !important;
 }
+.phone-app .property-hero::before,
 .phone-app .property-hero::after { display: none !important; }
+
+/* Sem faixas decorativas de estatísticas na Home. */
+.phone-app .property-metrics { display: none !important; }
+.phone-app .property-hero-top { padding-bottom: 20px !important; }
 
 .phone-app .today-home-card {
   border-color: #e0e4dd !important;
@@ -125,10 +130,18 @@
   place-items: center !important;
 }
 
+/* Remove tracinhos/linhas decorativas de cabeçalhos. */
+.phone-app .screen-header::after,
+.phone-app .section-heading h2::after {
+  display: none !important;
+  content: none !important;
+}
+
 .phone-app .eyebrow,
 .phone-app .property-kicker,
 .phone-app [class*="-kicker"] {
-  letter-spacing: .06em !important;
+  letter-spacing: .04em !important;
+  text-transform: none !important;
 }
 
 .phone-app .section-heading h2,
@@ -147,6 +160,42 @@
 .phone-app .sector-board-row,
 .phone-app .monitoring-card {
   box-shadow: none !important;
+}
+
+/* Badges só como texto de estado, sem pílulas chamativas. */
+.phone-app .status-pill,
+.phone-app .offline-pill,
+.phone-app .tag-badge,
+.phone-app .demo-menu-badge,
+.phone-app .plus-badges em {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  text-transform: none !important;
+  letter-spacing: .01em !important;
+  box-shadow: none !important;
+}
+.phone-app .preview-badge { display: none !important; }
+
+/* Quotes sem aspas gigantes ou elementos cenográficos. */
+.phone-app blockquote,
+.phone-app [class*="quote"] {
+  quotes: none !important;
+}
+.phone-app blockquote::before,
+.phone-app blockquote::after,
+.phone-app [class*="quote"]::before,
+.phone-app [class*="quote"]::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Faixas de métricas viram conteúdo simples ou deixam de aparecer quando redundantes. */
+.phone-app .assistant-hero-metrics,
+.phone-app .assistant-data-strip,
+.phone-app .today-metrics {
+  display: none !important;
 }
 
 .today-history-link {
@@ -168,6 +217,23 @@
 .today-history-link strong { font-size: 9px; }
 .today-history-link small { margin-top: 2px; color: #7d8881; font-size: 7.4px; }
 
+/* Resultados científicos continuam visíveis, mas sem mini-cards e selos. */
+.phone-app .project-results-metrics {
+  gap: 0 !important;
+  border-top: 1px solid #e2e7e0;
+  border-bottom: 1px solid #e2e7e0;
+}
+.phone-app .project-results-metrics > div {
+  min-height: 58px !important;
+  padding: 8px !important;
+  border: 0 !important;
+  border-right: 1px solid #e2e7e0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+.phone-app .project-results-metrics > div:last-child { border-right: 0 !important; }
+.phone-app .project-results-metrics > div > span { display: none !important; }
+
 .hydra-root.theme-dark .phone-app .today-home-card,
 .hydra-root.theme-dark .history-home-row,
 .hydra-root.theme-dark .phone-app .feature-link-grid button {
@@ -184,6 +250,13 @@
 .hydra-root.theme-dark .history-home-row small,
 .hydra-root.theme-dark .today-history-link small { color: #91a098; }
 .hydra-root.theme-dark .today-history-link { border-color: #294235; color: #b3c7b8; }
+.hydra-root.theme-dark .phone-app .project-results-metrics {
+  border-color: #294235 !important;
+}
+.hydra-root.theme-dark .phone-app .project-results-metrics > div {
+  border-color: #294235 !important;
+  background: transparent !important;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .phone-app *, .phone-app *::before, .phone-app *::after { scroll-behavior: auto !important; }
