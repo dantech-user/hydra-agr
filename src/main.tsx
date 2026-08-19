@@ -14,6 +14,7 @@ import "./globals.css";
 import "./hydra-dark-mode.css";
 import "./hydra-dark-polish.css";
 import "./notifications-theme.css";
+import "./bottom-nav-community.css";
 import HydraApp from "./hydra-app";
 
 type ThemeMode = "light" | "dark";
