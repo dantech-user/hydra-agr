@@ -26,7 +26,7 @@ import "./globals.css";
 import "./hydra-dark-mode.css";
 import "./hydra-dark-polish.css";
 import "./notifications-theme.css";
-import "./herd-nav-highlight.css";
+import "./herd-highlight.css";
 import "./demo-mode.css";
 import HydraApp from "./hydra-app";
 import { supabase } from "./services/supabase";
