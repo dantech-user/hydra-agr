@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
-import { ClipboardCheck, Beef as Cow, Droplets, Home, MapPin, Nfc, Plus, RadioTower, Send, UserRound, UsersRound, X } from "lucide-react";
+import { ClipboardCheck, Beef as Cow, Droplets, Home, MapPin, Nfc, Plus, Send, UserRound, UsersRound, X } from "lucide-react";
 import { SplashBrand } from "./components/brand";
 import { requestCloseTopOverlay, useAppOverlay, useModalNavigation } from "./components/modal-system";
 import { BackendSetupScreen, BannedScreen, PasswordRecoveryScreen, SyncBanner } from "./components/system-state";
@@ -31,7 +31,6 @@ const mainTabs: { id: AppRoute; label: string; icon: typeof Home }[] = [
   { id: "water", label: "Água", icon: Droplets },
   { id: "herd", label: "Rebanho", icon: Cow },
   { id: "community", label: "Comunidade", icon: UsersRound },
-  { id: "monitor", label: "Monitorar", icon: RadioTower },
   { id: "profile", label: "Perfil", icon: UserRound },
 ];
 
@@ -224,7 +223,7 @@ export default function HydraApp() {
 
   const activeTab: AppRoute = mainRouteIds.includes(route)
     ? route
-    : route === "property" || route === "plus" || route === "admin" || route === "operations" ? "profile"
+    : route === "monitor" || route === "property" || route === "plus" || route === "admin" || route === "operations" ? "profile"
     : route === "nfc" ? "herd"
     : "home";
   const activeIndex = mainTabs.findIndex((tab) => tab.id === activeTab);
@@ -236,7 +235,7 @@ export default function HydraApp() {
         <SyncBanner status={store.syncStatus} error={store.lastError} retry={store.retrySync} />
         <div key={route} className={`app-content route-motion-${routeMotion}`}><Suspense fallback={<div className="route-loading"><span /><small>Carregando módulo…</small></div>}>{mainContent()}</Suspense></div>
 
-        <nav className={`bottom-nav bottom-nav-six ${modalNavigationOpen ? "is-hidden" : ""}`} aria-label="Navegação principal" aria-hidden={modalNavigationOpen} style={navStyle}>
+        <nav className={`bottom-nav ${modalNavigationOpen ? "is-hidden" : ""}`} aria-label="Navegação principal" aria-hidden={modalNavigationOpen} style={navStyle}>
           <span className="bottom-nav-indicator" aria-hidden="true" />
           {mainTabs.map((tab) => {
             const Icon = tab.icon;
