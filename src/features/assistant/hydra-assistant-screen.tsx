@@ -1,5 +1,5 @@
-import { Beef as Cow, Bot, ClipboardCheck, Droplets, LoaderCircle, RadioTower, Send, ShieldCheck, Sparkles } from "lucide-react";
-import { useMemo, useState, type FormEvent } from "react";
+import { Beef as Cow, Bot, CheckCircle2, ChevronRight, ClipboardCheck, Database, Droplets, LoaderCircle, RadioTower, Send, ShieldCheck, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { ScreenHeader } from "../../components/ui";
 import type { HydraAccount } from "../../lib/hydra-types";
 import { supabase } from "../../services/supabase";
@@ -56,10 +56,10 @@ type AssistantContext = {
 };
 
 const quickQuestions = [
-  { label: "O que precisa de atenção hoje?", icon: Sparkles },
-  { label: "Analise meu rebanho", icon: Cow },
-  { label: "Como está a água?", icon: Droplets },
-  { label: "Quais atividades estão pendentes?", icon: ClipboardCheck },
+  { label: "O que precisa de atenção hoje?", icon: Sparkles, caption: "Prioridades do dia" },
+  { label: "Analise meu rebanho", icon: Cow, caption: "Pesos e identificação" },
+  { label: "Como está a água?", icon: Droplets, caption: "Últimos 30 dias" },
+  { label: "Quais atividades estão pendentes?", icon: ClipboardCheck, caption: "Tarefas e atrasos" },
 ];
 
 function dateOnly(value: string) {
@@ -181,14 +181,20 @@ export function HydraAssistantScreen({ account, onBack }: Props) {
   const context = useMemo(() => contextFromAccount(account), [account]);
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const firstName = account.profile.name.split(/\s+/)[0] || "Produtor";
   const [messages, setMessages] = useState<AssistantMessage[]>([
     {
       id: "welcome",
       role: "assistant",
-      text: `Posso analisar os dados cadastrados de ${account.property.name || "sua propriedade"} e ajudar a definir prioridades. O que você quer verificar?`,
+      text: `Olá, ${firstName}. Já organizei uma visão dos registros de ${account.property.name || "sua propriedade"}. Posso cruzar rebanho, água, atividades e monitoramentos para ajudar você a enxergar prioridades.`,
       mode: "local",
     },
   ]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [messages, busy]);
 
   async function ask(value: string) {
     const text = value.trim().slice(0, 600);
@@ -232,46 +238,77 @@ export function HydraAssistantScreen({ account, onBack }: Props) {
 
   return (
     <div className="screen page-enter assistant-screen">
-      <ScreenHeader eyebrow="GESTÃO INTELIGENTE" title="Assistente Hydra" subtitle="Sugestões baseadas nos dados da propriedade." onBack={onBack} />
+      <ScreenHeader eyebrow="GESTÃO INTELIGENTE" title="Assistente Hydra" subtitle="Análises baseadas nos registros da propriedade." onBack={onBack} />
 
-      <section className="assistant-overview">
-        <span className="assistant-overview-icon"><Sparkles size={25} /></span>
-        <div><strong>Visão rápida da propriedade</strong><small>{context.herd.total} animais · {context.activities.pending} tarefas pendentes · {context.water.records30Days} registros de água em 30 dias</small></div>
-        <span className="assistant-live-dot">DADOS REAIS</span>
+      <section className="assistant-hero">
+        <div className="assistant-hero-top">
+          <span className="assistant-hero-mark"><Sparkles size={26} /></span>
+          <div className="assistant-hero-copy">
+            <span className="assistant-hero-kicker"><CheckCircle2 size={13} /> DADOS CONECTADOS</span>
+            <h2>Uma visão mais clara da sua propriedade.</h2>
+            <p>O Hydra cruza seus registros para encontrar pendências, padrões e próximos passos.</p>
+          </div>
+        </div>
+        <div className="assistant-hero-metrics">
+          <div><Cow size={17} /><span><strong>{context.herd.total}</strong><small>animais</small></span></div>
+          <div><ClipboardCheck size={17} /><span><strong>{context.activities.pending}</strong><small>pendências</small></span></div>
+          <div><Droplets size={17} /><span><strong>{context.water.records30Days}</strong><small>leituras 30d</small></span></div>
+          <div><RadioTower size={17} /><span><strong>{context.monitoring.last30Days}</strong><small>monitoramentos</small></span></div>
+        </div>
       </section>
 
-      <div className="assistant-quick-grid">
-        {quickQuestions.map(({ label, icon: Icon }) => <button key={label} onClick={() => void ask(label)} disabled={busy}><Icon size={17} /><span>{label}</span></button>)}
-      </div>
-
-      <section className="assistant-chat" aria-live="polite">
-        {messages.map((message) => (
-          <article key={message.id} className={`assistant-message ${message.role}`}>
-            {message.role === "assistant" && <span className="assistant-avatar"><Bot size={17} /></span>}
-            <div>
-              <p>{message.text}</p>
-              {message.role === "assistant" && <small>{message.mode === "ai" ? "IA Hydra · análise contextual" : "Análise local · dados do aparelho"}</small>}
-            </div>
-          </article>
-        ))}
-        {busy && <article className="assistant-message assistant"><span className="assistant-avatar"><LoaderCircle size={17} className="spin" /></span><div><p>Analisando os registros da propriedade…</p></div></article>}
+      <section className="assistant-section-block">
+        <div className="assistant-section-title"><div><span>PERGUNTAS RÁPIDAS</span><strong>Por onde quer começar?</strong></div><Sparkles size={18} /></div>
+        <div className="assistant-quick-grid">
+          {quickQuestions.map(({ label, icon: Icon, caption }) => (
+            <button key={label} onClick={() => void ask(label)} disabled={busy}>
+              <span className="assistant-quick-icon"><Icon size={18} /></span>
+              <span className="assistant-quick-copy"><strong>{label}</strong><small>{caption}</small></span>
+              <ChevronRight size={16} />
+            </button>
+          ))}
+        </div>
       </section>
 
-      <form className="assistant-composer" onSubmit={submit}>
-        <textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Pergunte sobre rebanho, água, atividades ou monitoramento…" maxLength={600} rows={2} />
-        <button type="submit" disabled={busy || !question.trim()} aria-label="Enviar pergunta"><Send size={19} /></button>
-      </form>
+      <section className="assistant-conversation">
+        <header className="assistant-conversation-head">
+          <div><span className="assistant-online-dot" /><span><strong>Hydra</strong><small>Assistente da propriedade</small></span></div>
+          <span className="assistant-context-badge"><Database size={13} /> contexto ativo</span>
+        </header>
 
-      <div className="assistant-boundaries">
-        <ShieldCheck size={17} />
-        <p><strong>Assistente de gestão</strong><small>Ele usa os registros do Hydra Agro para organização e priorização. Não substitui veterinário, agrônomo ou outro profissional e não fornece diagnóstico, medicação ou dosagem.</small></p>
-      </div>
+        <div className="assistant-chat" aria-live="polite">
+          {messages.map((message) => (
+            <article key={message.id} className={`assistant-message ${message.role}`}>
+              {message.role === "assistant" && <span className="assistant-avatar"><Bot size={17} /></span>}
+              <div className="assistant-bubble">
+                <p>{message.text}</p>
+                {message.role === "assistant" && <small>{message.mode === "ai" ? "IA Hydra · análise contextual" : "Hydra · análise dos registros"}</small>}
+              </div>
+            </article>
+          ))}
+          {busy && <article className="assistant-message assistant"><span className="assistant-avatar is-thinking"><LoaderCircle size={17} className="spin" /></span><div className="assistant-bubble assistant-thinking"><span /><span /><span /></div></article>}
+          <div ref={chatEndRef} />
+        </div>
+
+        <form className="assistant-composer" onSubmit={submit}>
+          <div className="assistant-composer-field">
+            <textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Pergunte qualquer coisa sobre a propriedade…" maxLength={600} rows={2} />
+            <small>{question.length}/600</small>
+          </div>
+          <button type="submit" disabled={busy || !question.trim()} aria-label="Enviar pergunta"><Send size={19} /></button>
+        </form>
+      </section>
 
       <div className="assistant-data-strip">
-        <span><Cow size={15} /> {context.herd.identified}/{context.herd.total} NFC</span>
+        <span><Cow size={15} /> {context.herd.identified}/{context.herd.total} com NFC</span>
         <span><Droplets size={15} /> {context.water.amount30Days.toLocaleString("pt-BR")} L / 30d</span>
-        <span><ClipboardCheck size={15} /> {context.activities.pending} pendentes</span>
-        <span><RadioTower size={15} /> {context.monitoring.last30Days} monitoramentos</span>
+        <span><ClipboardCheck size={15} /> {context.activities.overdue} atrasadas</span>
+        <span><RadioTower size={15} /> {context.monitoring.withOccurrence} ocorrências</span>
+      </div>
+
+      <div className="assistant-boundaries">
+        <ShieldCheck size={18} />
+        <p><strong>Assistente de gestão, com limites claros</strong><small>Usa os registros do Hydra Agro para organização e priorização. Não substitui veterinário, agrônomo ou outro profissional e não fornece diagnóstico, medicação ou dosagem.</small></p>
       </div>
     </div>
   );
