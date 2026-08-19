@@ -3,6 +3,7 @@ import { BadgeCheck, Camera, ChevronRight, Beef as Cow, Filter, History, LoaderC
 import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader } from "../../components/ui";
 import { showAppToast } from "../../components/modal-system";
 import { makeId, type Animal, type AnimalHistoryEntry, type HydraAccount, type UpdateAccount } from "../../lib/hydra-types";
+import { AnimalPublicShare } from "./animal-public-share";
 import { HerdCareGuide } from "./herd-care-guide";
 
 type Props = {
@@ -237,6 +238,7 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
           {selected.weight && <div className="detail-line"><Weight size={19} /><div><span>Último peso informado</span><strong>{selected.weight} kg</strong></div></div>}
           {selected.notes && <div className="detail-note">{selected.notes}</div>}
 
+          <AnimalPublicShare animal={selected} />
           <WeightEvolution animal={selected} onAdd={() => openWeight(selected)} />
 
           {(selected.history?.length ?? 0) > 0 && <div className="animal-history animal-timeline"><h3><History size={17} /> Linha do tempo</h3>{selected.history!.slice().reverse().map((entry) => <div key={entry.id} className={entry.weight ? "is-weight" : ""}><span /><p><strong>{entry.type}</strong>{entry.description}{entry.weight && <b>{entry.weight} kg</b>}<small>{new Date(entry.date).toLocaleString("pt-BR")}</small></p></div>)}</div>}
