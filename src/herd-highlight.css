@@ -139,6 +139,68 @@
   background: #edf3e9 !important;
 }
 
+/* Espaçamento vertical: separa blocos sem deixar a interface vazia. */
+.home-screen .property-hero + .home-summary-section {
+  margin-top: 22px !important;
+}
+
+.home-screen .home-summary-section {
+  display: grid;
+  gap: 14px;
+}
+
+.home-screen .home-summary-section > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.home-screen .home-summary-section + .home-section {
+  margin-top: 32px !important;
+}
+
+.home-screen .feature-link-grid {
+  gap: 14px !important;
+}
+
+.home-screen .home-fab-label {
+  margin-top: 24px !important;
+}
+
+/* Rebanho: busca, filtros e ações deixam de parecer um bloco único. */
+.screen > .search-row {
+  margin-bottom: 14px;
+}
+
+.screen > .search-row + .filter-chips {
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+}
+
+.screen > .search-row + .nfc-inline-card {
+  margin-top: 18px !important;
+}
+
+.screen > .filter-chips + .nfc-inline-card {
+  margin-top: 0 !important;
+}
+
+.screen > .nfc-inline-card {
+  margin-bottom: 14px !important;
+}
+
+.screen > .herd-care-launch {
+  margin-bottom: 14px !important;
+}
+
+.screen > .herd-care-launch + .animal-list,
+.screen > .nfc-inline-card + .animal-list {
+  margin-top: 0 !important;
+}
+
+.screen > .animal-list {
+  gap: 12px !important;
+}
+
 .hydra-root.theme-dark .sector-board {
   border-color: #294235;
   background: #0e1d15;
