@@ -46,6 +46,18 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
   const waterAttention = account.waterSources.filter((source) => source.status !== "ativa").length;
   const animalsWithoutNfc = account.animals.filter((animal) => !animal.electronicId).length;
   const propertyReady = Boolean(account.property.municipality && account.property.mainActivity);
+  const centralNotes = [
+    pendingActivities.length > 0
+      ? `${pendingActivities.length} ${pendingActivities.length === 1 ? "atividade pendente" : "atividades pendentes"}`
+      : null,
+    waterAttention > 0
+      ? `${waterAttention} ${waterAttention === 1 ? "fonte de água em atenção" : "fontes de água em atenção"}`
+      : null,
+    animalsWithoutNfc > 0
+      ? `${animalsWithoutNfc} ${animalsWithoutNfc === 1 ? "animal sem NFC" : "animais sem NFC"}`
+      : null,
+  ].filter(Boolean) as string[];
+  const centralSummary = centralNotes.length > 0 ? centralNotes.join(" · ") : "Sem pendências principais";
 
   const pendingSetup = [
     account.waterRecords.length === 0 && { label: "Registrar a primeira leitura de água", icon: <Droplets size={21} />, route: "water" as AppRoute },
@@ -80,9 +92,8 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
         <button className="property-link" onClick={() => navigate("property")}>Ver ficha <ChevronRight size={18} /></button>
       </section>
 
-      <section className="home-section">
-        <SectionHeader title="Resumo" action={<button className="text-button" onClick={() => navigate("notifications")}>Alertas</button>} />
-        <button className="today-home-card" onClick={() => navigate("today")}><span><LayoutDashboard size={20} /></span><div><strong>Central Hoje</strong><small>{pendingActivities.length} atividades pendentes · {waterAttention} fontes em atenção · {animalsWithoutNfc} animais sem NFC</small></div><ChevronRight size={18} /></button>
+      <section className="home-section home-summary-section">
+        <button className={`today-home-card home-status-row ${centralNotes.length > 0 ? "has-attention" : "is-clear"}`} onClick={() => navigate("today")}><span><LayoutDashboard size={19} /></span><div><strong>Central Hoje</strong><small>{centralSummary}</small></div><ChevronRight size={18} /></button>
         <button className="history-home-row" onClick={() => navigate("history")}><span><History size={19} /></span><div><strong>Histórico da propriedade</strong><small>Água, atividades, rebanho e monitoramentos</small></div><ChevronRight size={18} /></button>
 
         {!propertyReady && <button className="first-action-card" onClick={() => navigate("property")}><span><Plus size={24} /></span><div><strong>Complete a ficha da propriedade</strong><p>Localização, área e atividade principal.</p></div><ChevronRight size={21} /></button>}
