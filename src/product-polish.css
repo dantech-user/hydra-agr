@@ -27,29 +27,6 @@
 }
 .phone-app .property-hero::after { display: none !important; }
 
-.home-compact-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin: -3px 0 12px;
-}
-
-.assistant-home-button {
-  min-height: 34px;
-  padding: 0 10px;
-  border: 1px solid #dfe4dd;
-  border-radius: 9px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--paper);
-  color: #405d4b;
-  font-size: 9px;
-  font-weight: 760;
-  cursor: pointer;
-}
-.assistant-home-button svg { color: var(--forest-700); }
-.assistant-home-button:active { transform: scale(.97); }
-
 .phone-app .today-home-card {
   border-color: #e0e4dd !important;
   background: var(--paper) !important;
@@ -62,10 +39,52 @@
 }
 .phone-app .today-home-card > svg { color: #8b958f; }
 
+.home-summary-section {
+  margin-top: 14px !important;
+}
+
+.phone-app .home-status-row {
+  width: 100%;
+  min-height: 58px;
+  margin: 0 0 8px;
+  padding: 9px 10px;
+  grid-template-columns: 34px 1fr auto;
+  gap: 9px;
+  border-radius: 12px !important;
+  text-align: left;
+}
+.phone-app .home-status-row > span {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 9px !important;
+}
+.phone-app .home-status-row > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.phone-app .home-status-row strong {
+  font-size: 9.6px;
+  line-height: 1.2;
+}
+.phone-app .home-status-row small {
+  margin-top: 2px;
+  color: #78847c;
+  font-size: 7.5px;
+  line-height: 1.35;
+}
+.phone-app .home-status-row.has-attention small {
+  color: #6e746d;
+}
+.phone-app .home-status-row.is-clear > span {
+  background: #eef3e9 !important;
+  color: #467258 !important;
+}
+
 .history-home-row {
   width: 100%;
   min-height: 57px;
-  margin: -4px 0 12px;
+  margin: 0 0 12px;
   padding: 9px 11px;
   border: 1px solid #e0e4dd;
   display: grid;
@@ -149,7 +168,6 @@
 .today-history-link strong { font-size: 9px; }
 .today-history-link small { margin-top: 2px; color: #7d8881; font-size: 7.4px; }
 
-.hydra-root.theme-dark .assistant-home-button,
 .hydra-root.theme-dark .phone-app .today-home-card,
 .hydra-root.theme-dark .history-home-row,
 .hydra-root.theme-dark .phone-app .feature-link-grid button {
@@ -157,12 +175,12 @@
   background: #0e1d15 !important;
   color: #eef3ef !important;
 }
-.hydra-root.theme-dark .assistant-home-button svg { color: #9dc9a6; }
 .hydra-root.theme-dark .phone-app .today-home-card > span,
 .hydra-root.theme-dark .history-home-row > span {
   background: #173326 !important;
   color: #9dc9a6 !important;
 }
+.hydra-root.theme-dark .phone-app .home-status-row small,
 .hydra-root.theme-dark .history-home-row small,
 .hydra-root.theme-dark .today-history-link small { color: #91a098; }
 .hydra-root.theme-dark .today-history-link { border-color: #294235; color: #b3c7b8; }
