@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Beef as Cow, Droplets, Info, MapPinned, Trophy } from "lucide-react";
+import "../../ranking.css";
+import { useCallback, useEffect, useState } from "react";
+import { Beef as Cow, Droplets, Info, MapPinned, RefreshCw, Trophy } from "lucide-react";
 import { Modal, ScreenHeader } from "../../components/ui";
 import type { HydraAccount } from "../../lib/hydra-types";
+import { loadPropertyRanking, type PropertyRankingEntry } from "../../services/property-ranking";
 
 type Props = { account: HydraAccount; onBack: () => void };
 
@@ -22,19 +24,73 @@ function ProgressCard({ icon, title, text, current, target, footer }: { icon: Re
 
 export function ChallengesScreen({ account, onBack }: Props) {
   const [infoOpen, setInfoOpen] = useState(false);
+  const [ranking, setRanking] = useState<PropertyRankingEntry[]>([]);
+  const [rankingLoading, setRankingLoading] = useState(true);
+  const [rankingError, setRankingError] = useState("");
+
   const waterDays = new Set(account.waterRecords.map((record) => record.date)).size;
   const identified = account.animals.filter((animal) => animal.electronicId).length;
   const monitoredSectors = new Set(account.monitoring.map((record) => record.sectorId).filter(Boolean)).size;
+  const completedActivities = account.activities.filter((activity) => activity.done).length;
+  const ownXp =
+    account.animals.length * 10
+    + identified * 20
+    + account.waterRecords.length * 5
+    + completedActivities * 10
+    + account.monitoring.length * 10
+    + account.sectors.length * 5;
+  const myRanking = ranking.find((item) => item.isMine);
+
+  const refreshRanking = useCallback(async () => {
+    setRankingLoading(true);
+    setRankingError("");
+    try {
+      setRanking(await loadPropertyRanking());
+    } catch {
+      setRankingError("Não foi possível carregar o ranking agora.");
+    } finally {
+      setRankingLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshRanking();
+  }, [refreshRanking]);
 
   return (
     <div className="screen page-enter extra-screen">
-      <ScreenHeader title="Desafios" subtitle="Progresso calculado somente com seus registros." onBack={onBack} action={<button className="icon-button bare" onClick={() => setInfoOpen(true)} aria-label="Sobre os desafios"><Info size={21} /></button>} />
+      <ScreenHeader title="Desafios" subtitle="XP e progresso calculados pelos registros da propriedade." onBack={onBack} action={<button className="icon-button bare" onClick={() => setInfoOpen(true)} aria-label="Sobre XP e desafios"><Info size={21} /></button>} />
 
-      <section className="ranking-hero">
-        <span><Trophy size={37} /></span>
-        <small>RANKING SUSTENTÁVEL</small>
-        <h2>Sem posição</h2>
-        <p>O ranking multiusuário será exibido quando a comunidade conectada estiver disponível.</p>
+      <section className="property-ranking-section" aria-label="Ranking de propriedades">
+        <header className="property-ranking-head">
+          <span><Trophy size={22} /></span>
+          <div>
+            <strong>Ranking de propriedades</strong>
+            <small>{myRanking ? `Sua posição: ${myRanking.position}º · ${myRanking.xp} XP` : `Seu XP atual: ${ownXp}`}</small>
+          </div>
+          <button className={rankingLoading ? "loading" : ""} onClick={() => void refreshRanking()} disabled={rankingLoading} aria-label="Atualizar ranking"><RefreshCw size={18} /></button>
+        </header>
+
+        {rankingLoading && <p className="property-ranking-message">Carregando propriedades…</p>}
+        {!rankingLoading && rankingError && <p className="property-ranking-message error">{rankingError}</p>}
+        {!rankingLoading && !rankingError && ranking.length === 0 && <p className="property-ranking-message">Ainda não há propriedades com nome cadastradas no ranking.</p>}
+        {!rankingLoading && !rankingError && ranking.length > 0 && (
+          <div className="property-ranking-list">
+            {ranking.map((item) => (
+              <div key={item.propertyId} className={`property-ranking-row ${item.isMine ? "mine" : ""}`}>
+                <span className="property-ranking-position">{item.position}º</span>
+                <div className="property-ranking-copy">
+                  <strong>{item.propertyName}</strong>
+                  <small>{item.municipality || "Município não informado"}</small>
+                  {item.isMine && <em>Sua propriedade</em>}
+                </div>
+                <strong className="property-ranking-xp">{item.xp} XP</strong>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p className="xp-rules">XP: animal cadastrado 10 · NFC vinculado +20 · registro de água 5 · atividade concluída 10 · monitoramento 10 · setor criado 5.</p>
       </section>
 
       <div className="challenge-heading"><h2>Seus desafios</h2><span>Dados reais</span></div>
@@ -44,12 +100,13 @@ export function ChallengesScreen({ account, onBack }: Props) {
         <ProgressCard icon={<MapPinned size={24} />} title="Propriedade monitorada" text="Avança quando um setor recebe ao menos um monitoramento real." current={monitoredSectors} target={account.sectors.length} footer="Atualizado pelo histórico de monitoramento" />
       </div>
 
-      <section className="ranking-empty">
-        <div><Trophy size={22} /><strong>Ranking geral</strong></div>
-        <p>Nenhuma pessoa fictícia será adicionada. Perfis reais aparecerão após a integração comunitária.</p>
-      </section>
-      <Modal open={infoOpen} onClose={() => setInfoOpen(false)} title="Como funcionam os desafios">
-        <div className="legal-copy"><p>O progresso usa exclusivamente leituras de água, identificações eletrônicas e monitoramentos registrados na sua conta. Não há pontos, pessoas ou resultados inventados.</p><button className="primary-button full" onClick={() => setInfoOpen(false)}>Entendi</button></div>
+      <Modal open={infoOpen} onClose={() => setInfoOpen(false)} title="Como funciona o XP">
+        <div className="legal-copy">
+          <p>As propriedades são ordenadas do maior para o menor XP. O primeiro lugar é a propriedade com mais XP.</p>
+          <p>O XP usa somente registros reais: 10 por animal cadastrado, mais 20 quando ele recebe NFC/RFID, 5 por registro de água, 10 por atividade concluída, 10 por monitoramento e 5 por setor criado.</p>
+          <p>Nome do proprietário, e-mail, telefone e outros dados privados não aparecem no ranking.</p>
+          <button className="primary-button full" onClick={() => setInfoOpen(false)}>Entendi</button>
+        </div>
       </Modal>
     </div>
   );
