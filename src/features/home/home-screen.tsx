@@ -8,7 +8,6 @@ import {
   Beef as Cow,
   Droplets,
   History,
-  LayoutDashboard,
   Leaf,
   Map,
   MessageSquareText,
@@ -43,21 +42,7 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
   const today = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date());
   const waterTotal = account.waterRecords.reduce((total, record) => total + record.amount, 0);
   const pendingActivities = account.activities.filter((activity) => !activity.done);
-  const waterAttention = account.waterSources.filter((source) => source.status !== "ativa").length;
-  const animalsWithoutNfc = account.animals.filter((animal) => !animal.electronicId).length;
   const propertyReady = Boolean(account.property.municipality && account.property.mainActivity);
-  const centralNotes = [
-    pendingActivities.length > 0
-      ? `${pendingActivities.length} ${pendingActivities.length === 1 ? "atividade pendente" : "atividades pendentes"}`
-      : null,
-    waterAttention > 0
-      ? `${waterAttention} ${waterAttention === 1 ? "fonte de água em atenção" : "fontes de água em atenção"}`
-      : null,
-    animalsWithoutNfc > 0
-      ? `${animalsWithoutNfc} ${animalsWithoutNfc === 1 ? "animal sem NFC" : "animais sem NFC"}`
-      : null,
-  ].filter(Boolean) as string[];
-  const centralSummary = centralNotes.length > 0 ? centralNotes.join(" · ") : "Sem pendências principais";
 
   const pendingSetup = [
     account.waterRecords.length === 0 && { label: "Registrar a primeira leitura de água", icon: <Droplets size={21} />, route: "water" as AppRoute },
@@ -93,7 +78,6 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
       </section>
 
       <section className="home-section home-summary-section">
-        <button className={`today-home-card home-status-row ${centralNotes.length > 0 ? "has-attention" : "is-clear"}`} onClick={() => navigate("today")}><span><LayoutDashboard size={19} /></span><div><strong>Central Hoje</strong><small>{centralSummary}</small></div><ChevronRight size={18} /></button>
         <button className="history-home-row" onClick={() => navigate("history")}><span><History size={19} /></span><div><strong>Histórico da propriedade</strong><small>Água, atividades, rebanho e monitoramentos</small></div><ChevronRight size={18} /></button>
 
         {!propertyReady && <button className="first-action-card" onClick={() => navigate("property")}><span><Plus size={24} /></span><div><strong>Complete a ficha da propriedade</strong><p>Localização, área e atividade principal.</p></div><ChevronRight size={21} /></button>}
