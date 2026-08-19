@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { BadgeCheck, Camera, ChevronRight, Beef as Cow, Filter, History, LoaderCircle, Nfc, Pencil, Plus, Search, Trash2, Weight } from "lucide-react";
+import { BadgeCheck, Camera, ChevronRight, Beef as Cow, Filter, History, LoaderCircle, Nfc, Pencil, Plus, Search, Sprout, Trash2, Weight } from "lucide-react";
 import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader } from "../../components/ui";
 import { showAppToast } from "../../components/modal-system";
 import { makeId, type Animal, type HydraAccount, type UpdateAccount } from "../../lib/hydra-types";
+import { HerdCareGuide } from "./herd-care-guide";
 
 type Props = {
   account: HydraAccount;
@@ -25,6 +26,7 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
   const [filter, setFilter] = useState("Todos");
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
+  const [careOpen, setCareOpen] = useState(false);
   const [editingId, setEditingId] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
   const [animal, setAnimal] = useState(blankAnimal);
@@ -135,8 +137,13 @@ export function HerdScreen({ account, updateAccount, openNfc, focusAnimalId, sav
       {filtersOpen && <div className="filter-chips">{["Todos", "Bovino", "Caprino", "Ovino", "Equino", "Identificados"].map((item) => <button key={item} className={filter === item ? "active" : ""} onClick={() => setFilter(item)}>{item}</button>)}</div>}
 
       <button className="nfc-inline-card" onClick={() => openNfc()}><span><Nfc size={23} /></span><div><strong>Localizar por NFC/RFID</strong><small>Aproxime uma tag compatível ou digite o código.</small></div><ChevronRight size={19} /></button>
+      <button className="herd-care-launch" onClick={() => setCareOpen(true)}><span><Sprout size={23} /></span><div><strong>Alimentação e manejo</strong><small>Dicas de alimentação, ambiente de criação, bem-estar e uso sustentável por espécie.</small></div><ChevronRight size={19} /></button>
 
       {account.animals.length === 0 ? <EmptyState icon={<Cow size={27} />} title="Nenhum animal cadastrado" text="Crie a primeira ficha do rebanho sem preencher dados inventados." action={<button className="primary-button" onClick={openCreate}><Plus size={17} /> Cadastrar animal</button>} /> : filtered.length === 0 ? <EmptyState icon={<Search size={25} />} title="Nenhum resultado" text="Tente outro termo ou remova o filtro." /> : <div className="animal-list">{filtered.map((item) => <button key={item.id} className="animal-card" onClick={() => setSelectedId(item.id)}>{item.photoUrl ? <img className="animal-avatar image" src={item.photoUrl} alt={`Foto de ${item.name || item.identification}`} /> : <span className="animal-avatar"><Cow size={25} /></span>}<div className="animal-copy"><span className="animal-code">{item.identification}</span><strong>{item.name || "Animal sem nome"}</strong><small>{[item.species, item.breed, item.sex].filter(Boolean).join(" · ")}</small></div><div className="animal-side">{item.electronicId && <span className="tag-badge"><Nfc size={13} /> vinculado</span>}<ChevronRight size={19} /></div></button>)}</div>}
+
+      <Modal open={careOpen} onClose={() => setCareOpen(false)} eyebrow="REBANHO" title="Alimentação e manejo" wide tall>
+        <HerdCareGuide account={account} />
+      </Modal>
 
       <Modal open={formOpen} onClose={() => { setFormOpen(false); setError(""); }} eyebrow={editingId ? "EDIÇÃO" : "NOVA FICHA"} title={editingId ? "Editar animal" : "Cadastrar animal"} wide dismissible={!saving}>
         <form className="modal-form" onSubmit={saveAnimal}>
