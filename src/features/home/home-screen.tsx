@@ -64,18 +64,15 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
 
       {announcements.length > 0 && <section className="home-announcements" aria-label="Avisos do Hydra Agro">{announcements.slice(0, 3).map((announcement) => <article key={announcement.id} className={announcement.level}><span>{announcement.level === "critical" ? "IMPORTANTE" : announcement.level === "attention" ? "ATENÇÃO" : "AVISO"}</span><strong>{announcement.title}</strong><p>{announcement.body}</p></article>)}</section>}
 
-      <div className="shortcut-row" aria-label="Atalhos">
+      <div className="shortcut-row" aria-label="Atalhos" style={{ gridTemplateColumns: "repeat(5, minmax(0, 1fr))" }}>
         <button onClick={() => navigate("herd")}><span><Cow size={23} /></span><small>Rebanho</small></button>
         <button onClick={() => navigate("water")}><span><Droplets size={23} /></span><small>Água</small></button>
         <button onClick={() => navigate("monitor")}><span><RadioTower size={23} /></span><small>Monitorar</small></button>
         <button onClick={() => navigate("activities")}><span><ClipboardCheck size={23} /></span><small>Atividades</small></button>
+        <button onClick={() => navigate("assistant")}><span><MessageSquareText size={23} /></span><small>Assistente</small></button>
       </div>
 
       <button className="nfc-banner" onClick={() => navigate("nfc")}><span className="nfc-banner-icon"><ScanLine size={27} /></span><span className="nfc-banner-copy"><small>NFC / RFID</small><strong>Ler identificação do animal</strong><em>{account.animals.filter((animal) => animal.electronicId).length} identificados · {account.nfcReadCount} leituras</em></span><ChevronRight size={22} /></button>
-
-      <div className="home-compact-actions">
-        <button className="assistant-home-button" onClick={() => navigate("assistant")}><MessageSquareText size={16} /><span>Assistente</span></button>
-      </div>
 
       <section className="property-hero">
         <div className="property-hero-top"><div><span className="property-kicker">Propriedade</span><h2>{account.property.name || "Propriedade não cadastrada"}</h2><p>{propertyReady ? `${account.property.mainActivity} · ${account.property.municipality}, ${account.property.state}` : "Complete a ficha da propriedade"}</p></div><button onClick={() => navigate("property")} aria-label="Editar propriedade"><Sprout size={20} /></button></div>
