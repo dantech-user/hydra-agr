@@ -10,7 +10,6 @@
 }
 
 .phone-app .nfc-banner,
-.phone-app .assistant-home-card,
 .phone-app .property-hero,
 .phone-app .today-home-card,
 .phone-app .history-home-row,
@@ -28,22 +27,28 @@
 }
 .phone-app .property-hero::after { display: none !important; }
 
-.phone-app .assistant-home-card {
-  border-color: #e0e4dd !important;
-  background: var(--paper) !important;
-  color: var(--ink) !important;
+.home-compact-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: -3px 0 12px;
 }
-.phone-app .assistant-home-card > span:first-child {
-  border-radius: 10px !important;
-  background: var(--sage-soft) !important;
-  color: var(--forest-700) !important;
+
+.assistant-home-button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid #dfe4dd;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  color: #405d4b;
+  font-size: 9px;
+  font-weight: 760;
+  cursor: pointer;
 }
-.phone-app .assistant-home-card small:first-child {
-  color: #6b7a71 !important;
-  letter-spacing: .03em !important;
-  text-transform: none !important;
-}
-.phone-app .assistant-home-card em { color: #78837c !important; }
+.assistant-home-button svg { color: var(--forest-700); }
+.assistant-home-button:active { transform: scale(.97); }
 
 .phone-app .today-home-card {
   border-color: #e0e4dd !important;
@@ -135,7 +140,7 @@
 .today-history-link strong { font-size: 9px; }
 .today-history-link small { margin-top: 2px; color: #7d8881; font-size: 7.4px; }
 
-.hydra-root.theme-dark .phone-app .assistant-home-card,
+.hydra-root.theme-dark .assistant-home-button,
 .hydra-root.theme-dark .phone-app .today-home-card,
 .hydra-root.theme-dark .history-home-row,
 .hydra-root.theme-dark .phone-app .feature-link-grid button {
@@ -143,7 +148,7 @@
   background: #0e1d15 !important;
   color: #eef3ef !important;
 }
-.hydra-root.theme-dark .phone-app .assistant-home-card > span:first-child,
+.hydra-root.theme-dark .assistant-home-button svg { color: #9dc9a6; }
 .hydra-root.theme-dark .phone-app .today-home-card > span,
 .hydra-root.theme-dark .history-home-row > span {
   background: #173326 !important;
