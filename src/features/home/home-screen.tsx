@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   Beef as Cow,
   Droplets,
+  LayoutDashboard,
   Leaf,
   Map,
   Plus,
@@ -44,6 +45,8 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
   }).format(new Date());
   const waterTotal = account.waterRecords.reduce((total, record) => total + record.amount, 0);
   const pendingActivities = account.activities.filter((activity) => !activity.done);
+  const waterAttention = account.waterSources.filter((source) => source.status !== "ativa").length;
+  const animalsWithoutNfc = account.animals.filter((animal) => !animal.electronicId).length;
   const propertyReady = Boolean(account.property.municipality && account.property.mainActivity);
 
   const pendingSetup = [
@@ -155,6 +158,12 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
           title="Agora na propriedade"
           action={<button className="text-button" onClick={() => navigate("notifications")}>Alertas</button>}
         />
+
+        <button className="today-home-card" onClick={() => navigate("today")}>
+          <span><LayoutDashboard size={20} /></span>
+          <div><strong>Central Hoje</strong><small>{pendingActivities.length} atividades pendentes · {waterAttention} fontes em atenção · {animalsWithoutNfc} animais sem NFC</small></div>
+          <em>ABRIR</em>
+        </button>
 
         {!propertyReady && (
           <button className="first-action-card" onClick={() => navigate("property")}>
