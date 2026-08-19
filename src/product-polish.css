@@ -179,19 +179,19 @@
 .phone-app .preview-badge { display: none !important; }
 
 /* Quotes sem aspas gigantes ou elementos cenográficos. */
-.phone-app blockquote,
-.phone-app [class*="quote"] {
+.hydra-root blockquote,
+.hydra-root [class*="quote"] {
   quotes: none !important;
 }
-.phone-app blockquote::before,
-.phone-app blockquote::after,
-.phone-app [class*="quote"]::before,
-.phone-app [class*="quote"]::after {
+.hydra-root blockquote::before,
+.hydra-root blockquote::after,
+.hydra-root [class*="quote"]::before,
+.hydra-root [class*="quote"]::after {
   content: none !important;
   display: none !important;
 }
 
-/* Faixas de métricas viram conteúdo simples ou deixam de aparecer quando redundantes. */
+/* Faixas de métricas deixam de aparecer quando são redundantes. */
 .phone-app .assistant-hero-metrics,
 .phone-app .assistant-data-strip,
 .phone-app .today-metrics {
@@ -218,12 +218,12 @@
 .today-history-link small { margin-top: 2px; color: #7d8881; font-size: 7.4px; }
 
 /* Resultados científicos continuam visíveis, mas sem mini-cards e selos. */
-.phone-app .project-results-metrics {
+.hydra-root .project-results-metrics {
   gap: 0 !important;
   border-top: 1px solid #e2e7e0;
   border-bottom: 1px solid #e2e7e0;
 }
-.phone-app .project-results-metrics > div {
+.hydra-root .project-results-metrics > div {
   min-height: 58px !important;
   padding: 8px !important;
   border: 0 !important;
@@ -231,8 +231,26 @@
   border-radius: 0 !important;
   background: transparent !important;
 }
-.phone-app .project-results-metrics > div:last-child { border-right: 0 !important; }
-.phone-app .project-results-metrics > div > span { display: none !important; }
+.hydra-root .project-results-metrics > div:last-child { border-right: 0 !important; }
+.hydra-root .project-results-metrics > div > span { display: none !important; }
+
+/* Roteiro de feira sem contador extra ou badge decorativo. */
+.hydra-root .demo-guide-title > span { display: none !important; }
+.hydra-root .demo-menu-badge {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  letter-spacing: .01em !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+}
+.hydra-root .demo-kicker,
+.hydra-root .project-results-head > div > span,
+.hydra-root .demo-readiness-card > header span {
+  letter-spacing: .04em !important;
+  text-transform: none !important;
+}
 
 .hydra-root.theme-dark .phone-app .today-home-card,
 .hydra-root.theme-dark .history-home-row,
@@ -250,10 +268,11 @@
 .hydra-root.theme-dark .history-home-row small,
 .hydra-root.theme-dark .today-history-link small { color: #91a098; }
 .hydra-root.theme-dark .today-history-link { border-color: #294235; color: #b3c7b8; }
-.hydra-root.theme-dark .phone-app .project-results-metrics {
+.hydra-root.theme-dark .hydra-root .project-results-metrics,
+.hydra-root.theme-dark .project-results-metrics {
   border-color: #294235 !important;
 }
-.hydra-root.theme-dark .phone-app .project-results-metrics > div {
+.hydra-root.theme-dark .project-results-metrics > div {
   border-color: #294235 !important;
   background: transparent !important;
 }
