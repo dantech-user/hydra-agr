@@ -6,13 +6,14 @@ import {
   ClipboardCheck,
   Beef as Cow,
   Droplets,
+  History,
   LayoutDashboard,
   Leaf,
   Map,
+  MessageSquareText,
   Plus,
   RadioTower,
   ScanLine,
-  Sparkles,
   Sprout,
   Trophy,
   UsersRound,
@@ -88,40 +89,28 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
       {announcements.length > 0 && <section className="home-announcements" aria-label="Avisos do Hydra Agro">{announcements.slice(0, 3).map((announcement) => <article key={announcement.id} className={announcement.level}><span>{announcement.level === "critical" ? "IMPORTANTE" : announcement.level === "attention" ? "ATENÇÃO" : "AVISO"}</span><strong>{announcement.title}</strong><p>{announcement.body}</p></article>)}</section>}
 
       <div className="shortcut-row" aria-label="Atalhos">
-        <button onClick={() => navigate("herd")}>
-          <span><Cow size={23} /></span>
-          <small>Rebanho</small>
-        </button>
-        <button onClick={() => navigate("water")}>
-          <span><Droplets size={23} /></span>
-          <small>Água</small>
-        </button>
-        <button onClick={() => navigate("monitor")}>
-          <span><RadioTower size={23} /></span>
-          <small>Monitorar</small>
-        </button>
-        <button onClick={() => navigate("activities")}>
-          <span><ClipboardCheck size={23} /></span>
-          <small>Atividades</small>
-        </button>
+        <button onClick={() => navigate("herd")}><span><Cow size={23} /></span><small>Rebanho</small></button>
+        <button onClick={() => navigate("water")}><span><Droplets size={23} /></span><small>Água</small></button>
+        <button onClick={() => navigate("monitor")}><span><RadioTower size={23} /></span><small>Monitorar</small></button>
+        <button onClick={() => navigate("activities")}><span><ClipboardCheck size={23} /></span><small>Atividades</small></button>
       </div>
 
       <button className="nfc-banner" onClick={() => navigate("nfc")}>
         <span className="nfc-banner-icon"><ScanLine size={27} /></span>
         <span className="nfc-banner-copy">
-          <small>IDENTIFICAÇÃO DO REBANHO</small>
-          <strong>Ler brinco ou chip NFC/RFID</strong>
-          <em>{account.animals.filter((animal) => animal.electronicId).length} identificados · {account.nfcReadCount} leituras reais</em>
+          <small>NFC / RFID</small>
+          <strong>Ler identificação do animal</strong>
+          <em>{account.animals.filter((animal) => animal.electronicId).length} identificados · {account.nfcReadCount} leituras</em>
         </span>
         <ChevronRight size={22} />
       </button>
 
       <button className="assistant-home-card" onClick={() => navigate("assistant")}>
-        <span><Sparkles size={23} /></span>
+        <span><MessageSquareText size={22} /></span>
         <div>
-          <small>ASSISTENTE HYDRA</small>
-          <strong>Ajuda inteligente para a propriedade</strong>
-          <em>Analisa seus registros e ajuda a definir prioridades.</em>
+          <small>Assistente</small>
+          <strong>Consultar registros da propriedade</strong>
+          <em>Pergunte sobre rebanho, água, atividades ou monitoramentos.</em>
         </div>
         <ChevronRight size={19} />
       </button>
@@ -129,17 +118,11 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
       <section className="property-hero">
         <div className="property-hero-top">
           <div>
-            <span className="property-kicker">MINHA PROPRIEDADE</span>
+            <span className="property-kicker">Propriedade</span>
             <h2>{account.property.name || "Propriedade não cadastrada"}</h2>
-            <p>
-              {propertyReady
-                ? `${account.property.mainActivity} · ${account.property.municipality}, ${account.property.state}`
-                : "Complete a ficha para personalizar a gestão"}
-            </p>
+            <p>{propertyReady ? `${account.property.mainActivity} · ${account.property.municipality}, ${account.property.state}` : "Complete a ficha da propriedade"}</p>
           </div>
-          <button onClick={() => navigate("property")} aria-label="Editar propriedade">
-            <Sprout size={20} />
-          </button>
+          <button onClick={() => navigate("property")} aria-label="Editar propriedade"><Sprout size={20} /></button>
         </div>
 
         <div className="property-metrics">
@@ -148,27 +131,28 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
           <div><RadioTower size={20} /><span><strong>{account.monitoring.length}</strong><small>monitoramentos</small></span></div>
         </div>
 
-        <button className="property-link" onClick={() => navigate("property")}>
-          Ver ficha digital <ChevronRight size={18} />
-        </button>
+        <button className="property-link" onClick={() => navigate("property")}>Ver ficha <ChevronRight size={18} /></button>
       </section>
 
       <section className="home-section">
-        <SectionHeader
-          title="Agora na propriedade"
-          action={<button className="text-button" onClick={() => navigate("notifications")}>Alertas</button>}
-        />
+        <SectionHeader title="Resumo" action={<button className="text-button" onClick={() => navigate("notifications")}>Alertas</button>} />
 
         <button className="today-home-card" onClick={() => navigate("today")}>
           <span><LayoutDashboard size={20} /></span>
           <div><strong>Central Hoje</strong><small>{pendingActivities.length} atividades pendentes · {waterAttention} fontes em atenção · {animalsWithoutNfc} animais sem NFC</small></div>
-          <em>ABRIR</em>
+          <ChevronRight size={18} />
+        </button>
+
+        <button className="history-home-row" onClick={() => navigate("history")}>
+          <span><History size={19} /></span>
+          <div><strong>Histórico da propriedade</strong><small>Água, atividades, rebanho e monitoramentos</small></div>
+          <ChevronRight size={18} />
         </button>
 
         {!propertyReady && (
           <button className="first-action-card" onClick={() => navigate("property")}>
             <span><Plus size={24} /></span>
-            <div><strong>Complete a ficha da propriedade</strong><p>Localização, área e produção em um só lugar.</p></div>
+            <div><strong>Complete a ficha da propriedade</strong><p>Localização, área e atividade principal.</p></div>
             <ChevronRight size={21} />
           </button>
         )}
@@ -176,52 +160,31 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
         {pendingActivities.length > 0 && (
           <div className="task-card">
             <div className="task-card-title"><ClipboardCheck size={21} /><strong>Atividades pendentes</strong><span>{pendingActivities.length}</span></div>
-            {pendingActivities.slice(0, 3).map((activity) => (
-              <button key={activity.id} onClick={() => navigate("activities")}>
-                <span>{activity.category}</span><strong>{activity.title}</strong><ChevronRight size={19} />
-              </button>
-            ))}
+            {pendingActivities.slice(0, 3).map((activity) => <button key={activity.id} onClick={() => navigate("activities")}><span>{activity.category}</span><strong>{activity.title}</strong><ChevronRight size={19} /></button>)}
           </div>
         )}
 
         {pendingActivities.length === 0 && pendingSetup.length > 0 && (
           <div className="task-card">
             <div className="task-card-title"><ClipboardCheck size={21} /><strong>Primeiros passos</strong><span>{pendingSetup.length}</span></div>
-            {pendingSetup.map((item) => (
-              <button key={item.label} onClick={() => navigate(item.route)}>
-                {item.icon}<strong>{item.label}</strong><ChevronRight size={19} />
-              </button>
-            ))}
+            {pendingSetup.map((item) => <button key={item.label} onClick={() => navigate(item.route)}>{item.icon}<strong>{item.label}</strong><ChevronRight size={19} /></button>)}
           </div>
         )}
 
         {pendingActivities.length === 0 && pendingSetup.length === 0 && (
-          <div className="calm-state">
-            <Leaf size={22} />
-            <div><strong>Tudo em ordem por aqui</strong><span>Nenhuma atividade pendente.</span></div>
-          </div>
+          <div className="calm-state"><Leaf size={22} /><div><strong>Sem atividades pendentes</strong><span>Os registros atuais estão em dia.</span></div></div>
         )}
       </section>
 
       <section className="home-section">
-        <SectionHeader title="Conexões do campo" />
+        <SectionHeader title="Outras áreas" />
         <div className="feature-link-grid">
-          <button onClick={() => navigate("community")}>
-            <UsersRound size={23} />
-            <span><strong>Comunidade</strong><small>Compartilhe sua rotina</small></span>
-            <ChevronRight size={18} />
-          </button>
-          <button onClick={() => navigate("challenges")}>
-            <Trophy size={23} />
-            <span><strong>Desafios</strong><small>Metas com dados reais</small></span>
-            <ChevronRight size={18} />
-          </button>
+          <button onClick={() => navigate("community")}><UsersRound size={23} /><span><strong>Comunidade</strong><small>Publicações e comentários</small></span><ChevronRight size={18} /></button>
+          <button onClick={() => navigate("challenges")}><Trophy size={23} /><span><strong>Desafios</strong><small>Metas e acompanhamento</small></span><ChevronRight size={18} /></button>
         </div>
       </section>
 
-      <button className="home-fab-label" onClick={onQuickAction}>
-        <Plus size={19} /> Nova ação
-      </button>
+      <button className="home-fab-label" onClick={onQuickAction}><Plus size={19} /> Nova ação</button>
     </div>
   );
 }
