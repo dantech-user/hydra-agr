@@ -1,0 +1,276 @@
+/* Ajustes finais do modo escuro: corrige superfícies que ainda herdavam cores claras. */
+
+.hydra-root.theme-dark {
+  --dark-bg: #07110d;
+  --dark-surface: #0e1d15;
+  --dark-surface-2: #12251b;
+  --dark-surface-3: #173326;
+  --dark-border: #294235;
+  --dark-text: #eef3ef;
+  --dark-muted: #91a098;
+  --dark-green: #2d6849;
+  --dark-green-soft: #79a984;
+  --dark-blue: #68a5b8;
+  --dark-orange: #d8873b;
+}
+
+/* Home */
+.hydra-root.theme-dark .phone-app .greeting-block h1,
+.hydra-root.theme-dark .phone-app .section-heading h2,
+.hydra-root.theme-dark .phone-app .screen-heading h1 {
+  color: var(--dark-text) !important;
+}
+
+.hydra-root.theme-dark .phone-app .climate-chip {
+  background: var(--dark-surface-2) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .phone-app .climate-chip span,
+.hydra-root.theme-dark .phone-app .climate-chip span:not(:has(strong)) {
+  color: var(--dark-muted) !important;
+}
+.hydra-root.theme-dark .phone-app .climate-chip strong {
+  color: #dcebe1 !important;
+}
+.hydra-root.theme-dark .phone-app .climate-chip svg {
+  color: var(--dark-blue) !important;
+}
+.hydra-root.theme-dark .phone-app .climate-chip.error {
+  background: #241918 !important;
+  border-color: #573430 !important;
+}
+
+.hydra-root.theme-dark .phone-app .property-hero {
+  background: linear-gradient(145deg, #123c2b 0%, #0c2c20 100%) !important;
+  box-shadow: 0 18px 40px -26px rgba(0,0,0,.72) !important;
+}
+.hydra-root.theme-dark .phone-app .property-hero::after {
+  border-color: rgba(183,214,192,.055) !important;
+}
+.hydra-root.theme-dark .phone-app .property-metrics > div {
+  color: #91c0c8 !important;
+}
+.hydra-root.theme-dark .phone-app .property-metrics strong {
+  color: #eef3ef !important;
+}
+.hydra-root.theme-dark .phone-app .property-metrics small,
+.hydra-root.theme-dark .phone-app .property-hero p {
+  color: #9bafa4 !important;
+}
+
+/* O botão principal do dark usa verde; laranja fica só como acento da marca. */
+.hydra-root.theme-dark .phone-app .home-fab-label {
+  background: var(--dark-green) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 30px -17px rgba(45,104,73,.9) !important;
+}
+
+/* Primeiros passos e listas da Home */
+.hydra-root.theme-dark .phone-app .task-card {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+}
+.hydra-root.theme-dark .phone-app .task-card-title {
+  background: var(--dark-surface) !important;
+  color: #6e9f7e !important;
+}
+.hydra-root.theme-dark .phone-app .task-card-title strong,
+.hydra-root.theme-dark .phone-app .task-card > button strong {
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .phone-app .task-card > button {
+  background: var(--dark-surface-2) !important;
+  border-top-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .phone-app .task-card > button > svg:first-child,
+.hydra-root.theme-dark .phone-app .task-card > button > svg:last-child {
+  color: #6f9d7c !important;
+}
+.hydra-root.theme-dark .phone-app .task-card > button span {
+  color: var(--dark-green-soft) !important;
+}
+
+.hydra-root.theme-dark .phone-app .feature-link-grid button,
+.hydra-root.theme-dark .phone-app .first-action-card,
+.hydra-root.theme-dark .phone-app .calm-state {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+}
+.hydra-root.theme-dark .phone-app .feature-link-grid button,
+.hydra-root.theme-dark .phone-app .feature-link-grid button > svg {
+  color: #5d9671 !important;
+}
+.hydra-root.theme-dark .phone-app .feature-link-grid button > span,
+.hydra-root.theme-dark .phone-app .feature-link-grid strong {
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .phone-app .feature-link-grid small {
+  color: var(--dark-muted) !important;
+}
+
+/* Modal/Sheet global do modo escuro */
+.hydra-root.theme-dark .modal-sheet,
+.hydra-root.theme-dark .quick-sheet {
+  background: var(--dark-surface) !important;
+  color: var(--dark-text) !important;
+  box-shadow: 0 -24px 80px rgba(0,0,0,.52) !important;
+}
+.hydra-root.theme-dark .modal-head,
+.hydra-root.theme-dark .quick-sheet header {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+}
+.hydra-root.theme-dark .modal-head h2,
+.hydra-root.theme-dark .quick-sheet h2,
+.hydra-root.theme-dark .modal-body h3 {
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .modal-head .icon-button,
+.hydra-root.theme-dark .quick-sheet header .icon-button {
+  background: var(--dark-surface-2) !important;
+  border-color: var(--dark-border) !important;
+  color: #d8e5dc !important;
+}
+.hydra-root.theme-dark .sheet-handle {
+  background: #52635a !important;
+}
+.hydra-root.theme-dark .modal-body,
+.hydra-root.theme-dark .modal-body p {
+  color: var(--dark-muted) !important;
+}
+.hydra-root.theme-dark .modal-form > .modal-action-row,
+.hydra-root.theme-dark .confirm-action > .modal-action-row {
+  background: linear-gradient(to bottom, rgba(14,29,21,0), var(--dark-surface) 15px) !important;
+}
+
+/* Clima completo */
+.hydra-root.theme-dark .weather-details,
+.hydra-root.theme-dark .weather-loading,
+.hydra-root.theme-dark .weather-empty {
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .weather-current {
+  background: linear-gradient(145deg, #174833, #0f3225) !important;
+}
+.hydra-root.theme-dark .weather-current-icon {
+  background: rgba(255,255,255,.07) !important;
+  color: #e4a958 !important;
+}
+.hydra-root.theme-dark .weather-current > div:nth-child(2) > span,
+.hydra-root.theme-dark .weather-current > small {
+  color: #a9beb2 !important;
+}
+.hydra-root.theme-dark .weather-current > div:nth-child(2) > p {
+  color: #d5e1da !important;
+}
+.hydra-root.theme-dark .weather-metric {
+  background: var(--dark-surface-2) !important;
+  border-color: var(--dark-border) !important;
+}
+.hydra-root.theme-dark .weather-metric > span {
+  background: var(--dark-surface-3) !important;
+  color: #7eae8a !important;
+}
+.hydra-root.theme-dark .weather-metric small {
+  color: var(--dark-muted) !important;
+}
+.hydra-root.theme-dark .weather-metric strong {
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .weather-dayline {
+  background: #102019 !important;
+  border: 1px solid var(--dark-border) !important;
+}
+.hydra-root.theme-dark .weather-dayline > div {
+  border-color: #294235 !important;
+}
+.hydra-root.theme-dark .weather-dayline small,
+.hydra-root.theme-dark .weather-source {
+  color: var(--dark-muted) !important;
+}
+.hydra-root.theme-dark .weather-dayline strong {
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .weather-source svg {
+  color: #6e9d7c !important;
+}
+.hydra-root.theme-dark .weather-warning {
+  background: #2b2417 !important;
+  color: #d7b56e !important;
+}
+.hydra-root.theme-dark .weather-loading > span,
+.hydra-root.theme-dark .weather-empty > span {
+  background: #2a2319 !important;
+  color: #d89346 !important;
+}
+.hydra-root.theme-dark .weather-loading strong,
+.hydra-root.theme-dark .weather-empty h3 {
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .weather-loading p,
+.hydra-root.theme-dark .weather-empty p {
+  color: var(--dark-muted) !important;
+}
+
+/* Quick actions também não podem abrir claras */
+.hydra-root.theme-dark .quick-grid > button {
+  background: var(--dark-surface-2) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .quick-grid > button > span {
+  background: #1e2d21 !important;
+  color: #d18b47 !important;
+}
+.hydra-root.theme-dark .quick-grid > button > svg {
+  color: #6e9d7c !important;
+}
+
+/* Componentes genéricos que ainda tinham branco literal no CSS original. */
+.hydra-root.theme-dark .inline-empty,
+.hydra-root.theme-dark .compact-list,
+.hydra-root.theme-dark .setting-card,
+.hydra-root.theme-dark .water-chart,
+.hydra-root.theme-dark .water-trend,
+.hydra-root.theme-dark .detail-grid > div {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+
+.hydra-root.theme-dark .status-pill.atenção {
+  background: #302716 !important;
+  color: #d6b866 !important;
+}
+.hydra-root.theme-dark .status-pill.inativa,
+.hydra-root.theme-dark .offline-pill {
+  background: #252b27 !important;
+  color: #9ca59f !important;
+}
+
+/* Janela de Aparência também acompanha o dark. */
+.hydra-root.theme-dark .theme-dialog {
+  background: var(--dark-surface) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .theme-dialog h2 { color: var(--dark-text) !important; }
+.hydra-root.theme-dark .theme-dialog > p,
+.hydra-root.theme-dark .theme-dialog-close { color: var(--dark-muted) !important; }
+.hydra-root.theme-dark .theme-dialog-kicker { color: #80aa89 !important; }
+.hydra-root.theme-dark .theme-option {
+  background: var(--dark-surface-2) !important;
+  border-color: var(--dark-border) !important;
+  color: var(--dark-text) !important;
+}
+.hydra-root.theme-dark .theme-option > span {
+  background: var(--dark-surface-3) !important;
+  color: #82ad8b !important;
+}
+.hydra-root.theme-dark .theme-option small { color: var(--dark-muted) !important; }
+.hydra-root.theme-dark .theme-option.active {
+  background: #183526 !important;
+  border-color: #47735a !important;
+}
