@@ -32,9 +32,9 @@ const AdminScreen = lazy(() => import("./features/admin/admin-screen").then((mod
 
 const mainTabs: { id: AppRoute; label: string; icon: typeof Home }[] = [
   { id: "home", label: "Início", icon: Home },
-  { id: "herd", label: "Rebanho", icon: Cow },
-  { id: "nfc", label: "NFC", icon: Nfc },
   { id: "water", label: "Água", icon: Droplets },
+  { id: "nfc", label: "NFC", icon: Nfc },
+  { id: "herd", label: "Rebanho", icon: Cow },
   { id: "profile", label: "Perfil", icon: UserRound },
 ];
 

@@ -1,8 +1,7 @@
-export type MainTab = "home" | "herd" | "nfc" | "water" | "profile";
+export type MainTab = "home" | "water" | "herd" | "monitor" | "profile";
 
 export type AppRoute =
   | MainTab
-  | "monitor"
   | "community"
   | "challenges"
   | "property"
@@ -11,6 +10,7 @@ export type AppRoute =
   | "assistant"
   | "today"
   | "history"
+  | "nfc"
   | "notifications"
   | "plus"
   | "admin";
