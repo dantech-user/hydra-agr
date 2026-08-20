@@ -1,5 +1,7 @@
 "use client";
 
+import "../../product-polish.css";
+import "../../identity-system.css";
 import {
   Bell,
   ChevronRight,
@@ -32,7 +34,6 @@ export function HomeScreen({ account, navigate, onQuickAction, announcements }: 
   const waterTotal = account.waterRecords.reduce((total, record) => total + record.amount, 0);
   const pendingActivities = account.activities.filter((activity) => !activity.done);
   const propertyReady = Boolean(account.property.municipality && account.property.mainActivity);
-  const identifiedCount = account.animals.filter((animal) => animal.electronicId).length;
 
   const pendingSetup = [
     account.waterRecords.length === 0 && { label: "Registrar a primeira leitura de água", icon: <Droplets size={21} />, route: "water" as AppRoute },
