@@ -1,0 +1,1244 @@
+/* Hydra Agro — identidade visual final
+   Referência fixa: mockup aprovado pelo usuário.
+   Este arquivo entra por último e unifica as telas principais. */
+
+.hydra-root.theme-light .phone-app {
+  --ha-bg: #f7f5ef;
+  --ha-card: #fffefa;
+  --ha-card-soft: #f1f4ee;
+  --ha-green: #175436;
+  --ha-green-2: #246949;
+  --ha-green-dark: #0f3221;
+  --ha-green-soft: #e8f0e7;
+  --ha-line: #dde3dc;
+  --ha-muted: #78847d;
+  --ha-orange: #f29438;
+  --ha-orange-soft: #fff0df;
+  --ha-blue: #4b9fbc;
+  --ha-blue-soft: #e8f4f7;
+  --ha-danger: #b6534b;
+  --ha-shadow: 0 14px 34px -27px rgba(18, 62, 39, .46);
+  background: var(--ha-bg) !important;
+}
+
+.hydra-root.theme-dark .phone-app {
+  --ha-bg: #081610;
+  --ha-card: #0e2118;
+  --ha-card-soft: #112a1e;
+  --ha-green: #86ba91;
+  --ha-green-2: #5d9971;
+  --ha-green-dark: #edf5ef;
+  --ha-green-soft: #183629;
+  --ha-line: #294638;
+  --ha-muted: #93a59b;
+  --ha-orange: #efa34e;
+  --ha-orange-soft: #2f2519;
+  --ha-blue: #70b2c9;
+  --ha-blue-soft: #132d35;
+  --ha-danger: #df8b82;
+  --ha-shadow: 0 18px 38px -30px rgba(0, 0, 0, .82);
+  background: var(--ha-bg) !important;
+}
+
+/* Base */
+.phone-app .screen,
+.phone-app .route-loading {
+  background: var(--ha-bg) !important;
+  color: var(--ha-green-dark) !important;
+}
+
+.phone-app .screen {
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+  padding-bottom: calc(106px + env(safe-area-inset-bottom)) !important;
+}
+
+.phone-app .screen-header {
+  margin-bottom: 20px !important;
+}
+.phone-app .screen-header::after,
+.phone-app .section-heading h2::after {
+  display: none !important;
+  content: none !important;
+}
+.phone-app .screen-header-row {
+  align-items: center !important;
+  gap: 10px !important;
+}
+.phone-app .screen-heading > .eyebrow,
+.phone-app .screen-header > .eyebrow {
+  display: none !important;
+}
+.phone-app .screen-heading h1 {
+  margin: 0 !important;
+  color: var(--ha-green-dark) !important;
+  font-family: var(--font-manrope), system-ui, sans-serif !important;
+  font-size: 29px !important;
+  line-height: 1.04 !important;
+  font-weight: 800 !important;
+  letter-spacing: -.045em !important;
+}
+.phone-app .screen-heading p {
+  margin: 6px 0 0 !important;
+  color: var(--ha-muted) !important;
+  font-size: 10px !important;
+  line-height: 1.45 !important;
+}
+.phone-app .section-heading {
+  min-height: 28px !important;
+  margin-bottom: 11px !important;
+}
+.phone-app .section-heading h2,
+.phone-app .identity-section-title h2,
+.phone-app .challenge-heading h2 {
+  color: var(--ha-green-dark) !important;
+  font-family: var(--font-manrope), system-ui, sans-serif !important;
+  font-size: 19px !important;
+  line-height: 1.15 !important;
+  font-weight: 800 !important;
+  letter-spacing: -.03em !important;
+}
+
+.phone-app .icon-button {
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 14px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green) !important;
+  box-shadow: none !important;
+}
+.phone-app .icon-button.bare {
+  border-color: transparent !important;
+  background: transparent !important;
+}
+.phone-app .icon-button.accent {
+  border: 0 !important;
+  background: var(--ha-orange) !important;
+  color: #fff !important;
+  box-shadow: 0 11px 23px -18px rgba(242, 148, 56, .92) !important;
+}
+.phone-app .icon-button.quiet {
+  background: var(--ha-card) !important;
+}
+
+.phone-app .primary-button,
+.phone-app .secondary-button,
+.phone-app .small-button,
+.phone-app .wide-outline-button,
+.phone-app .danger-button,
+.phone-app .preview-button {
+  min-height: 48px !important;
+  border-radius: 15px !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+}
+.phone-app .primary-button,
+.phone-app .small-button {
+  background: var(--ha-green) !important;
+  color: #fff !important;
+}
+.phone-app .secondary-button,
+.phone-app .wide-outline-button,
+.phone-app .preview-button {
+  border: 1px solid var(--ha-line) !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .danger-button {
+  background: color-mix(in srgb, var(--ha-danger) 10%, var(--ha-card)) !important;
+  color: var(--ha-danger) !important;
+}
+
+.phone-app .field > span {
+  color: var(--ha-muted) !important;
+  font-size: 10px !important;
+  letter-spacing: .02em !important;
+  text-transform: none !important;
+}
+.phone-app .field input,
+.phone-app .field select,
+.phone-app .field textarea,
+.phone-app .search-box,
+.phone-app .filter-button {
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 15px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green-dark) !important;
+  box-shadow: none !important;
+}
+.phone-app .field input:focus,
+.phone-app .field select:focus,
+.phone-app .field textarea:focus {
+  border-color: color-mix(in srgb, var(--ha-green) 50%, var(--ha-line)) !important;
+  background: var(--ha-card) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ha-green) 9%, transparent) !important;
+  transform: none !important;
+}
+
+.phone-app .empty-state,
+.phone-app .inline-empty,
+.phone-app .compact-list,
+.phone-app .setting-card,
+.phone-app .property-section-card,
+.phone-app .sector-card,
+.phone-app .monitoring-card,
+.phone-app .post-card,
+.phone-app .notification-settings,
+.phone-app .notification-list > div {
+  border-color: var(--ha-line) !important;
+  border-radius: 20px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .empty-icon,
+.phone-app .row-icon,
+.phone-app .profile-menu-icon {
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .empty-state h3,
+.phone-app .compact-row strong,
+.phone-app .setting-card strong {
+  color: var(--ha-green-dark) !important;
+}
+.phone-app .empty-state p,
+.phone-app .compact-row small,
+.phone-app .setting-card small,
+.phone-app .plain-empty {
+  color: var(--ha-muted) !important;
+}
+
+/* Navegação inferior igual ao conceito */
+.phone-app .bottom-nav {
+  height: calc(86px + env(safe-area-inset-bottom)) !important;
+  padding: 8px 8px env(safe-area-inset-bottom) !important;
+  border-top: 1px solid var(--ha-line) !important;
+  background: color-mix(in srgb, var(--ha-card) 96%, transparent) !important;
+  box-shadow: 0 -12px 32px -29px rgba(17, 53, 34, .48) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+.phone-app .bottom-nav-indicator { display: none !important; }
+.phone-app .bottom-nav button {
+  gap: 3px !important;
+  color: #89938d !important;
+}
+.phone-app .bottom-nav button > span {
+  width: 40px !important;
+  height: 38px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: transparent !important;
+  color: inherit !important;
+  transform: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+}
+.phone-app .bottom-nav button > small {
+  margin: 0 !important;
+  color: inherit !important;
+  font-size: 8px !important;
+  font-weight: 680 !important;
+}
+.phone-app .bottom-nav button.active {
+  color: var(--ha-green) !important;
+}
+.phone-app .bottom-nav button.active > span {
+  background: var(--ha-green-soft) !important;
+}
+.phone-app .bottom-nav button:nth-of-type(3) {
+  color: var(--ha-green) !important;
+}
+.phone-app .bottom-nav button:nth-of-type(3) > span,
+.phone-app .bottom-nav button:nth-of-type(3).active > span {
+  width: 59px !important;
+  height: 59px !important;
+  border-radius: 50% !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+  transform: translateY(-11px) !important;
+  box-shadow: 0 16px 28px -18px rgba(23, 84, 54, .9) !important;
+}
+.phone-app .bottom-nav button:nth-of-type(3) > small {
+  margin-top: -6px !important;
+  color: var(--ha-green) !important;
+  font-weight: 800 !important;
+}
+
+/* HOME */
+.phone-app .home-screen {
+  padding-top: max(19px, calc(env(safe-area-inset-top) + 13px)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.phone-app .home-brandbar {
+  order: 1;
+  margin-bottom: 18px !important;
+}
+.phone-app .home-brandbar .wordmark-mark {
+  width: 44px !important;
+  height: 44px !important;
+}
+.phone-app .home-brandbar .wordmark-copy {
+  font-size: 17px !important;
+}
+.phone-app .home-announcements {
+  order: 2;
+  margin: 0 0 14px !important;
+  gap: 8px !important;
+}
+.phone-app .home-announcements article {
+  padding: 12px 13px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-left: 3px solid var(--ha-green) !important;
+  border-radius: 17px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .home-announcements article.attention { border-left-color: var(--ha-orange) !important; }
+.phone-app .home-announcements article.critical { border-left-color: var(--ha-danger) !important; }
+.phone-app .greeting-block { display: none !important; }
+
+.phone-app .property-hero {
+  order: 3;
+  min-height: 244px !important;
+  margin: 0 0 25px !important;
+  border: 0 !important;
+  border-radius: 25px !important;
+  background-position: center !important;
+  background-size: cover !important;
+  box-shadow: 0 20px 42px -29px rgba(11, 48, 31, .72) !important;
+  overflow: hidden !important;
+}
+.phone-app .property-hero::before,
+.phone-app .property-hero::after { display: none !important; }
+.phone-app .property-hero-top {
+  min-height: 159px !important;
+  padding: 18px 18px 14px !important;
+  align-items: flex-start !important;
+  background: linear-gradient(180deg, rgba(6, 28, 19, .06) 0%, rgba(6, 28, 19, .12) 33%, rgba(6, 28, 19, .68) 100%) !important;
+}
+.phone-app .property-kicker { display: none !important; }
+.phone-app .property-hero h2 {
+  margin: 72px 0 5px !important;
+  max-width: 78% !important;
+  color: #fff !important;
+  font-family: var(--font-manrope), system-ui, sans-serif !important;
+  font-size: 24px !important;
+  line-height: 1.05 !important;
+  font-weight: 800 !important;
+  letter-spacing: -.04em !important;
+}
+.phone-app .property-hero p {
+  margin: 0 !important;
+  color: rgba(255,255,255,.86) !important;
+  font-size: 9px !important;
+}
+.phone-app .property-hero-top button {
+  width: auto !important;
+  height: 35px !important;
+  padding: 0 11px !important;
+  border: 1px solid rgba(255,255,255,.24) !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: rgba(18, 76, 49, .86) !important;
+  color: #fff !important;
+  backdrop-filter: blur(8px) !important;
+}
+.phone-app .property-hero-top button span {
+  display: inline !important;
+  font-size: 8px !important;
+  font-weight: 760 !important;
+}
+.phone-app .property-metrics {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  gap: 0 !important;
+  margin: -5px 11px 10px !important;
+  padding: 9px 5px !important;
+  border-radius: 17px !important;
+  background: rgba(255, 254, 250, .97) !important;
+  box-shadow: 0 12px 28px -24px rgba(0,0,0,.58) !important;
+}
+.phone-app .property-metrics > div {
+  min-height: 48px !important;
+  padding: 3px 8px !important;
+  border-right: 1px solid #e8e9e4 !important;
+  color: var(--ha-green) !important;
+  animation: none !important;
+}
+.phone-app .property-metrics > div:last-child { border-right: 0 !important; }
+.phone-app .property-metrics strong {
+  color: #153526 !important;
+  font-size: 12px !important;
+}
+.phone-app .property-metrics small {
+  color: #7c8781 !important;
+  font-size: 6.5px !important;
+  line-height: 1.25 !important;
+}
+.phone-app .property-link {
+  min-height: 40px !important;
+  border-top: 1px solid rgba(255,255,255,.16) !important;
+  background: rgba(6, 39, 25, .66) !important;
+  font-size: 9px !important;
+}
+
+.phone-app .home-quick-section {
+  order: 4;
+  margin: 0 0 23px !important;
+}
+.phone-app .identity-section-title { margin: 0 0 11px !important; }
+.phone-app .shortcut-row.identity-shortcuts {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0,1fr)) !important;
+  gap: 8px !important;
+}
+.phone-app .shortcut-row.identity-shortcuts button {
+  min-height: 96px !important;
+  padding: 10px 4px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 18px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .shortcut-row.identity-shortcuts button > span {
+  width: 44px !important;
+  height: 44px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+  box-shadow: none !important;
+}
+.phone-app .shortcut-row.identity-shortcuts button:first-child > span {
+  border-radius: 50% !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+}
+.phone-app .shortcut-row.identity-shortcuts small {
+  margin-top: 5px !important;
+  color: var(--ha-green-dark) !important;
+  font-size: 8px !important;
+  font-weight: 720 !important;
+}
+.phone-app .shortcut-row button > span::after { display: none !important; }
+.phone-app .nfc-banner { display: none !important; }
+
+.phone-app .home-summary-section {
+  order: 5;
+  margin: 0 0 14px !important;
+  display: grid !important;
+  gap: 11px !important;
+}
+.phone-app .history-home-row,
+.phone-app .first-action-card,
+.phone-app .task-card,
+.phone-app .calm-state {
+  margin: 0 !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .history-home-row {
+  min-height: 68px !important;
+  padding: 11px 13px !important;
+}
+.phone-app .history-home-row > span,
+.phone-app .first-action-card > span {
+  border-radius: 14px !important;
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .history-home-row strong,
+.phone-app .first-action-card strong,
+.phone-app .task-card strong,
+.phone-app .calm-state strong { color: var(--ha-green-dark) !important; }
+.phone-app .history-home-row small,
+.phone-app .first-action-card p,
+.phone-app .calm-state span { color: var(--ha-muted) !important; }
+.phone-app .task-card-title {
+  color: var(--ha-green) !important;
+}
+.phone-app .task-card-title span {
+  padding: 0 !important;
+  background: transparent !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .task-card > button {
+  border-top-color: var(--ha-line) !important;
+  background: transparent !important;
+}
+
+.phone-app .assistant-home-identity {
+  order: 6;
+  width: 100% !important;
+  min-height: 82px !important;
+  margin: 0 0 23px !important;
+  padding: 13px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  display: grid !important;
+  grid-template-columns: 45px 1fr auto !important;
+  align-items: center !important;
+  gap: 11px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green-dark) !important;
+  text-align: left !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .assistant-home-identity > span {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 14px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .assistant-home-identity > div { display: flex !important; flex-direction: column !important; }
+.phone-app .assistant-home-identity strong { font-size: 11px !important; }
+.phone-app .assistant-home-identity small { margin-top: 3px !important; color: var(--ha-muted) !important; font-size: 7.7px !important; line-height: 1.35 !important; }
+.phone-app .assistant-home-identity > svg { color: var(--ha-green) !important; }
+
+.phone-app .identity-other-section {
+  order: 7;
+  margin: 0 0 18px !important;
+}
+.phone-app .feature-link-grid.identity-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  gap: 8px !important;
+}
+.phone-app .feature-link-grid.identity-grid button {
+  min-height: 112px !important;
+  padding: 13px 9px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .feature-link-grid.identity-grid button > svg:first-child { color: var(--ha-green) !important; }
+.phone-app .feature-link-grid.identity-grid button > svg:last-child { display: none !important; }
+.phone-app .feature-link-grid.identity-grid span { display: flex !important; flex-direction: column !important; }
+.phone-app .feature-link-grid.identity-grid strong { color: var(--ha-green-dark) !important; font-size: 9.5px !important; }
+.phone-app .feature-link-grid.identity-grid small { margin-top: 3px !important; color: var(--ha-muted) !important; font-size: 6.8px !important; line-height: 1.35 !important; }
+.phone-app .home-fab-label {
+  order: 8;
+  position: static !important;
+  align-self: center !important;
+  min-height: 44px !important;
+  margin: 3px 0 8px !important;
+  padding: 0 17px !important;
+  border-radius: 15px !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+/* REBANHO */
+.phone-app .screen:has(.nfc-inline-card) .screen-header { margin-bottom: 18px !important; }
+.phone-app .screen:has(.nfc-inline-card) .search-row { gap: 8px !important; }
+.phone-app .screen:has(.nfc-inline-card) .search-box {
+  min-height: 50px !important;
+  padding-inline: 13px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .search-box input {
+  color: var(--ha-green-dark) !important;
+  font-size: 10px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .filter-button {
+  width: 50px !important;
+  height: 50px !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .filter-button.active {
+  background: var(--ha-green) !important;
+  color: #fff !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .filter-chips {
+  margin: 11px -18px 18px !important;
+  padding: 0 18px !important;
+  gap: 7px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .filter-chips button {
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 99px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-muted) !important;
+  font-size: 8px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .filter-chips button.active {
+  border-color: var(--ha-green) !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .nfc-inline-card,
+.phone-app .screen:has(.nfc-inline-card) .herd-care-launch {
+  min-height: 76px !important;
+  margin-bottom: 11px !important;
+  padding: 11px 12px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green-dark) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .nfc-inline-card > span,
+.phone-app .screen:has(.nfc-inline-card) .herd-care-launch > span {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 14px !important;
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .nfc-inline-card strong,
+.phone-app .screen:has(.nfc-inline-card) .herd-care-launch strong {
+  color: var(--ha-green-dark) !important;
+  font-size: 10.5px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .nfc-inline-card small,
+.phone-app .screen:has(.nfc-inline-card) .herd-care-launch small {
+  color: var(--ha-muted) !important;
+  font-size: 7.5px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .animal-list {
+  margin-top: 4px !important;
+  gap: 10px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .animal-card {
+  min-height: 92px !important;
+  padding: 11px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .animal-avatar {
+  width: 59px !important;
+  height: 59px !important;
+  border-radius: 17px !important;
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .animal-code {
+  color: var(--ha-orange) !important;
+  font-size: 7px !important;
+  letter-spacing: .02em !important;
+  text-transform: none !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .animal-copy strong {
+  color: var(--ha-green-dark) !important;
+  font-size: 12.5px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .animal-copy small {
+  margin-top: 4px !important;
+  color: var(--ha-muted) !important;
+  font-size: 7.7px !important;
+}
+.phone-app .screen:has(.nfc-inline-card) .tag-badge {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--ha-green) !important;
+  font-size: 7px !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* NFC */
+.phone-app .nfc-screen .screen-header { margin-bottom: 0 !important; }
+.phone-app .nfc-screen .nfc-hero {
+  margin: 0 0 19px !important;
+  padding: 30px 14px 20px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ha-green-dark) !important;
+  box-shadow: none !important;
+}
+.phone-app .nfc-screen .nfc-waves {
+  width: 178px !important;
+  height: 178px !important;
+  margin: 0 auto 14px !important;
+  color: #fff !important;
+}
+.phone-app .nfc-screen .nfc-waves::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 43px !important;
+  border-radius: 50% !important;
+  background: var(--ha-green) !important;
+  box-shadow: 0 20px 36px -25px rgba(23, 84, 54, .9) !important;
+}
+.phone-app .nfc-screen .nfc-waves > span {
+  border-color: color-mix(in srgb, var(--ha-green) 24%, transparent) !important;
+}
+.phone-app .nfc-screen .nfc-waves > svg {
+  position: relative !important;
+  z-index: 3 !important;
+  width: 42px !important;
+  height: 42px !important;
+}
+.phone-app .nfc-screen .nfc-hero h2 {
+  color: var(--ha-green-dark) !important;
+  font-size: 21px !important;
+  font-family: var(--font-manrope), system-ui, sans-serif !important;
+  font-weight: 800 !important;
+}
+.phone-app .nfc-screen .nfc-hero p {
+  max-width: 292px !important;
+  color: var(--ha-muted) !important;
+  font-size: 8.5px !important;
+}
+.phone-app .nfc-screen .nfc-hero > button {
+  min-height: 45px !important;
+  padding: 0 16px !important;
+  border-radius: 14px !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+}
+.phone-app .nfc-screen .nfc-hero > small { color: var(--ha-muted) !important; }
+.phone-app .nfc-screen .segmented-control {
+  margin: 0 0 13px !important;
+  padding: 4px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 15px !important;
+  background: var(--ha-card-soft) !important;
+}
+.phone-app .nfc-screen .segmented-control button.active {
+  background: var(--ha-card) !important;
+  color: var(--ha-green) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .nfc-screen .nfc-manual-card,
+.phone-app .nfc-screen .nfc-result-card {
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .nfc-screen .manual-heading { color: var(--ha-green) !important; }
+.phone-app .nfc-screen .manual-heading strong { color: var(--ha-green-dark) !important; }
+.phone-app .nfc-screen .manual-heading small { color: var(--ha-muted) !important; }
+
+/* ÁGUA */
+.phone-app .screen:has(.water-overview) .screen-header { margin-bottom: 17px !important; }
+.phone-app .screen:has(.water-overview) .water-overview {
+  padding: 18px !important;
+  border: 1px solid color-mix(in srgb, var(--ha-blue) 20%, var(--ha-line)) !important;
+  border-radius: 22px !important;
+  color: var(--ha-green-dark) !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.water-overview) .water-overview::after { display: none !important; }
+.phone-app .screen:has(.water-overview) .water-total-icon {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 16px !important;
+  background: var(--ha-blue-soft) !important;
+  color: var(--ha-blue) !important;
+}
+.phone-app .screen:has(.water-overview) .water-total > span,
+.phone-app .screen:has(.water-overview) .water-total > small,
+.phone-app .screen:has(.water-overview) .water-mini-metrics span {
+  color: var(--ha-muted) !important;
+}
+.phone-app .screen:has(.water-overview) .water-total > strong {
+  color: var(--ha-green-dark) !important;
+  font-family: var(--font-manrope), system-ui, sans-serif !important;
+  font-size: 31px !important;
+  font-weight: 800 !important;
+}
+.phone-app .screen:has(.water-overview) .water-mini-metrics {
+  border-top: 1px solid var(--ha-line) !important;
+}
+.phone-app .screen:has(.water-overview) .water-mini-metrics > div + div {
+  border-left: 1px solid var(--ha-line) !important;
+}
+.phone-app .screen:has(.water-overview) .water-mini-metrics strong {
+  color: var(--ha-green-dark) !important;
+}
+.phone-app .screen:has(.water-overview) .action-pair {
+  margin-top: 10px !important;
+  gap: 8px !important;
+}
+.phone-app .screen:has(.water-overview) .action-pair .primary-button {
+  background: var(--ha-blue) !important;
+}
+.phone-app .screen:has(.water-overview) .content-section { margin-top: 25px !important; }
+.phone-app .screen:has(.water-overview) .water-chart {
+  height: 208px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 20px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.water-overview) .chart-value { color: var(--ha-blue) !important; }
+.phone-app .screen:has(.water-overview) .chart-track {
+  background: var(--ha-blue-soft) !important;
+}
+.phone-app .screen:has(.water-overview) .chart-track i {
+  background: linear-gradient(180deg, #78bdd1, var(--ha-blue)) !important;
+}
+.phone-app .screen:has(.water-overview) .water-trend {
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 18px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.water-overview) .water-trend > span {
+  background: var(--ha-blue-soft) !important;
+  color: var(--ha-blue) !important;
+}
+.phone-app .screen:has(.water-overview) .water-trend strong { color: var(--ha-green-dark) !important; }
+.phone-app .screen:has(.water-overview) .water-trend p,
+.phone-app .screen:has(.water-overview) .water-trend small { color: var(--ha-muted) !important; }
+.phone-app .screen:has(.water-overview) .timeline-list { border-left-color: var(--ha-line) !important; }
+.phone-app .screen:has(.water-overview) .timeline-dot {
+  background: var(--ha-blue) !important;
+  box-shadow: 0 0 0 4px var(--ha-bg) !important;
+}
+
+/* ATIVIDADES */
+.phone-app .screen:has(.activity-summary) .activity-summary {
+  gap: 9px !important;
+  margin-bottom: 17px !important;
+}
+.phone-app .screen:has(.activity-summary) .activity-summary > div {
+  min-height: 72px !important;
+  padding: 12px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 18px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.activity-summary) .activity-summary strong {
+  color: var(--ha-green-dark) !important;
+  font-size: 18px !important;
+}
+.phone-app .screen:has(.activity-summary) .activity-summary small { color: var(--ha-muted) !important; }
+.phone-app .screen:has(.activity-summary) .activity-list { gap: 9px !important; }
+.phone-app .screen:has(.activity-summary) .activity-card {
+  min-height: 78px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 18px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.activity-summary) .activity-check {
+  border-color: color-mix(in srgb, var(--ha-green) 28%, var(--ha-line)) !important;
+  background: var(--ha-card) !important;
+}
+.phone-app .screen:has(.activity-summary) .activity-card.done .activity-check {
+  border-color: var(--ha-green) !important;
+  background: var(--ha-green) !important;
+}
+.phone-app .screen:has(.activity-summary) .activity-main small {
+  color: var(--ha-orange) !important;
+  text-transform: none !important;
+}
+.phone-app .screen:has(.activity-summary) .activity-main strong { color: var(--ha-green-dark) !important; }
+.phone-app .screen:has(.activity-summary) .activity-main span { color: var(--ha-muted) !important; }
+
+/* RANKING / DESAFIOS */
+.phone-app .screen:has(.property-ranking-section) .property-ranking-section {
+  margin-bottom: 25px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .property-ranking-head {
+  min-height: 104px !important;
+  padding: 18px !important;
+  border-bottom: 0 !important;
+  background: linear-gradient(145deg, #1c6243, #123f2c) !important;
+  color: #fff !important;
+}
+.phone-app .screen:has(.property-ranking-section) .property-ranking-head > span {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 16px !important;
+  background: rgba(255,255,255,.12) !important;
+  color: #f5b35e !important;
+}
+.phone-app .screen:has(.property-ranking-section) .property-ranking-head strong {
+  color: #fff !important;
+  font-size: 14px !important;
+}
+.phone-app .screen:has(.property-ranking-section) .property-ranking-head small {
+  color: rgba(255,255,255,.72) !important;
+  font-size: 8px !important;
+}
+.phone-app .screen:has(.property-ranking-section) .property-ranking-head button {
+  background: rgba(255,255,255,.12) !important;
+  color: #fff !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-podium {
+  min-height: 208px !important;
+  padding: 23px 13px 17px !important;
+  border-bottom: 1px solid var(--ha-line) !important;
+  background: var(--ha-card-soft) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-podium-place {
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 18px 18px 12px 12px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-podium-place.place-1 {
+  border-color: color-mix(in srgb, var(--ha-orange) 44%, var(--ha-line)) !important;
+  background: color-mix(in srgb, var(--ha-orange-soft) 45%, var(--ha-card)) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-podium-mark {
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .place-1 .ranking-podium-mark {
+  background: var(--ha-orange-soft) !important;
+  color: var(--ha-orange) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-podium-place > strong,
+.phone-app .screen:has(.property-ranking-section) .ranking-my-copy > strong,
+.phone-app .screen:has(.property-ranking-section) .property-ranking-copy strong {
+  color: var(--ha-green-dark) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-podium-place > small,
+.phone-app .screen:has(.property-ranking-section) .ranking-my-copy > small,
+.phone-app .screen:has(.property-ranking-section) .property-ranking-copy small {
+  color: var(--ha-muted) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-podium-place > b,
+.phone-app .screen:has(.property-ranking-section) .ranking-my-number span,
+.phone-app .screen:has(.property-ranking-section) .ranking-my-copy > p,
+.phone-app .screen:has(.property-ranking-section) .property-ranking-position,
+.phone-app .screen:has(.property-ranking-section) .property-ranking-xp {
+  color: var(--ha-green) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .place-1 > b,
+.phone-app .screen:has(.property-ranking-section) .property-ranking-row:first-child .property-ranking-position {
+  color: var(--ha-orange) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-my-position {
+  border-color: var(--ha-line) !important;
+  background: var(--ha-green-soft) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .ranking-my-number { border-right-color: color-mix(in srgb, var(--ha-green) 20%, var(--ha-line)) !important; }
+.phone-app .screen:has(.property-ranking-section) .ranking-table-head {
+  border-color: var(--ha-line) !important;
+  background: var(--ha-card-soft) !important;
+  color: var(--ha-muted) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .property-ranking-row {
+  border-bottom-color: var(--ha-line) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .property-ranking-row.mine {
+  background: var(--ha-green-soft) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .xp-rules {
+  border-top-color: var(--ha-line) !important;
+  color: var(--ha-muted) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .challenge-heading {
+  margin: 24px 0 11px !important;
+}
+.phone-app .screen:has(.property-ranking-section) .challenge-heading span {
+  color: var(--ha-muted) !important;
+  font-size: 8px !important;
+}
+.phone-app .screen:has(.property-ranking-section) .challenge-list { gap: 9px !important; }
+.phone-app .screen:has(.property-ranking-section) .challenge-card {
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .challenge-icon {
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .screen:has(.property-ranking-section) .challenge-copy strong { color: var(--ha-green-dark) !important; }
+.phone-app .screen:has(.property-ranking-section) .challenge-copy p,
+.phone-app .screen:has(.property-ranking-section) .challenge-card > small { color: var(--ha-muted) !important; }
+.phone-app .screen:has(.property-ranking-section) .challenge-progress { background: var(--ha-green-soft) !important; }
+.phone-app .screen:has(.property-ranking-section) .challenge-progress i { background: var(--ha-green) !important; }
+
+/* PERFIL */
+.phone-app .profile-screen {
+  padding-inline: 18px !important;
+  padding-top: max(18px, calc(env(safe-area-inset-top) + 12px)) !important;
+  background: var(--ha-bg) !important;
+}
+.phone-app .profile-screen .profile-hero {
+  min-height: 0 !important;
+  margin: 0 0 13px !important;
+  padding: 10px 4px 17px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ha-green-dark) !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+.phone-app .profile-screen .profile-rings { display: none !important; }
+.phone-app .profile-screen .profile-top-edit {
+  top: 0 !important;
+  right: 0 !important;
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 13px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green) !important;
+  backdrop-filter: none !important;
+}
+.phone-app .profile-screen .profile-avatar-wrap {
+  width: 88px !important;
+  height: 88px !important;
+  margin: 2px auto 0 !important;
+}
+.phone-app .profile-screen .profile-avatar {
+  width: 88px !important;
+  height: 88px !important;
+  border: 4px solid var(--ha-card) !important;
+  border-radius: 50% !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 28px -22px rgba(10, 48, 31, .72) !important;
+}
+.phone-app .profile-screen .avatar-edit-button {
+  border-color: var(--ha-bg) !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+}
+.phone-app .profile-screen .profile-hero h1 {
+  margin: 12px 0 3px !important;
+  color: var(--ha-green-dark) !important;
+  font-family: var(--font-manrope), system-ui, sans-serif !important;
+  font-size: 23px !important;
+  font-weight: 800 !important;
+}
+.phone-app .profile-screen .profile-hero > strong {
+  color: var(--ha-green) !important;
+  font-size: 10px !important;
+}
+.phone-app .profile-screen .profile-hero > p,
+.phone-app .profile-screen .profile-bio {
+  color: var(--ha-muted) !important;
+}
+.phone-app .profile-screen .plan-card {
+  margin: 0 0 22px !important;
+  min-height: 82px !important;
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green-dark) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .profile-screen .plan-mark {
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .profile-screen .plan-card span,
+.phone-app .profile-screen .plan-card small { color: var(--ha-muted) !important; }
+.phone-app .profile-screen .plan-card > button {
+  border-radius: 11px !important;
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .profile-screen .profile-group {
+  margin: 0 0 20px !important;
+}
+.phone-app .profile-screen .group-label {
+  margin: 0 0 7px 2px !important;
+  color: var(--ha-muted) !important;
+  font-size: 7.5px !important;
+  letter-spacing: .04em !important;
+}
+.phone-app .profile-screen .profile-menu-card {
+  border: 1px solid var(--ha-line) !important;
+  border-radius: 19px !important;
+  background: var(--ha-card) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .profile-screen .profile-menu-row {
+  min-height: 64px !important;
+  padding: 10px 12px !important;
+  border-bottom-color: var(--ha-line) !important;
+  background: transparent !important;
+}
+.phone-app .profile-screen .profile-menu-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 13px !important;
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .profile-screen .profile-menu-row strong {
+  color: var(--ha-green-dark) !important;
+  font-size: 11px !important;
+}
+.phone-app .profile-screen .profile-menu-row small {
+  color: var(--ha-muted) !important;
+  font-size: 8px !important;
+}
+.phone-app .profile-screen .logout-button {
+  width: 100% !important;
+  margin: 2px 0 0 !important;
+  border: 1px solid color-mix(in srgb, var(--ha-danger) 23%, var(--ha-line)) !important;
+  border-radius: 15px !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-danger) !important;
+}
+.phone-app .profile-screen .profile-version { color: var(--ha-muted) !important; }
+
+/* Outras telas entram no mesmo sistema visual */
+.phone-app .screen:not(.home-screen):not(.profile-screen):not(.nfc-screen) .content-section,
+.phone-app .monitor-section {
+  margin-top: 24px !important;
+}
+.phone-app .sector-card,
+.phone-app .monitoring-card,
+.phone-app .community-composer,
+.phone-app .post-card,
+.phone-app .notification-settings,
+.phone-app .notification-list > div,
+.phone-app .property-section-card {
+  border-color: var(--ha-line) !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-green-dark) !important;
+  box-shadow: var(--ha-shadow) !important;
+}
+.phone-app .sector-icon,
+.phone-app .community-composer > span,
+.phone-app .notification-settings > div > span,
+.phone-app .property-cover-icon {
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .community-tabs button,
+.phone-app .admin-tabs button {
+  border-color: var(--ha-line) !important;
+  background: var(--ha-card) !important;
+  color: var(--ha-muted) !important;
+}
+.phone-app .community-tabs button.active,
+.phone-app .admin-tabs button.active {
+  border-color: var(--ha-green) !important;
+  background: var(--ha-green) !important;
+  color: #fff !important;
+}
+
+/* Modais */
+.phone-app .modal-sheet,
+.phone-app .quick-sheet,
+.hydra-root .theme-dialog,
+.hydra-root .demo-dialog {
+  border-color: var(--ha-line) !important;
+  background: var(--ha-card) !important;
+}
+.phone-app .modal-head {
+  border-bottom-color: var(--ha-line) !important;
+  background: var(--ha-card) !important;
+}
+.phone-app .modal-head h2,
+.phone-app .quick-sheet h2 {
+  color: var(--ha-green-dark) !important;
+  font-family: var(--font-manrope), system-ui, sans-serif !important;
+  font-weight: 800 !important;
+}
+.phone-app .modal-body,
+.phone-app .modal-body p { color: var(--ha-muted) !important; }
+.phone-app .modal-body .field > span { color: var(--ha-green-dark) !important; }
+.phone-app .modal-form > .modal-action-row,
+.phone-app .confirm-action > .modal-action-row {
+  background: linear-gradient(to bottom, transparent, var(--ha-card) 15px) !important;
+}
+.phone-app .quick-grid > button {
+  border-color: var(--ha-line) !important;
+  border-radius: 18px !important;
+  background: var(--ha-card) !important;
+}
+.phone-app .quick-grid > button > span {
+  background: var(--ha-green-soft) !important;
+  color: var(--ha-green) !important;
+}
+.phone-app .quick-grid strong { color: var(--ha-green-dark) !important; }
+.phone-app .quick-grid small { color: var(--ha-muted) !important; }
+
+/* Remove aparência de template/IA que sobrou */
+.phone-app .status-pill,
+.phone-app .offline-pill,
+.phone-app .tag-badge,
+.phone-app .preview-badge,
+.phone-app .demo-menu-badge {
+  box-shadow: none !important;
+}
+.phone-app blockquote,
+.phone-app [class*="quote"] { quotes: none !important; }
+.phone-app blockquote::before,
+.phone-app blockquote::after,
+.phone-app [class*="quote"]::before,
+.phone-app [class*="quote"]::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Dark mode: ajustes dos elementos claros internos */
+.hydra-root.theme-dark .phone-app .property-metrics {
+  background: rgba(14, 33, 24, .97) !important;
+}
+.hydra-root.theme-dark .phone-app .property-metrics > div {
+  border-right-color: #294638 !important;
+}
+.hydra-root.theme-dark .phone-app .property-metrics strong { color: #edf5ef !important; }
+.hydra-root.theme-dark .phone-app .property-metrics small { color: #95a79d !important; }
+.hydra-root.theme-dark .phone-app .property-hero-top {
+  background: linear-gradient(180deg, rgba(2, 16, 10, .08), rgba(2, 16, 10, .72)) !important;
+}
+.hydra-root.theme-dark .phone-app .profile-screen .profile-avatar {
+  border-color: #0e2118 !important;
+}
+.hydra-root.theme-dark .phone-app .ranking-podium-place.place-1 {
+  background: #211b13 !important;
+}
+
+@media (max-width: 390px) {
+  .phone-app .screen {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .phone-app .shortcut-row.identity-shortcuts { gap: 6px !important; }
+  .phone-app .shortcut-row.identity-shortcuts button { min-height: 91px !important; }
+  .phone-app .feature-link-grid.identity-grid { gap: 6px !important; }
+  .phone-app .feature-link-grid.identity-grid button { min-height: 108px !important; padding-inline: 7px !important; }
+  .phone-app .screen:has(.nfc-inline-card) .filter-chips {
+    margin-inline: -16px !important;
+    padding-inline: 16px !important;
+  }
+  .phone-app .property-metrics strong { font-size: 11px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-app *,
+  .phone-app *::before,
+  .phone-app *::after {
+    scroll-behavior: auto !important;
+  }
+}
