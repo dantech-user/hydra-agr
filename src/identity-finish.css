@@ -1,0 +1,648 @@
+/* Hydra Agro — acabamento final da identidade visual.
+   Mantém as funções e dados reais, unificando Home, Rebanho, NFC, Água,
+   Atividades, Ranking, Perfil e telas auxiliares no mesmo sistema visual. */
+
+.phone-app {
+  --ha-radius-lg: 22px;
+  --ha-radius-md: 17px;
+  --ha-radius-sm: 13px;
+  --ha-gap-section: 24px;
+  --ha-gap-card: 12px;
+}
+
+/* Base geral */
+.phone-app .screen {
+  color: var(--identity-green-dark) !important;
+}
+
+.phone-app .content-section,
+.phone-app .home-section,
+.phone-app .profile-group {
+  margin-top: var(--ha-gap-section) !important;
+}
+
+.phone-app .content-section:first-of-type { margin-top: 0 !important; }
+.phone-app .last-section { margin-bottom: 12px !important; }
+
+.phone-app .screen-header {
+  margin-bottom: 22px !important;
+}
+
+.phone-app .screen-heading h1,
+.phone-app .section-heading h2,
+.phone-app h1,
+.phone-app h2,
+.phone-app h3 {
+  text-wrap: balance;
+}
+
+.phone-app .screen-action .icon-button,
+.phone-app .screen-header .icon-button.quiet {
+  width: 44px !important;
+  height: 44px !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: 15px !important;
+  background: var(--identity-card) !important;
+  color: var(--identity-green-dark) !important;
+}
+
+.phone-app .screen-action .icon-button.accent {
+  border-color: var(--identity-green) !important;
+  background: var(--identity-green) !important;
+  color: #fff !important;
+}
+
+/* Superfícies compartilhadas */
+.phone-app :is(
+  .content-card,
+  .setting-card,
+  .compact-row,
+  .activity-card,
+  .challenge-card,
+  .monitoring-card,
+  .property-section-card,
+  .community-composer,
+  .post-card,
+  .notification-list > div,
+  .assistant-hero,
+  .assistant-conversation,
+  .assistant-quick-grid,
+  .history-home-row,
+  .first-action-card,
+  .calm-state,
+  .task-card,
+  .nfc-manual-card,
+  .nfc-result-card,
+  .weight-evolution-card
+) {
+  border-color: var(--identity-line) !important;
+  border-radius: var(--ha-radius-lg) !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+
+.phone-app :is(.compact-list, .activity-list, .challenge-list) {
+  display: grid !important;
+  gap: var(--ha-gap-card) !important;
+}
+
+.phone-app :is(.status-pill, .tag-badge) {
+  box-shadow: none !important;
+}
+
+/* Navegação igual ao conceito aprovado: Início · Rebanho · NFC · Água · Perfil */
+.phone-app .bottom-nav {
+  min-height: 86px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid var(--identity-line) !important;
+  background: color-mix(in srgb, var(--identity-card) 96%, transparent) !important;
+  box-shadow: 0 -18px 38px -34px rgba(10, 45, 29, .55) !important;
+}
+.phone-app .bottom-nav-indicator { display: none !important; }
+.phone-app .bottom-nav button {
+  color: #8a948e !important;
+}
+.phone-app .bottom-nav button > span {
+  width: 40px !important;
+  height: 40px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.phone-app .bottom-nav button > small {
+  margin-top: 4px !important;
+  font-size: 8px !important;
+  font-weight: 650 !important;
+  color: inherit !important;
+}
+.phone-app .bottom-nav button.active {
+  color: var(--identity-green) !important;
+}
+.phone-app .bottom-nav button.active > span {
+  background: var(--identity-green-soft) !important;
+  color: var(--identity-green) !important;
+}
+.phone-app .bottom-nav button:nth-of-type(3),
+.phone-app .bottom-nav button:nth-of-type(3).active {
+  color: var(--identity-green) !important;
+}
+.phone-app .bottom-nav button:nth-of-type(3) > span,
+.phone-app .bottom-nav button:nth-of-type(3).active > span {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  background: var(--identity-green) !important;
+  color: #fff !important;
+  box-shadow: 0 15px 28px -17px rgba(22, 85, 52, .92) !important;
+  transform: translateY(-10px) !important;
+}
+.phone-app .bottom-nav button:nth-of-type(3) > small {
+  margin-top: -4px !important;
+  font-weight: 800 !important;
+}
+
+/* HOME — acabamento do mockup */
+.phone-app .home-screen .property-hero {
+  border-radius: 25px !important;
+}
+.phone-app .home-screen .property-hero-top button {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.phone-app .home-screen .property-metrics {
+  margin-inline: 12px !important;
+}
+.phone-app .home-screen .property-metrics > div {
+  justify-content: center !important;
+}
+.phone-app .home-screen .identity-shortcuts button,
+.phone-app .home-screen .identity-grid button {
+  transition: transform .18s ease, border-color .18s ease;
+}
+.phone-app .home-screen .identity-shortcuts button:active,
+.phone-app .home-screen .identity-grid button:active {
+  transform: scale(.98);
+}
+.phone-app .home-screen .assistant-home-identity {
+  border-radius: 21px !important;
+}
+
+/* ÁGUA */
+.phone-app .screen:has(.water-overview) .screen-heading > .eyebrow { display: none !important; }
+.phone-app .water-overview {
+  margin: 0 0 14px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.45fr) minmax(112px, .7fr) !important;
+  gap: 10px !important;
+  background: transparent !important;
+}
+.phone-app .water-total {
+  min-height: 150px !important;
+  padding: 16px !important;
+  border: 1px solid #d9e8ee !important;
+  border-radius: var(--ha-radius-lg) !important;
+  background: linear-gradient(145deg, #f5fbfd, #eef7fb) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+.phone-app .water-total-icon {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 14px !important;
+  background: #e2f2f9 !important;
+  color: var(--identity-blue) !important;
+}
+.phone-app .water-total > span {
+  margin-top: 14px !important;
+  color: #517386 !important;
+  font-size: 8px !important;
+  letter-spacing: .02em !important;
+  text-transform: none !important;
+}
+.phone-app .water-total > strong {
+  margin-top: 4px !important;
+  color: #163b4d !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+}
+.phone-app .water-total > small {
+  margin-top: 7px !important;
+  color: #69818d !important;
+}
+.phone-app .water-mini-metrics {
+  display: grid !important;
+  grid-template-rows: repeat(2, minmax(0,1fr)) !important;
+  gap: 10px !important;
+}
+.phone-app .water-mini-metrics > div {
+  min-width: 0 !important;
+  padding: 14px !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: var(--ha-radius-md) !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+.phone-app .water-mini-metrics span {
+  color: var(--identity-muted) !important;
+  font-size: 7.5px !important;
+}
+.phone-app .water-mini-metrics strong {
+  margin-top: 5px !important;
+  color: var(--identity-green-dark) !important;
+  font-size: 16px !important;
+}
+.phone-app .screen:has(.water-overview) .action-pair {
+  margin: 0 0 24px !important;
+  gap: 9px !important;
+}
+.phone-app .screen:has(.water-overview) .action-pair > button {
+  min-height: 48px !important;
+  border-radius: 15px !important;
+}
+.phone-app .water-chart {
+  min-height: 190px !important;
+  padding: 18px 12px 12px !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: var(--ha-radius-lg) !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+.phone-app .water-chart .chart-track {
+  border-radius: 9px !important;
+  background: #edf4f6 !important;
+}
+.phone-app .water-chart .chart-track i {
+  border-radius: 9px !important;
+  background: var(--identity-blue) !important;
+}
+.phone-app .water-chart .chart-value { color: #39738f !important; }
+.phone-app .water-trend {
+  margin-top: 12px !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: var(--ha-radius-md) !important;
+  background: var(--identity-card-soft) !important;
+  box-shadow: none !important;
+}
+.phone-app .screen:has(.water-overview) .compact-row {
+  min-height: 68px !important;
+  padding: 11px 12px !important;
+}
+.phone-app .screen:has(.water-overview) .row-icon.soft-blue {
+  background: #e8f5fa !important;
+  color: var(--identity-blue) !important;
+}
+.phone-app .screen:has(.water-overview) .status-pill {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  font-size: 7px !important;
+  font-weight: 750 !important;
+}
+.phone-app .screen:has(.water-overview) .timeline-list {
+  overflow: hidden !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: var(--ha-radius-lg) !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+.phone-app .screen:has(.water-overview) .timeline-list button {
+  min-height: 62px !important;
+  padding: 10px 13px !important;
+  border-bottom: 1px solid var(--identity-line) !important;
+  background: transparent !important;
+}
+.phone-app .screen:has(.water-overview) .timeline-list button:last-child { border-bottom: 0 !important; }
+.phone-app .screen:has(.water-overview) .timeline-dot { background: var(--identity-blue) !important; }
+
+/* ATIVIDADES */
+.phone-app .screen:has(.activity-summary) .screen-heading > .eyebrow { display: none !important; }
+.phone-app .activity-summary {
+  margin: 0 0 20px !important;
+  padding: 5px !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: 17px !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 5px !important;
+  background: var(--identity-card-soft) !important;
+  box-shadow: none !important;
+}
+.phone-app .activity-summary > div {
+  min-height: 58px !important;
+  padding: 9px 11px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: var(--identity-card) !important;
+  color: var(--identity-green) !important;
+  box-shadow: none !important;
+}
+.phone-app .activity-summary strong {
+  color: var(--identity-green-dark) !important;
+  font-size: 16px !important;
+}
+.phone-app .activity-summary small {
+  color: var(--identity-muted) !important;
+  font-size: 7.5px !important;
+  text-transform: none !important;
+}
+.phone-app .activity-list {
+  gap: 11px !important;
+}
+.phone-app .activity-card {
+  min-height: 86px !important;
+  padding: 12px !important;
+  display: grid !important;
+  grid-template-columns: 38px 1fr 18px !important;
+  gap: 11px !important;
+  align-items: center !important;
+}
+.phone-app .activity-check {
+  width: 36px !important;
+  height: 36px !important;
+  border: 1px solid #cfdcd1 !important;
+  border-radius: 12px !important;
+  background: var(--identity-green-soft) !important;
+  color: var(--identity-green) !important;
+}
+.phone-app .activity-card.done .activity-check {
+  border-color: var(--identity-green) !important;
+  background: var(--identity-green) !important;
+  color: #fff !important;
+}
+.phone-app .activity-main {
+  min-width: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+.phone-app .activity-main small {
+  color: var(--identity-muted) !important;
+  font-size: 7.3px !important;
+}
+.phone-app .activity-main strong {
+  margin-top: 4px !important;
+  color: var(--identity-green-dark) !important;
+  font-size: 11px !important;
+}
+.phone-app .activity-main span {
+  margin-top: 4px !important;
+  color: var(--identity-muted) !important;
+  font-size: 7.8px !important;
+}
+.phone-app .activity-card.done .activity-main { opacity: .7; }
+
+/* DESAFIOS / RANKING */
+.phone-app .screen:has(.property-ranking-section) .screen-heading > .eyebrow { display: none !important; }
+.phone-app .property-ranking-section {
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.phone-app .property-ranking-head {
+  min-height: 104px !important;
+  margin-bottom: 16px !important;
+  padding: 18px !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: linear-gradient(145deg, #174f36, #0d3524) !important;
+  color: #fff !important;
+  box-shadow: 0 18px 34px -28px rgba(8, 51, 32, .9) !important;
+}
+.phone-app .property-ranking-head > span {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 15px !important;
+  background: #fff0d9 !important;
+  color: #e68a00 !important;
+}
+.phone-app .property-ranking-head strong {
+  color: #fff !important;
+  font-size: 15px !important;
+}
+.phone-app .property-ranking-head small {
+  color: rgba(255,255,255,.75) !important;
+  font-size: 8px !important;
+}
+.phone-app .property-ranking-head button {
+  background: rgba(255,255,255,.12) !important;
+  color: #fff !important;
+}
+.phone-app .ranking-podium {
+  min-height: 218px !important;
+  margin-bottom: 14px !important;
+  padding: 20px 0 6px !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+.phone-app .ranking-podium-place {
+  border-color: var(--identity-line) !important;
+  border-radius: 20px !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+.phone-app .ranking-podium-place.place-1 {
+  border-color: #f0c980 !important;
+  background: #fffaf1 !important;
+  box-shadow: 0 18px 32px -26px rgba(212, 139, 16, .75) !important;
+}
+.phone-app .ranking-podium-mark {
+  border-radius: 50% !important;
+}
+.phone-app .ranking-my-position {
+  margin: 0 0 16px !important;
+  border: 1px solid #cfe0cf !important;
+  border-radius: 20px !important;
+  background: #f0f7ec !important;
+}
+.phone-app .ranking-table-head {
+  margin-top: 4px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--identity-line) !important;
+  background: transparent !important;
+}
+.phone-app .property-ranking-list {
+  overflow: hidden !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: 20px !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+.phone-app .property-ranking-row {
+  border-color: var(--identity-line) !important;
+}
+.phone-app .xp-rules {
+  margin-top: 12px !important;
+  padding: 10px 2px 0 !important;
+  border: 0 !important;
+  color: var(--identity-muted) !important;
+}
+.phone-app .challenge-heading {
+  margin-top: 28px !important;
+}
+.phone-app .challenge-heading h2 {
+  font-size: 20px !important;
+  color: var(--identity-green-dark) !important;
+}
+.phone-app .challenge-heading > span { display: none !important; }
+.phone-app .challenge-card {
+  padding: 14px !important;
+}
+
+/* NFC */
+.phone-app .nfc-screen .nfc-hero {
+  padding-top: 24px !important;
+}
+.phone-app .nfc-screen .nfc-waves {
+  width: 190px !important;
+  height: 190px !important;
+}
+.phone-app .nfc-screen .nfc-waves::before {
+  inset: 49px !important;
+  border: 1px solid color-mix(in srgb, var(--identity-green) 70%, transparent) !important;
+}
+.phone-app .nfc-screen .nfc-hero h2 {
+  margin-top: 4px !important;
+  font-size: 23px !important;
+}
+.phone-app .nfc-screen .nfc-hero p {
+  max-width: 280px !important;
+  margin-inline: auto !important;
+  line-height: 1.5 !important;
+}
+.phone-app .nfc-screen .nfc-manual-card {
+  padding: 16px !important;
+}
+
+/* PERFIL — cabeçalho compacto como no guia */
+.phone-app .profile-screen .profile-hero {
+  min-height: 128px !important;
+  margin: 0 0 16px !important;
+  padding: 16px !important;
+  border: 1px solid var(--identity-line) !important;
+  border-radius: 22px !important;
+  display: grid !important;
+  grid-template-columns: 76px minmax(0, 1fr) 42px !important;
+  grid-template-rows: auto auto auto auto !important;
+  column-gap: 13px !important;
+  row-gap: 2px !important;
+  align-items: center !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+  text-align: left !important;
+}
+.phone-app .profile-screen .profile-avatar-wrap {
+  grid-column: 1 !important;
+  grid-row: 1 / span 4 !important;
+  margin: 0 !important;
+  align-self: center !important;
+}
+.phone-app .profile-screen .profile-avatar {
+  width: 72px !important;
+  height: 72px !important;
+}
+.phone-app .profile-screen .profile-top-edit {
+  position: static !important;
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  width: 40px !important;
+  height: 40px !important;
+  justify-self: end !important;
+}
+.phone-app .profile-screen .profile-hero h1 {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  align-self: end !important;
+  margin: 0 !important;
+  font-size: 18px !important;
+  line-height: 1.1 !important;
+}
+.phone-app .profile-screen .profile-hero > strong {
+  grid-column: 2 / 4 !important;
+  grid-row: 2 !important;
+  margin: 2px 0 0 !important;
+  color: var(--identity-green) !important;
+  font-size: 9px !important;
+}
+.phone-app .profile-screen .profile-hero > p {
+  grid-column: 2 / 4 !important;
+  grid-row: 3 !important;
+  margin: 2px 0 0 !important;
+  font-size: 8px !important;
+}
+.phone-app .profile-screen .profile-bio {
+  grid-column: 2 / 4 !important;
+  grid-row: 4 !important;
+  margin-top: 4px !important;
+  font-size: 7.5px !important;
+}
+.phone-app .profile-screen .plan-card {
+  min-height: 84px !important;
+  padding: 13px !important;
+}
+.phone-app .profile-screen .profile-menu-card {
+  border-radius: 20px !important;
+}
+.phone-app .profile-screen .profile-menu-row {
+  min-height: 62px !important;
+  padding-inline: 13px !important;
+}
+.phone-app .profile-screen .profile-menu-icon {
+  width: 38px !important;
+  height: 38px !important;
+}
+.phone-app .profile-screen .logout-button {
+  min-height: 48px !important;
+  margin-top: 24px !important;
+}
+
+/* Telas auxiliares seguem a mesma identidade, sem redesenho cenográfico */
+.phone-app :is(.community-composer, .post-card, .monitoring-card, .property-section-card, .setting-card, .compact-row) {
+  border-radius: 20px !important;
+}
+.phone-app .sector-board {
+  border-color: var(--identity-line) !important;
+  border-radius: 20px !important;
+  background: var(--identity-card) !important;
+  box-shadow: var(--identity-shadow) !important;
+}
+.phone-app .sector-board-head {
+  border-color: var(--identity-line) !important;
+  background: var(--identity-card-soft) !important;
+  text-transform: none !important;
+  letter-spacing: .02em !important;
+}
+.phone-app .sector-board-row { border-color: var(--identity-line) !important; }
+.phone-app .assistant-hero,
+.phone-app .assistant-conversation {
+  border-color: var(--identity-line) !important;
+  background: var(--identity-card) !important;
+}
+.phone-app .empty-state {
+  border-radius: 22px !important;
+}
+
+/* Modo escuro */
+.hydra-root.theme-dark .phone-app .water-total {
+  border-color: #234354 !important;
+  background: #0d2028 !important;
+}
+.hydra-root.theme-dark .phone-app .water-total-icon {
+  background: #15303c !important;
+}
+.hydra-root.theme-dark .phone-app .water-total > strong { color: #dbeef5 !important; }
+.hydra-root.theme-dark .phone-app .water-total > span,
+.hydra-root.theme-dark .phone-app .water-total > small { color: #8faab6 !important; }
+.hydra-root.theme-dark .phone-app .water-chart .chart-track { background: #142b31 !important; }
+.hydra-root.theme-dark .phone-app .property-ranking-head {
+  background: linear-gradient(145deg, #16472f, #0b2b1d) !important;
+}
+.hydra-root.theme-dark .phone-app .ranking-podium-place.place-1 {
+  border-color: #5b472b !important;
+  background: #221b12 !important;
+}
+.hydra-root.theme-dark .phone-app .ranking-my-position {
+  border-color: #315543 !important;
+  background: #14291e !important;
+}
+.hydra-root.theme-dark .phone-app .profile-screen .profile-hero {
+  border-color: var(--identity-line) !important;
+  background: var(--identity-card) !important;
+}
+
+@media (max-width: 380px) {
+  .phone-app .water-overview {
+    grid-template-columns: minmax(0, 1.25fr) minmax(100px, .72fr) !important;
+  }
+  .phone-app .water-total { padding: 14px !important; }
+  .phone-app .profile-screen .profile-hero {
+    grid-template-columns: 68px minmax(0,1fr) 38px !important;
+    column-gap: 10px !important;
+  }
+  .phone-app .profile-screen .profile-avatar { width: 64px !important; height: 64px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-app .identity-shortcuts button,
+  .phone-app .identity-grid button { transition: none !important; }
+}
