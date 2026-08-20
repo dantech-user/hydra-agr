@@ -2,6 +2,7 @@
 
 import "../../product-polish.css";
 import "../../identity-system.css";
+import "../../identity-herd.css";
 import {
   Bell,
   ChevronRight,
