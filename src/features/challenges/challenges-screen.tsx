@@ -2,7 +2,7 @@
 
 import "../../ranking.css";
 import { useCallback, useEffect, useState } from "react";
-import { Beef as Cow, Droplets, Info, MapPinned, RefreshCw, Trophy } from "lucide-react";
+import { ArrowUp, Beef as Cow, Crown, Droplets, Info, MapPinned, RefreshCw, Trophy } from "lucide-react";
 import { Modal, ScreenHeader } from "../../components/ui";
 import type { HydraAccount } from "../../lib/hydra-types";
 import { loadPropertyRanking, type PropertyRankingEntry } from "../../services/property-ranking";
@@ -19,6 +19,19 @@ function ProgressCard({ icon, title, text, current, target, footer }: { icon: Re
       <div className="challenge-progress"><i style={{ width: `${percent}%` }} /></div>
       <small>{footer}<b>{percent}%</b></small>
     </article>
+  );
+}
+
+function PodiumPlace({ item }: { item: PropertyRankingEntry }) {
+  return (
+    <div className={`ranking-podium-place place-${item.position} ${item.isMine ? "mine" : ""}`}>
+      <div className="ranking-podium-mark">
+        {item.position === 1 ? <Crown size={20} /> : <span>{item.position}º</span>}
+      </div>
+      <strong>{item.propertyName}</strong>
+      <small>{item.municipality || "Município não informado"}</small>
+      <b>{item.xp} XP</b>
+    </div>
   );
 }
 
@@ -40,6 +53,12 @@ export function ChallengesScreen({ account, onBack }: Props) {
     + account.monitoring.length * 10
     + account.sectors.length * 5;
   const myRanking = ranking.find((item) => item.isMine);
+  const topThree = ranking.slice(0, 3);
+  const podium = [topThree[1], topThree[0], topThree[2]].filter(Boolean) as PropertyRankingEntry[];
+  const nextAhead = myRanking && myRanking.position > 1
+    ? ranking.find((item) => item.position === myRanking.position - 1)
+    : undefined;
+  const xpToNext = myRanking && nextAhead ? Math.max(1, nextAhead.xp - myRanking.xp + 1) : 0;
 
   const refreshRanking = useCallback(async () => {
     setRankingLoading(true);
@@ -66,7 +85,7 @@ export function ChallengesScreen({ account, onBack }: Props) {
           <span><Trophy size={22} /></span>
           <div>
             <strong>Ranking de propriedades</strong>
-            <small>{myRanking ? `Sua posição: ${myRanking.position}º · ${myRanking.xp} XP` : `Seu XP atual: ${ownXp}`}</small>
+            <small>Quanto mais registros reais, maior o XP.</small>
           </div>
           <button className={rankingLoading ? "loading" : ""} onClick={() => void refreshRanking()} disabled={rankingLoading} aria-label="Atualizar ranking"><RefreshCw size={18} /></button>
         </header>
@@ -74,23 +93,46 @@ export function ChallengesScreen({ account, onBack }: Props) {
         {rankingLoading && <p className="property-ranking-message">Carregando propriedades…</p>}
         {!rankingLoading && rankingError && <p className="property-ranking-message error">{rankingError}</p>}
         {!rankingLoading && !rankingError && ranking.length === 0 && <p className="property-ranking-message">Ainda não há propriedades com nome cadastradas no ranking.</p>}
+
         {!rankingLoading && !rankingError && ranking.length > 0 && (
-          <div className="property-ranking-list">
-            {ranking.map((item) => (
-              <div key={item.propertyId} className={`property-ranking-row ${item.isMine ? "mine" : ""}`}>
-                <span className="property-ranking-position">{item.position}º</span>
-                <div className="property-ranking-copy">
-                  <strong>{item.propertyName}</strong>
-                  <small>{item.municipality || "Município não informado"}</small>
-                  {item.isMine && <em>Sua propriedade</em>}
-                </div>
-                <strong className="property-ranking-xp">{item.xp} XP</strong>
+          <>
+            <div className={`ranking-podium count-${Math.min(3, topThree.length)}`}>
+              {podium.map((item) => <PodiumPlace key={item.propertyId} item={item} />)}
+            </div>
+
+            <div className="ranking-my-position">
+              <div className="ranking-my-number">
+                <span>{myRanking ? `${myRanking.position}º` : "—"}</span>
+                <small>sua posição</small>
               </div>
-            ))}
-          </div>
+              <div className="ranking-my-copy">
+                <strong>{account.property.name || "Sua propriedade"}</strong>
+                <small>{myRanking ? `${myRanking.xp} XP acumulados` : `${ownXp} XP calculados`}</small>
+                {myRanking?.position === 1
+                  ? <p>Você está liderando o ranking.</p>
+                  : myRanking && nextAhead
+                    ? <p><ArrowUp size={13} /> Faltam {xpToNext} XP para ultrapassar {nextAhead.propertyName}.</p>
+                    : <p>Sua posição aparece assim que o ranking terminar de sincronizar.</p>}
+              </div>
+            </div>
+
+            <div className="ranking-table-head"><span>Classificação</span><span>XP</span></div>
+            <div className="property-ranking-list">
+              {ranking.map((item) => (
+                <div key={item.propertyId} className={`property-ranking-row ${item.isMine ? "mine" : ""}`}>
+                  <span className="property-ranking-position">{item.position}º</span>
+                  <div className="property-ranking-copy">
+                    <strong>{item.propertyName}</strong>
+                    <small>{item.municipality || "Município não informado"}{item.isMine ? " · sua propriedade" : ""}</small>
+                  </div>
+                  <strong className="property-ranking-xp">{item.xp} XP</strong>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
-        <p className="xp-rules">XP: animal cadastrado 10 · NFC vinculado +20 · registro de água 5 · atividade concluída 10 · monitoramento 10 · setor criado 5.</p>
+        <p className="xp-rules">Animal 10 XP · NFC vinculado +20 · água 5 · atividade concluída 10 · monitoramento 10 · setor 5.</p>
       </section>
 
       <div className="challenge-heading"><h2>Seus desafios</h2><span>Dados reais</span></div>
