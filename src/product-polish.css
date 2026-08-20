@@ -338,6 +338,61 @@
   border-radius: 50% !important;
 }
 
+/* Espaçamento refeito: grupos coesos, com respiro entre blocos. */
+.phone-app .home-screen .home-summary-section {
+  margin-top: 22px !important;
+  display: grid !important;
+  gap: 14px !important;
+}
+.phone-app .home-screen .home-summary-section > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+.phone-app .home-screen .home-summary-section + .home-section {
+  margin-top: 30px !important;
+}
+.phone-app .home-screen .feature-link-grid {
+  gap: 14px !important;
+}
+.phone-app .home-screen .home-fab-label {
+  margin-top: 24px !important;
+}
+
+/* Rebanho: cada etapa visual fica separada sem criar espaços exagerados. */
+.phone-app .screen:has(.filter-chips) .screen-header {
+  margin-bottom: 22px !important;
+}
+.phone-app .screen:has(.filter-chips) .search-row {
+  margin-bottom: 12px !important;
+}
+.phone-app .screen:has(.filter-chips) .filter-chips {
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+}
+.phone-app .screen:has(.filter-chips) .nfc-inline-card {
+  margin-top: 0 !important;
+  margin-bottom: 14px !important;
+}
+.phone-app .screen:has(.filter-chips) .herd-care-launch {
+  margin-top: 0 !important;
+  margin-bottom: 14px !important;
+}
+.phone-app .screen:has(.filter-chips) .animal-list {
+  gap: 12px !important;
+}
+
+@media (max-width: 390px) {
+  .phone-app .home-screen .home-summary-section {
+    gap: 12px !important;
+  }
+  .phone-app .home-screen .home-summary-section + .home-section {
+    margin-top: 26px !important;
+  }
+  .phone-app .screen:has(.filter-chips) .screen-header {
+    margin-bottom: 20px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .phone-app *, .phone-app *::before, .phone-app *::after { scroll-behavior: auto !important; }
 }
