@@ -5,7 +5,7 @@ import {
   Camera,
   ChevronRight,
   Clock3,
-  Map,
+  LayoutGrid,
   MapPin,
   LoaderCircle,
   Pencil,
@@ -144,7 +144,7 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
   }
 
   return (
-    <div className="screen page-enter">
+    <div className="screen page-enter monitor-screen">
       <ScreenHeader
         eyebrow="GESTÃO DA PROPRIEDADE"
         title="Monitorar"
@@ -153,37 +153,45 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
       />
 
       <div className="segmented-control">
-        <button className={tab === "sectors" ? "active" : ""} onClick={() => setTab("sectors")}>Setores <span>{account.sectors.length}</span></button>
+        <button className={tab === "sectors" ? "active" : ""} onClick={() => setTab("sectors")}>Quadro <span>{account.sectors.length}</span></button>
         <button className={tab === "history" ? "active" : ""} onClick={() => setTab("history")}>Histórico <span>{account.monitoring.length}</span></button>
       </div>
 
       {tab === "sectors" ? (
         <section className="content-section monitor-section">
-          <SectionHeader title="Setores da propriedade" action={<button className="text-button" onClick={openNewSector}>Criar setor</button>} />
+          <SectionHeader title="Quadro de setores" action={<button className="text-button" onClick={openNewSector}>Novo setor</button>} />
           {account.sectors.length === 0 ? (
             <EmptyState
-              icon={<Map size={26} />}
-              title="Divida a propriedade em setores"
-              text="Crie áreas como Pasto 1, Curral, Plantação ou Reserva."
+              icon={<LayoutGrid size={26} />}
+              title="Monte o quadro da propriedade"
+              text="Cadastre áreas como pastos, curral, galpão, reserva ou pontos de água."
               action={<button className="primary-button" onClick={openNewSector}><Plus size={17} /> Criar primeiro setor</button>}
             />
           ) : (
-            <div className="sector-grid">
+            <div className="sector-board">
+              <div className="sector-board-head"><span>Setor</span><span>Situação</span></div>
               {account.sectors.map((item) => {
-                const count = account.monitoring.filter((recordItem) => recordItem.sectorId === item.id).length;
+                const sectorRecords = account.monitoring.filter((recordItem) => recordItem.sectorId === item.id);
+                const pending = account.activities.filter((activity) => activity.sectorId === item.id && !activity.done).length;
+                const hasOccurrence = sectorRecords.some((recordItem) => Boolean(recordItem.occurrence?.trim()));
+                const latest = sectorRecords.slice().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+                const status = hasOccurrence ? "Atenção" : pending > 0 ? `${pending} pendente${pending === 1 ? "" : "s"}` : "Em dia";
                 return (
-                  <button className="sector-card" key={item.id} onClick={() => setSelected(item)}>
-                    <span className="sector-icon"><MapPin size={22} /></span>
-                    <div><small>{item.kind}</small><strong>{item.name}</strong><em>{count} monitoramento{count === 1 ? "" : "s"}</em></div>
-                    <ChevronRight size={18} />
+                  <button className="sector-board-row" key={item.id} onClick={() => setSelected(item)}>
+                    <div className="sector-board-copy">
+                      <span><strong>{item.name}</strong><em>{item.kind}</em></span>
+                      <small>{latest ? `Última inspeção ${new Date(`${latest.date}T12:00:00`).toLocaleDateString("pt-BR")}` : "Sem inspeção registrada"} · {sectorRecords.length} registro{sectorRecords.length === 1 ? "" : "s"}</small>
+                    </div>
+                    <span className={`sector-board-status ${hasOccurrence ? "attention" : pending > 0 ? "pending" : "ok"}`}>{status}</span>
+                    <ChevronRight size={17} />
                   </button>
                 );
               })}
             </div>
           )}
           {account.sectors.length > 0 && (
-            <button className="wide-outline-button" onClick={() => { setRecord((current) => ({ ...current, sectorId: account.sectors[0].id })); setRecordOpen(true); }}>
-              <RadioTower size={18} /> Registrar inspeção manual
+            <button className="wide-outline-button monitor-register-button" onClick={() => { setRecord((current) => ({ ...current, sectorId: account.sectors[0].id })); setRecordOpen(true); }}>
+              <RadioTower size={18} /> Registrar inspeção
             </button>
           )}
         </section>
@@ -210,7 +218,7 @@ export function MonitorScreen({ account, updateAccount, saveMonitoringPhoto, cre
         </section>
       )}
 
-      <Modal open={sectorOpen} onClose={() => { setSectorOpen(false); setEditingSectorId(undefined); setError(""); }} eyebrow="MAPEAMENTO" title={editingSectorId ? "Editar setor" : "Criar setor"} dismissible={!saving}>
+      <Modal open={sectorOpen} onClose={() => { setSectorOpen(false); setEditingSectorId(undefined); setError(""); }} eyebrow="SETOR" title={editingSectorId ? "Editar setor" : "Criar setor"} dismissible={!saving}>
         <form className="modal-form" onSubmit={saveSector}>
           <Field label="Nome"><input value={sector.name} onChange={(e) => { setSector({ ...sector, name: e.target.value }); setError(""); }} placeholder="Ex.: Pasto 1" autoFocus /></Field>
           <Field label="Tipo">
