@@ -4,6 +4,7 @@ import "../../product-polish.css";
 import "../../identity-system.css";
 import "../../identity-herd.css";
 import "../../identity-finish.css";
+import "../../identity-final.css";
 import {
   Bell,
   ChevronRight,
