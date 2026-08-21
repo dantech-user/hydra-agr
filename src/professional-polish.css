@@ -1,5 +1,5 @@
-/* Hydra Agro — ajustes pontuais.
-   Mantém o layout clássico do Perfil e destaca apenas o NFC no centro da bottom bar. */
+/* Hydra Agro — ajuste pontual da navegação.
+   Mantém o layout clássico do app e destaca apenas o NFC no centro da bottom bar. */
 
 .phone-app .bottom-nav {
   overflow: visible !important;
@@ -62,7 +62,6 @@
   background: var(--sage-soft) !important;
 }
 
-/* NFC central e elevado. */
 .phone-app .bottom-nav > button:nth-of-type(3) {
   position: relative !important;
   z-index: 8 !important;
@@ -92,33 +91,111 @@
   transform: translateY(-10px) scale(.96) !important;
 }
 
-/* Perfil: não altera hero, cards, tamanhos, cores nem espaçamentos antigos.
-   Apenas remove atalhos redundantes para deixar a tela mais profissional. */
+/* Perfil clássico preservado. Apenas adiciona menu, abas e reduz opções visíveis. */
+.phone-app .profile-screen .profile-top-edit {
+  right: 58px !important;
+}
 
-/* MINHA CONTA: Hydra Agro+ já tem card próprio; Comunidade, Atividades e a central de
-   notificações já possuem acesso próprio no app. Mantém Dados pessoais. */
-.phone-app .profile-screen .profile-group:has(> .profile-menu-card > .profile-menu-row:nth-child(5)):not(:has(> .profile-menu-card > .profile-menu-row:nth-child(6)))
-  > .profile-menu-card > .profile-menu-row:nth-child(n + 2) {
+.phone-app .profile-settings-trigger {
+  position: absolute;
+  z-index: 6;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.phone-app .profile-settings-trigger:active {
+  transform: scale(.95);
+}
+
+.phone-app .profile-social-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 50px;
+  margin: -3px 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.phone-app .profile-social-tabs > button {
+  position: relative;
+  min-width: 0;
+  min-height: 50px;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.phone-app .profile-social-tabs > button span {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.phone-app .profile-social-tabs > button small {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  display: inline-grid;
+  place-items: center;
+  background: var(--sage-soft);
+  color: var(--forest-700);
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.phone-app .profile-social-tabs > button.active {
+  color: var(--forest-700);
+}
+
+.phone-app .profile-social-tabs > button.active::after {
+  content: "";
+  position: absolute;
+  left: 24%;
+  right: 24%;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--forest-700);
+}
+
+/* Aparência e modo demonstração continuam funcionais, mas saem da lista principal. */
+.phone-app .profile-screen .theme-menu-row,
+.phone-app .profile-screen .demo-menu-row {
   display: none !important;
 }
 
-/* MINHA PROPRIEDADE: alertas de água ficam nas preferências de Notificações. */
-.phone-app .profile-screen .profile-group:has(> .profile-menu-card > .profile-menu-row:nth-child(4)):not(:has(> .profile-menu-card > .profile-menu-row:nth-child(5)))
-  > .profile-menu-card > .profile-menu-row:nth-child(4) {
-  display: none !important;
+.profile-settings-sheet {
+  display: grid;
+  gap: 13px;
 }
 
-/* PREFERÊNCIAS: remove somente o atalho de apoio do meio das configurações.
-   Mantém Notificações, Segurança, Termos, Privacidade e Sobre. */
-.phone-app .profile-screen .profile-group:has(> .profile-menu-card > .profile-menu-row:nth-child(6))
-  > .profile-menu-card > .profile-menu-row:nth-child(3) {
-  display: none !important;
+.profile-settings-sheet .profile-menu-card {
+  margin: 0;
 }
 
-/* Links oficiais: mantém os dois canais principais e evita uma lista longa. */
-.phone-app .profile-screen .profile-group:last-of-type
-  > .profile-menu-card > .profile-menu-row:nth-child(n + 3) {
-  display: none !important;
+.profile-settings-label {
+  margin: 6px 4px -5px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .09em;
 }
 
 .hydra-root.theme-dark .phone-app .bottom-nav {
@@ -138,6 +215,27 @@
   color: #8fbd99 !important;
 }
 
+.hydra-root.theme-dark .phone-app .profile-social-tabs {
+  border-bottom-color: #294235;
+}
+
+.hydra-root.theme-dark .phone-app .profile-social-tabs > button {
+  color: #82938a;
+}
+
+.hydra-root.theme-dark .phone-app .profile-social-tabs > button.active {
+  color: #8fbd99;
+}
+
+.hydra-root.theme-dark .phone-app .profile-social-tabs > button.active::after {
+  background: #8fbd99;
+}
+
+.hydra-root.theme-dark .phone-app .profile-social-tabs > button small {
+  background: #173526;
+  color: #8fbd99;
+}
+
 @media (max-width: 370px) {
   .phone-app .bottom-nav > button > small {
     font-size: 7.2px !important;
@@ -147,5 +245,15 @@
   .phone-app .bottom-nav > button:nth-of-type(3).active > span {
     width: 54px !important;
     height: 54px !important;
+  }
+
+  .phone-app .profile-screen .profile-top-edit {
+    right: 54px !important;
+  }
+
+  .phone-app .profile-settings-trigger {
+    right: 13px;
+    width: 36px;
+    height: 36px;
   }
 }
