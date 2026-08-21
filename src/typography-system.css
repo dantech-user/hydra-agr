@@ -1,0 +1,223 @@
+/* Hydra Agro — escala tipográfica global e consistente.
+   Mantém hierarquia visual, mas elimina tamanhos aleatórios entre telas. */
+
+.hydra-root {
+  --type-display: 30px;
+  --type-section: 18px;
+  --type-card: 13px;
+  --type-body: 12px;
+  --type-control: 11px;
+  --type-caption: 9.5px;
+  --type-eyebrow: 9px;
+  --type-nav: 8.5px;
+  --line-display: 1.08;
+  --line-heading: 1.22;
+  --line-body: 1.48;
+}
+
+/* Base */
+.hydra-root .phone-app,
+.hydra-root .modal-layer,
+.hydra-root .theme-dialog,
+.hydra-root .demo-dialog {
+  font-size: var(--type-body) !important;
+  line-height: var(--line-body);
+}
+
+/* Títulos principais de todas as telas */
+.hydra-root .phone-app .screen-heading h1,
+.hydra-root .phone-app .greeting-block h1,
+.hydra-root .phone-app .nfc-screen h1,
+.hydra-root .phone-app .assistant-screen h1,
+.hydra-root .phone-app .today-screen h1,
+.hydra-root .phone-app .history-screen h1,
+.hydra-root .phone-app .profile-screen .profile-name,
+.hydra-root .phone-app .profile-hero h1 {
+  font-size: var(--type-display) !important;
+  line-height: var(--line-display) !important;
+  letter-spacing: -.035em !important;
+}
+
+/* Títulos de seções, sheets e blocos grandes */
+.hydra-root .phone-app .section-heading h2,
+.hydra-root .phone-app .property-hero h2,
+.hydra-root .phone-app .empty-state h3,
+.hydra-root .modal-sheet .modal-head h2,
+.hydra-root .theme-dialog h2,
+.hydra-root .demo-dialog h2,
+.hydra-root .phone-app .ranking-hero h2,
+.hydra-root .phone-app .water-overview h2 {
+  font-size: var(--type-section) !important;
+  line-height: var(--line-heading) !important;
+  letter-spacing: -.025em !important;
+}
+
+/* Títulos de cards e linhas */
+.hydra-root .phone-app :is(
+  .property-link,
+  .nfc-inline-card,
+  .herd-care-launch,
+  .animal-card,
+  .post-card,
+  .community-composer,
+  .feature-link-grid,
+  .task-card,
+  .history-home-row,
+  .first-action-card,
+  .profile-menu-row,
+  .plan-card,
+  .activity-card,
+  .water-card,
+  .monitor-card,
+  .ranking-row,
+  .assistant-home-card,
+  .today-home-card
+) strong,
+.hydra-root .profile-settings-sheet .profile-menu-row strong,
+.hydra-root .demo-dialog strong,
+.hydra-root .theme-dialog strong {
+  font-size: var(--type-card) !important;
+  line-height: 1.28 !important;
+}
+
+/* Corpo de texto */
+.hydra-root .phone-app :is(
+  .screen-heading,
+  .greeting-block,
+  .property-hero,
+  .empty-state,
+  .post-card,
+  .community-composer,
+  .nfc-inline-card,
+  .herd-care-launch,
+  .animal-card,
+  .activity-card,
+  .water-card,
+  .monitor-card,
+  .profile-hero,
+  .profile-group,
+  .task-card,
+  .first-action-card
+) p,
+.hydra-root .modal-sheet p,
+.hydra-root .theme-dialog p,
+.hydra-root .demo-dialog p {
+  font-size: var(--type-body) !important;
+  line-height: var(--line-body) !important;
+}
+
+/* Textos secundários */
+.hydra-root .phone-app :is(
+  .screen-heading,
+  .greeting-block,
+  .property-hero,
+  .nfc-inline-card,
+  .herd-care-launch,
+  .animal-card,
+  .post-card,
+  .feature-link-grid,
+  .task-card,
+  .history-home-row,
+  .first-action-card,
+  .profile-menu-row,
+  .plan-card,
+  .activity-card,
+  .water-card,
+  .monitor-card,
+  .ranking-row,
+  .assistant-home-card,
+  .today-home-card
+) small,
+.hydra-root .profile-settings-sheet small,
+.hydra-root .theme-dialog small,
+.hydra-root .demo-dialog small {
+  font-size: var(--type-caption) !important;
+  line-height: 1.4 !important;
+}
+
+/* Eyebrows / labels */
+.hydra-root .phone-app .eyebrow,
+.hydra-root .phone-app .group-label,
+.hydra-root .phone-app .property-kicker,
+.hydra-root .modal-sheet .eyebrow,
+.hydra-root .theme-dialog-kicker,
+.hydra-root .demo-kicker,
+.hydra-root .profile-settings-label,
+.hydra-root .field > span {
+  font-size: var(--type-eyebrow) !important;
+  line-height: 1.25 !important;
+  letter-spacing: .08em !important;
+}
+
+/* Botões e controles */
+.hydra-root .phone-app button:not(.icon-button),
+.hydra-root .modal-sheet button:not(.icon-button),
+.hydra-root .theme-dialog button,
+.hydra-root .demo-dialog button {
+  font-size: var(--type-control) !important;
+  line-height: 1.2 !important;
+}
+
+.hydra-root .phone-app input,
+.hydra-root .phone-app textarea,
+.hydra-root .phone-app select,
+.hydra-root .modal-sheet input,
+.hydra-root .modal-sheet textarea,
+.hydra-root .modal-sheet select {
+  font-size: var(--type-body) !important;
+  line-height: 1.4 !important;
+}
+
+/* Chips, badges e metadata */
+.hydra-root .phone-app :is(
+  .filter-chips,
+  .community-tabs,
+  .tag-badge,
+  .status-badge,
+  .animal-code,
+  .demo-menu-badge
+) {
+  font-size: var(--type-control) !important;
+}
+
+.hydra-root .phone-app :is(.filter-chips, .community-tabs) button {
+  font-size: var(--type-control) !important;
+  line-height: 1 !important;
+}
+
+/* Bottom bar: mesma escala em todas as abas */
+.hydra-root .phone-app .bottom-nav button > small,
+.hydra-root .phone-app .bottom-nav button:nth-of-type(3) > small,
+.hydra-root .phone-app .bottom-nav button.active > small {
+  font-size: var(--type-nav) !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Composer/comentários não podem escapar da escala */
+.hydra-root .phone-app .community-composer p,
+.hydra-root .phone-app .comment-form input,
+.hydra-root .phone-app .search-box input {
+  font-size: var(--type-body) !important;
+}
+
+/* Mantém nomes e números importantes legíveis sem criar novos tamanhos aleatórios. */
+.hydra-root .phone-app .animal-copy > strong,
+.hydra-root .phone-app .post-card header strong,
+.hydra-root .phone-app .profile-menu-row strong,
+.hydra-root .phone-app .task-card strong {
+  font-size: var(--type-card) !important;
+}
+
+@media (max-width: 370px) {
+  .hydra-root {
+    --type-display: 28px;
+    --type-section: 17px;
+    --type-card: 12.5px;
+    --type-body: 11.5px;
+    --type-control: 10.5px;
+    --type-caption: 9px;
+    --type-eyebrow: 8.5px;
+    --type-nav: 8px;
+  }
+}
