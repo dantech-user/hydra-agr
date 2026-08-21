@@ -1,0 +1,247 @@
+/* Hydra Agro — limpeza final de superfícies claras.
+   Remove cinzas frios, preserva identidade: Água azul, NFC laranja, Propriedade verde. */
+
+.hydra-root:not(.theme-dark) {
+  --cream: #efe9dc;
+  --paper: #f8f3e7;
+  --sage-soft: #e8efe6;
+  --line: #d7dccf;
+  --muted: #5d7468;
+  --neutral-bg: #efe9dc;
+  --neutral-surface: #f8f3e7;
+  --neutral-soft: #edf1e8;
+  --neutral-hover: #fbf7ed;
+  --water-soft: #e5f2f5;
+  --water-soft-2: #d8ecef;
+  --water-line: #bfdde3;
+  --water-ink: #286f82;
+}
+
+/* Fundo geral: creme quente, nunca cinza. */
+html:has(.hydra-root:not(.theme-dark)),
+body:has(.hydra-root:not(.theme-dark)),
+body:has(.hydra-root:not(.theme-dark)) #root,
+.hydra-root:not(.theme-dark),
+.hydra-root:not(.theme-dark) .app-shell,
+.hydra-root:not(.theme-dark) .phone-app {
+  background: var(--neutral-bg) !important;
+}
+
+.hydra-root:not(.theme-dark) .app-content {
+  background:
+    radial-gradient(circle at 90% 0%, rgba(244,122,11,.055), transparent 25%),
+    radial-gradient(circle at 7% 92%, rgba(23,99,70,.055), transparent 28%),
+    linear-gradient(145deg, #f0eadf 0%, #ece8dc 52%, #f2eadb 100%) !important;
+}
+
+/* Superfícies neutras: creme/verde suave no lugar do cinza. */
+.hydra-root:not(.theme-dark) :is(
+  .content-section,
+  .empty-state,
+  .animal-card,
+  .post-card,
+  .community-composer,
+  .profile-menu-card,
+  .profile-menu-row,
+  .plan-card,
+  .monitor-card,
+  .activity-card,
+  .task-card,
+  .history-home-row,
+  .first-action-card,
+  .assistant-home-card,
+  .today-home-card,
+  .nfc-manual-card,
+  .nfc-result-card,
+  .detail-card,
+  .settings-card,
+  .setting-card,
+  .compact-row,
+  .inline-empty,
+  .plain-empty,
+  .modal-sheet,
+  .quick-sheet,
+  .profile-settings-sheet,
+  .theme-dialog,
+  .demo-dialog
+) {
+  background-color: var(--neutral-surface) !important;
+  border-color: var(--line) !important;
+}
+
+.hydra-root:not(.theme-dark) :is(
+  .community-tabs,
+  .filter-chips,
+  .profile-social-tabs,
+  .state-readonly,
+  .municipality-region-note,
+  .info-strip
+) {
+  background-color: var(--neutral-soft) !important;
+  border-color: var(--line) !important;
+}
+
+/* Inputs também deixam de ter aquele cinza frio. */
+.hydra-root:not(.theme-dark) :is(
+  input,
+  select,
+  textarea,
+  .municipality-trigger,
+  .municipality-panel,
+  .municipality-search
+) {
+  background-color: #fbf6ea !important;
+  border-color: #d8dccf !important;
+}
+
+.hydra-root:not(.theme-dark) :is(input, select, textarea):focus,
+.hydra-root:not(.theme-dark) .municipality-picker.is-open .municipality-trigger {
+  background-color: #fffaf0 !important;
+}
+
+/* Textos que herdavam cinza passam a verde neutro. */
+.hydra-root:not(.theme-dark) :is(
+  .screen-heading p,
+  .subtle-label,
+  .field small,
+  .profile-version,
+  .content-section p,
+  .empty-state p,
+  .plain-empty,
+  .inline-empty small,
+  .compact-row small,
+  .timeline-list small
+) {
+  color: #607669 !important;
+}
+
+/* =========================================================
+   ÁGUA — identidade azul suave, sem bloco cinza
+   ========================================================= */
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-overview {
+  border: 1px solid var(--water-line) !important;
+  background:
+    radial-gradient(circle at 88% 8%, rgba(255,255,255,.5), transparent 30%),
+    linear-gradient(145deg, #eaf6f8 0%, var(--water-soft) 48%, var(--water-soft-2) 100%) !important;
+  color: #1e6578 !important;
+  box-shadow: 0 22px 48px -38px rgba(40,111,130,.5) !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-total-icon {
+  background: linear-gradient(145deg, #63aebe, #3d8ea2) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.28) !important;
+  box-shadow: 0 12px 24px -17px rgba(45,126,148,.68) !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-mini-metrics > div {
+  background: rgba(255,255,255,.46) !important;
+  border-color: rgba(55,132,151,.13) !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-mini-metrics :is(span, strong),
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-total :is(span, strong, small) {
+  color: inherit !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .action-pair .secondary-button {
+  background: linear-gradient(180deg, #e5f2f5, #d8eaee) !important;
+  color: var(--water-ink) !important;
+  border-color: var(--water-line) !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .content-section {
+  background:
+    linear-gradient(145deg, #faf6ec 0%, #f4f1e7 100%) !important;
+  border-color: #d6ddd2 !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .row-icon.soft-blue {
+  background: #dcedf1 !important;
+  color: #327f94 !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .compact-row:hover {
+  background: #eef5f1 !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .chart-track {
+  background: #deebe9 !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .chart-track > i {
+  background: linear-gradient(180deg, #56a7ba, #347f94) !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .timeline-dot {
+  background: #438fa3 !important;
+  box-shadow: 0 0 0 5px #e2f0f3 !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .info-strip {
+  background: #e8f2ee !important;
+  color: #356d58 !important;
+  border-color: #cfe1d7 !important;
+}
+
+.hydra-root:not(.theme-dark) .screen:has(> .water-overview) .info-strip.attention {
+  background: #fff0dd !important;
+  color: #a65b11 !important;
+  border-color: #efd1aa !important;
+}
+
+/* =========================================================
+   HOME — mantém os destaques pedidos
+   ========================================================= */
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner {
+  border-color: rgba(255,255,255,.16) !important;
+  background:
+    radial-gradient(circle at 50% -22%, rgba(255,255,255,.18), transparent 48%),
+    linear-gradient(145deg, #ff9b31 0%, #f47a0b 58%, #df6500 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 24px 50px -32px rgba(204,91,0,.56) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-icon {
+  background: rgba(255,255,255,.14) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy :is(small, strong) {
+  color: #fff !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy em {
+  color: rgba(255,247,239,.8) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .property-hero {
+  background:
+    radial-gradient(circle at 94% 0%, rgba(255,142,34,.14), transparent 32%),
+    linear-gradient(145deg, #1a6548 0%, #114b36 58%, #0b3d2b 100%) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.1) !important;
+}
+
+/* Bottom dock claro acompanha o creme, sem cinza. */
+@media (min-width: 900px) {
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav {
+    background: rgba(248,243,231,.96) !important;
+    border-color: rgba(23,77,53,.12) !important;
+  }
+}
+
+/* Hover claro e quente. */
+@media (hover: hover) {
+  .hydra-root:not(.theme-dark) :is(
+    .animal-card,
+    .post-card,
+    .profile-menu-row,
+    .compact-row,
+    .history-home-row,
+    .task-card
+  ):hover {
+    background-color: var(--neutral-hover) !important;
+  }
+}
