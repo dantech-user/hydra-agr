@@ -1,3 +1,4 @@
+import "../../community-polish.css";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Camera, Heart, ImagePlus, LoaderCircle, MessageCircle, RefreshCw, Send, Trash2, UsersRound } from "lucide-react";
 import { ConfirmDialog, EmptyState, Field, LoadingButton, Modal, ScreenHeader } from "../../components/ui";
@@ -98,7 +99,7 @@ export function CommunityScreen({ account, onBack, publishPost, likePost, commen
   }
 
   return (
-    <div className="screen page-enter extra-screen">
+    <div className="screen page-enter extra-screen community-screen">
       <ScreenHeader title="Comunidade" subtitle="Experiências reais de quem vive o campo." onBack={onBack} action={<div className="header-action-pair"><button className="icon-button" onClick={() => void refresh()} aria-label="Atualizar comunidade" disabled={busy === "refresh"}>{busy === "refresh" ? <LoaderCircle size={19} className="spin" /> : <RefreshCw size={19} />}</button><button className="icon-button accent" onClick={() => setComposerOpen(true)} aria-label="Nova publicação"><Camera size={20} /></button></div>} />
 
       <div className="community-tabs">
