@@ -1,0 +1,415 @@
+/* Hydra Agro — camada visual de impacto.
+   Mais contraste, profundidade e identidade sem mexer na lógica do app. */
+
+.hydra-root:not(.theme-dark) {
+  --impact-bg: #e7e7de;
+  --impact-paper: #f8f2e6;
+  --impact-paper-2: #f2f0e7;
+  --impact-green: #0d432f;
+  --impact-green-2: #176346;
+  --impact-green-soft: #e4ece4;
+  --impact-orange: #ff7a00;
+  --impact-orange-2: #ff9a2e;
+  --impact-line: rgba(20, 76, 52, .13);
+  --impact-shadow: 0 24px 60px -42px rgba(7, 47, 31, .48);
+}
+
+/* Base clara com mais personalidade */
+html:has(.hydra-root:not(.theme-dark)),
+body:has(.hydra-root:not(.theme-dark)),
+body:has(.hydra-root:not(.theme-dark)) #root,
+.hydra-root:not(.theme-dark),
+.hydra-root:not(.theme-dark) .app-shell,
+.hydra-root:not(.theme-dark) .phone-app {
+  background: var(--impact-bg) !important;
+}
+
+.hydra-root:not(.theme-dark) .app-content {
+  background:
+    radial-gradient(circle at 88% 0%, rgba(255, 122, 0, .075), transparent 25%),
+    radial-gradient(circle at 6% 92%, rgba(13, 67, 47, .075), transparent 28%),
+    linear-gradient(135deg, #e9e9e0 0%, #e5e6dc 52%, #ece8dc 100%) !important;
+}
+
+/* Botões principais ficam mais vivos */
+.hydra-root:not(.theme-dark) .primary-button,
+.hydra-root:not(.theme-dark) .small-button {
+  border: 1px solid rgba(255,255,255,.09) !important;
+  background: linear-gradient(145deg, #176346 0%, #0d432f 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 28px -17px rgba(13, 67, 47, .72) !important;
+}
+
+.hydra-root:not(.theme-dark) .icon-button.accent,
+.hydra-root:not(.theme-dark) .home-fab-label {
+  border: 1px solid rgba(255,255,255,.14) !important;
+  background: linear-gradient(145deg, var(--impact-orange-2), var(--impact-orange)) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 28px -16px rgba(255, 122, 0, .7) !important;
+}
+
+.hydra-root:not(.theme-dark) .secondary-button {
+  border: 1px solid rgba(13, 67, 47, .09) !important;
+  background: linear-gradient(180deg, #edf2ea, #e5ebe4) !important;
+  color: var(--impact-green) !important;
+}
+
+/* Cards principais: nada de bloco branco chapado */
+.hydra-root:not(.theme-dark) :is(
+  .content-section,
+  .animal-card,
+  .post-card,
+  .community-composer,
+  .profile-menu-row,
+  .plan-card,
+  .water-overview,
+  .water-card,
+  .monitor-card,
+  .activity-card,
+  .task-card,
+  .history-home-row,
+  .first-action-card,
+  .assistant-home-card,
+  .today-home-card,
+  .nfc-manual-card,
+  .nfc-result-card,
+  .empty-state
+) {
+  border: 1px solid var(--impact-line) !important;
+  background:
+    linear-gradient(145deg, rgba(250, 247, 238, .96), rgba(241, 240, 231, .96)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.65),
+    var(--impact-shadow) !important;
+}
+
+.hydra-root:not(.theme-dark) :is(.content-section, .animal-card, .post-card, .profile-menu-row) {
+  position: relative;
+}
+
+/* Inputs ficam quentes, mas com contraste */
+.hydra-root:not(.theme-dark) :is(input, select, textarea, .municipality-trigger, .municipality-panel, .state-readonly) {
+  background: #f8f4e9 !important;
+  border-color: rgba(20, 76, 52, .14) !important;
+}
+
+.hydra-root:not(.theme-dark) :is(input, select, textarea):focus,
+.hydra-root:not(.theme-dark) .municipality-picker.is-open .municipality-trigger {
+  background: #fffaf0 !important;
+  border-color: rgba(23, 99, 70, .38) !important;
+  box-shadow: 0 0 0 4px rgba(23, 99, 70, .08) !important;
+}
+
+/* Atalhos da Home ganham identidade por função */
+.hydra-root:not(.theme-dark) .shortcut-row > button {
+  border: 1px solid rgba(20, 76, 52, .11) !important;
+  background: linear-gradient(155deg, #faf6eb, #efeee5) !important;
+  box-shadow: 0 18px 38px -34px rgba(7, 47, 31, .44) !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button > span:not(.touch-ripple) {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 15px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #e2ece3 !important;
+  color: #176346 !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(2) > span:not(.touch-ripple) {
+  background: #e2eef1 !important;
+  color: #317f95 !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(3) > span:not(.touch-ripple),
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(5) > span:not(.touch-ripple) {
+  background: #fff0dc !important;
+  color: #e36f08 !important;
+}
+
+/* NFC vira um dos destaques visuais da Home */
+.hydra-root:not(.theme-dark) .nfc-banner {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background:
+    radial-gradient(circle at 88% 22%, rgba(131,186,91,.22), transparent 26%),
+    linear-gradient(135deg, #15583f 0%, #0c3d2b 60%, #092f21 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 24px 48px -30px rgba(8, 53, 35, .62) !important;
+}
+
+.hydra-root:not(.theme-dark) .nfc-banner::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 120px;
+  height: 120px;
+  right: -42px;
+  top: -48px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 50%;
+  box-shadow: 0 0 0 22px rgba(255,255,255,.035), 0 0 0 44px rgba(255,255,255,.02);
+}
+
+.hydra-root:not(.theme-dark) .nfc-banner :is(strong, small, em, svg) {
+  color: inherit !important;
+}
+
+.hydra-root:not(.theme-dark) .nfc-banner em {
+  color: rgba(238, 247, 240, .7) !important;
+}
+
+.hydra-root:not(.theme-dark) .nfc-banner-icon {
+  background: linear-gradient(145deg, #ff9d36, #ff7900) !important;
+  color: white !important;
+  box-shadow: 0 12px 26px -15px rgba(255,122,0,.75) !important;
+}
+
+/* Propriedade: quente, sólida e com contraste */
+.hydra-root:not(.theme-dark) .property-hero {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(20,76,52,.14) !important;
+  background:
+    radial-gradient(circle at 94% 4%, rgba(255,122,0,.105), transparent 28%),
+    linear-gradient(145deg, #f8f3e5, #e8ede3) !important;
+  box-shadow: 0 24px 52px -40px rgba(8, 51, 34, .48) !important;
+}
+
+.hydra-root:not(.theme-dark) .property-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 180px;
+  height: 180px;
+  right: -90px;
+  bottom: -100px;
+  border-radius: 50%;
+  background: rgba(23,99,70,.06);
+}
+
+.hydra-root:not(.theme-dark) .property-metrics > div {
+  border-color: rgba(20,76,52,.09) !important;
+  background: rgba(255,255,255,.32) !important;
+}
+
+/* Chips e abas mais fortes */
+.hydra-root:not(.theme-dark) :is(.community-tabs, .filter-chips, .profile-social-tabs) {
+  border-color: rgba(20,76,52,.1) !important;
+  background: rgba(239, 239, 230, .78) !important;
+}
+
+.hydra-root:not(.theme-dark) :is(.community-tabs, .filter-chips, .profile-social-tabs) button.active {
+  background: linear-gradient(145deg, #176346, #0e4b35) !important;
+  color: #fff !important;
+  box-shadow: 0 9px 22px -14px rgba(13,67,47,.55) !important;
+}
+
+/* Modal e quick actions acompanham a linguagem */
+.hydra-root:not(.theme-dark) :is(.modal-sheet, .quick-sheet, .profile-settings-sheet, .theme-dialog, .demo-dialog) {
+  border: 1px solid rgba(20,76,52,.12) !important;
+  background:
+    radial-gradient(circle at 96% 2%, rgba(255,122,0,.045), transparent 25%),
+    #f6f1e5 !important;
+  box-shadow: 0 30px 80px -38px rgba(5, 40, 26, .58) !important;
+}
+
+.hydra-root:not(.theme-dark) .quick-grid > button {
+  border: 1px solid rgba(20,76,52,.1) !important;
+  background: linear-gradient(145deg, #faf6ea, #ecece3) !important;
+}
+
+.hydra-root:not(.theme-dark) .quick-grid > button > span:not(.touch-ripple) {
+  background: #e4ece4 !important;
+  color: #176346 !important;
+}
+
+/* Estados vazios ficam menos “caixa branca” */
+.hydra-root:not(.theme-dark) .empty-state > span,
+.hydra-root:not(.theme-dark) .empty-state > .empty-icon {
+  background: linear-gradient(145deg, #e7eee5, #dce8dd) !important;
+  color: #176346 !important;
+  box-shadow: inset 0 0 0 1px rgba(23,99,70,.06) !important;
+}
+
+/* ========================================
+   Notebook / desktop: impacto visual maior
+   ======================================== */
+@media (min-width: 900px) {
+  .hydra-root:not(.theme-dark) .app-shell {
+    position: relative !important;
+    isolation: isolate !important;
+  }
+
+  .hydra-root:not(.theme-dark) .app-shell::before {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 78% 12%, rgba(255,122,0,.08), transparent 18%),
+      radial-gradient(circle at 12% 82%, rgba(13,67,47,.085), transparent 22%);
+  }
+
+  /* Cabeçalhos mais fortes */
+  .hydra-root:not(.theme-dark) .screen-heading h1,
+  .hydra-root:not(.theme-dark) .greeting-block h1 {
+    color: #103526 !important;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  }
+
+  .hydra-root:not(.theme-dark) .eyebrow {
+    color: #176346 !important;
+  }
+
+  .hydra-root:not(.theme-dark) .eyebrow.orange {
+    color: #e86e00 !important;
+  }
+
+  /* Dock com cara de produto */
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav {
+    border: 1px solid rgba(13,67,47,.14) !important;
+    background:
+      linear-gradient(180deg, rgba(250,247,238,.96), rgba(237,237,228,.95)) !important;
+    box-shadow:
+      0 28px 64px -34px rgba(6,45,29,.48),
+      inset 0 1px 0 rgba(255,255,255,.8) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) {
+    border-color: rgba(13,67,47,.1) !important;
+    background: linear-gradient(145deg, #e5eee5, #dce8df) !important;
+    color: #14563d !important;
+  }
+
+  /* NFC central vira o “botão assinatura” */
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+    border-color: #f4efe4 !important;
+    background: linear-gradient(145deg, #ff9b2f, #ff7600) !important;
+    color: #fff !important;
+    box-shadow:
+      0 18px 34px -14px rgba(255,122,0,.58),
+      0 4px 12px rgba(255,122,0,.18) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav > button:nth-of-type(3) > small {
+    color: #b95a00 !important;
+  }
+
+  /* Cards levantam sem mexer no layout */
+  .hydra-root:not(.theme-dark) .phone-app :is(
+    .shortcut-row > button,
+    .animal-card,
+    .post-card,
+    .profile-menu-row,
+    .content-section,
+    .property-hero,
+    .nfc-banner,
+    .history-home-row,
+    .first-action-card,
+    .quick-grid > button
+  ) {
+    transition:
+      transform 220ms cubic-bezier(.2,.8,.2,1),
+      box-shadow 220ms ease,
+      border-color 220ms ease,
+      filter 220ms ease !important;
+  }
+
+  .hydra-root:not(.theme-dark) .phone-app :is(
+    .shortcut-row > button,
+    .animal-card,
+    .post-card,
+    .profile-menu-row,
+    .history-home-row,
+    .quick-grid > button
+  ):hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(23,99,70,.2) !important;
+    box-shadow: 0 24px 48px -34px rgba(7,47,31,.52) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .nfc-banner:hover {
+    transform: translateY(-3px) !important;
+    filter: saturate(1.06) brightness(1.025) !important;
+    box-shadow: 0 30px 54px -30px rgba(7,47,31,.68) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .property-hero:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 30px 58px -40px rgba(8,51,34,.56) !important;
+  }
+
+  /* Cards ganham uma linha de luz no topo */
+  .hydra-root:not(.theme-dark) :is(.content-section, .animal-card, .post-card, .profile-menu-row) {
+    overflow: hidden !important;
+  }
+
+  .hydra-root:not(.theme-dark) :is(.content-section, .animal-card, .post-card, .profile-menu-row)::before {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    left: 18px;
+    right: 18px;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
+  }
+
+  /* Água mantém identidade azul sem fugir do tema */
+  .hydra-root:not(.theme-dark) .water-overview {
+    background:
+      radial-gradient(circle at 92% 8%, rgba(59,143,164,.12), transparent 26%),
+      linear-gradient(145deg, #f5f3e8, #e8efea) !important;
+  }
+
+  /* Rebanho: bloco NFC e manejo com mais contraste */
+  .hydra-root:not(.theme-dark) .nfc-inline-card {
+    border-color: rgba(255,122,0,.18) !important;
+    background: linear-gradient(145deg, #fff3df, #f2ecdf) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .herd-care-launch {
+    border-color: rgba(23,99,70,.13) !important;
+    background: linear-gradient(145deg, #eaf0e5, #f3f0e6) !important;
+  }
+
+  /* Entrada mais viva */
+  @keyframes hydraImpactIn {
+    from { opacity: 0; transform: translateY(10px) scale(.995); filter: saturate(.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: saturate(1); }
+  }
+
+  .hydra-root:not(.theme-dark) .app-content > .screen.page-enter {
+    animation: hydraImpactIn 420ms cubic-bezier(.2,.8,.2,1) both !important;
+  }
+}
+
+/* Mobile: mantém a estrutura, só ganha acabamento */
+@media (max-width: 899px) {
+  .hydra-root:not(.theme-dark) .nfc-banner {
+    border-radius: 21px !important;
+  }
+
+  .hydra-root:not(.theme-dark) .shortcut-row > button {
+    box-shadow: none !important;
+  }
+
+  .hydra-root:not(.theme-dark) .home-fab-label {
+    box-shadow: 0 13px 26px -16px rgba(255,122,0,.62) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydra-root .app-content > .screen.page-enter,
+  .hydra-root .phone-app * {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
