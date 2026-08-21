@@ -1,5 +1,5 @@
-/* Hydra Agro — ajuste pontual da navegação.
-   Mantém o layout clássico do app e destaca apenas o NFC no centro da bottom bar. */
+/* Hydra Agro — ajustes pontuais.
+   Mantém o layout clássico do Perfil e destaca apenas o NFC no centro da bottom bar. */
 
 .phone-app .bottom-nav {
   overflow: visible !important;
@@ -62,6 +62,7 @@
   background: var(--sage-soft) !important;
 }
 
+/* NFC central e elevado. */
 .phone-app .bottom-nav > button:nth-of-type(3) {
   position: relative !important;
   z-index: 8 !important;
@@ -89,6 +90,35 @@
 
 .phone-app .bottom-nav > button:nth-of-type(3):active > span {
   transform: translateY(-10px) scale(.96) !important;
+}
+
+/* Perfil: não altera hero, cards, tamanhos, cores nem espaçamentos antigos.
+   Apenas remove atalhos redundantes para deixar a tela mais profissional. */
+
+/* MINHA CONTA: Hydra Agro+ já tem card próprio; Comunidade, Atividades e a central de
+   notificações já possuem acesso próprio no app. Mantém Dados pessoais. */
+.phone-app .profile-screen .profile-group:has(> .profile-menu-card > .profile-menu-row:nth-child(5)):not(:has(> .profile-menu-card > .profile-menu-row:nth-child(6)))
+  > .profile-menu-card > .profile-menu-row:nth-child(n + 2) {
+  display: none !important;
+}
+
+/* MINHA PROPRIEDADE: alertas de água ficam nas preferências de Notificações. */
+.phone-app .profile-screen .profile-group:has(> .profile-menu-card > .profile-menu-row:nth-child(4)):not(:has(> .profile-menu-card > .profile-menu-row:nth-child(5)))
+  > .profile-menu-card > .profile-menu-row:nth-child(4) {
+  display: none !important;
+}
+
+/* PREFERÊNCIAS: remove somente o atalho de apoio do meio das configurações.
+   Mantém Notificações, Segurança, Termos, Privacidade e Sobre. */
+.phone-app .profile-screen .profile-group:has(> .profile-menu-card > .profile-menu-row:nth-child(6))
+  > .profile-menu-card > .profile-menu-row:nth-child(3) {
+  display: none !important;
+}
+
+/* Links oficiais: mantém os dois canais principais e evita uma lista longa. */
+.phone-app .profile-screen .profile-group:last-of-type
+  > .profile-menu-card > .profile-menu-row:nth-child(n + 3) {
+  display: none !important;
 }
 
 .hydra-root.theme-dark .phone-app .bottom-nav {
