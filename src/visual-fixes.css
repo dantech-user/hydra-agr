@@ -1,0 +1,75 @@
+/* Correções finais de navegação e cabeçalho da Home. */
+
+/* Remove qualquer camada/indicador residual atrás do NFC ativo. */
+.phone-app .bottom-nav-indicator,
+.phone-app .bottom-nav > button:nth-of-type(3)::before,
+.phone-app .bottom-nav > button:nth-of-type(3)::after,
+.phone-app .bottom-nav > button:nth-of-type(3) > span::before,
+.phone-app .bottom-nav > button:nth-of-type(3) > span::after {
+  display: none !important;
+  content: none !important;
+}
+
+.phone-app .bottom-nav > button:nth-of-type(3),
+.phone-app .bottom-nav > button:nth-of-type(3).active,
+.phone-app .bottom-nav > button:nth-of-type(3):focus,
+.phone-app .bottom-nav > button:nth-of-type(3):focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.phone-app .bottom-nav > button:nth-of-type(3) > span,
+.phone-app .bottom-nav > button:nth-of-type(3).active > span {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 17px !important;
+  transform: translateY(-9px) !important;
+  background: var(--forest-700) !important;
+  box-shadow: 0 8px 18px -14px rgba(10, 67, 42, .72) !important;
+  filter: none !important;
+}
+
+/* Hydra Agro alinhado e ocupando corretamente o espaço do cabeçalho. */
+.phone-app .home-brandbar {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+}
+
+.phone-app .home-brandbar .wordmark {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+}
+
+.phone-app .home-brandbar .wordmark-mark {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+.phone-app .home-brandbar .wordmark-copy {
+  min-width: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  line-height: .92 !important;
+  transform: translateY(1px) !important;
+}
+
+.phone-app .home-brandbar > .icon-button {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+}
+
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > span,
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3).active > span {
+  box-shadow: 0 8px 18px -14px rgba(0,0,0,.58) !important;
+}
