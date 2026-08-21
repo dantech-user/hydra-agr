@@ -1,0 +1,378 @@
+/* Hydra Agro — acabamento visual específico da tela Rebanho.
+   Mantém toda a lógica atual e só refina hierarquia, espaçamento e feedback. */
+
+/* Escopo exclusivo: a tela de rebanho é a única screen com nfc-inline-card direto. */
+.phone-app .screen:has(> .nfc-inline-card) {
+  --herd-surface: #fffefb;
+  --herd-soft: #f3f5ee;
+  --herd-warm: #fff1de;
+  --herd-line: #e5e4dc;
+  --herd-green: var(--forest-700);
+}
+
+/* Cabeçalho mais compacto e proporcional. */
+.phone-app .screen:has(> .nfc-inline-card) > .screen-header {
+  margin-bottom: 18px !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .screen-header-row {
+  align-items: flex-start !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .screen-heading .eyebrow {
+  margin-bottom: 7px !important;
+  color: var(--forest-700) !important;
+  font-size: 10px !important;
+  letter-spacing: .06em !important;
+  font-weight: 850 !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .screen-heading h1 {
+  margin-bottom: 7px !important;
+  font-size: clamp(38px, 10vw, 48px) !important;
+  line-height: .98 !important;
+  letter-spacing: -.045em !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .screen-heading p {
+  margin: 0 !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+  color: #7b8780 !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .screen-action .icon-button.accent {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 25px -18px rgba(255, 135, 18, .9) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .screen-action .icon-button.accent svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Busca + filtro: uma única faixa visual, mas sem colar os controles. */
+.phone-app .screen:has(> .nfc-inline-card) > .search-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 54px !important;
+  gap: 10px !important;
+  margin: 0 0 12px !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .search-box {
+  min-height: 54px !important;
+  padding: 0 16px !important;
+  border: 1px solid var(--herd-line) !important;
+  border-radius: 18px !important;
+  background: #fbfaf6 !important;
+  box-shadow: 0 10px 25px -28px rgba(15,55,39,.55) !important;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease, transform 180ms var(--ease-product) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .search-box:focus-within {
+  border-color: rgba(31,97,69,.34) !important;
+  background: #fffefb !important;
+  box-shadow: 0 0 0 4px rgba(31,97,69,.07) !important;
+  transform: translateY(-1px);
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .search-box > svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: #718078 !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .search-box input {
+  min-width: 0 !important;
+  font-size: 14px !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .filter-button {
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  border: 1px solid var(--herd-line) !important;
+  border-radius: 18px !important;
+  background: var(--herd-surface) !important;
+  color: var(--forest-700) !important;
+  box-shadow: none !important;
+  transition: transform 170ms var(--ease-spring), background 180ms ease, color 180ms ease !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .filter-button.active {
+  border-color: transparent !important;
+  background: var(--forest-700) !important;
+  color: #fff !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .filter-button:active {
+  transform: scale(.94) !important;
+}
+
+/* Chips mais leves, com rolagem horizontal natural em telas estreitas. */
+.phone-app .screen:has(> .nfc-inline-card) > .filter-chips {
+  display: flex !important;
+  gap: 8px !important;
+  margin: 0 0 18px !important;
+  padding: 1px 1px 3px !important;
+  overflow-x: auto !important;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.phone-app .screen:has(> .nfc-inline-card) > .filter-chips::-webkit-scrollbar { display: none; }
+
+.phone-app .screen:has(> .nfc-inline-card) .filter-chips button {
+  flex: 0 0 auto !important;
+  min-height: 38px !important;
+  padding: 0 14px !important;
+  border: 1px solid #e1e2db !important;
+  border-radius: 999px !important;
+  background: rgba(255,254,251,.86) !important;
+  color: #6d7b73 !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  font-weight: 760 !important;
+  transition: transform 170ms var(--ease-spring), background 180ms ease, color 180ms ease, border-color 180ms ease !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .filter-chips button.active {
+  border-color: var(--forest-700) !important;
+  background: var(--forest-700) !important;
+  color: #fff !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .filter-chips button:active {
+  transform: scale(.96) !important;
+}
+
+/* NFC ganha prioridade visual sem virar banner exagerado. */
+.phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card {
+  min-height: 88px !important;
+  margin: 0 0 12px !important;
+  padding: 14px 16px !important;
+  grid-template-columns: 50px minmax(0, 1fr) 20px !important;
+  gap: 13px !important;
+  border: 1px solid #f0dfc7 !important;
+  border-radius: 22px !important;
+  background: linear-gradient(135deg, #fff5e7 0%, #fff0dc 100%) !important;
+  box-shadow: 0 18px 34px -34px rgba(185,102,21,.75) !important;
+  transition: transform 190ms var(--ease-spring), box-shadow 220ms ease !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card > span {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  color: var(--orange) !important;
+  box-shadow: 0 8px 20px -20px rgba(148,78,14,.75) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card > span svg {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .nfc-inline-card strong {
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+  color: var(--forest-900) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .nfc-inline-card small {
+  margin-top: 4px !important;
+  color: #7e8881 !important;
+  font-size: 10px !important;
+  line-height: 1.35 !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card > svg {
+  color: var(--forest-700) !important;
+  transition: transform 180ms var(--ease-product) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card:active {
+  transform: scale(.988) !important;
+}
+.phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card:active > svg { transform: translateX(2px); }
+
+/* Manejo vira atalho secundário, mais compacto. */
+.phone-app .screen:has(> .nfc-inline-card) > .herd-care-launch {
+  min-height: 76px !important;
+  margin: 0 0 16px !important;
+  padding: 11px 15px !important;
+  grid-template-columns: 44px minmax(0, 1fr) 20px !important;
+  gap: 12px !important;
+  border: 1px solid var(--herd-line) !important;
+  border-radius: 20px !important;
+  background: rgba(255,254,251,.88) !important;
+  box-shadow: none !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .herd-care-launch > span {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 14px !important;
+  background: #edf4ea !important;
+  color: var(--forest-700) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .herd-care-launch strong {
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .herd-care-launch small {
+  display: -webkit-box !important;
+  margin-top: 3px !important;
+  overflow: hidden !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: #7e8982 !important;
+  font-size: 9.5px !important;
+  line-height: 1.35 !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .herd-care-launch > svg { color: #829087 !important; }
+
+/* Estado vazio: menor, mais elegante e sem ocupar metade da tela. */
+.phone-app .screen:has(> .nfc-inline-card) > .empty-state {
+  min-height: 286px !important;
+  margin: 0 !important;
+  padding: 34px 24px 30px !important;
+  border: 1px solid var(--herd-line) !important;
+  border-radius: 24px !important;
+  background: linear-gradient(180deg, #fffefb 0%, #fcfbf6 100%) !important;
+  box-shadow: 0 18px 40px -42px rgba(15,55,39,.72) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .empty-state .empty-icon {
+  width: 64px !important;
+  height: 64px !important;
+  margin-bottom: 18px !important;
+  border-radius: 20px !important;
+  background: #edf4ea !important;
+  color: var(--forest-700) !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .empty-state .empty-icon svg {
+  width: 29px !important;
+  height: 29px !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .empty-state h3 {
+  margin-bottom: 8px !important;
+  font-size: 20px !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.025em !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .empty-state p {
+  max-width: 320px !important;
+  margin: 0 auto !important;
+  color: #7b8780 !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .empty-state .empty-action {
+  margin-top: 20px !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) > .empty-state .primary-button {
+  min-height: 46px !important;
+  padding: 0 20px !important;
+  border-radius: 15px !important;
+  box-shadow: 0 10px 22px -18px rgba(15,55,39,.72) !important;
+  font-size: 12px !important;
+}
+
+/* Quando houver animais, cards também recebem um acabamento leve. */
+.phone-app .screen:has(> .nfc-inline-card) > .animal-list {
+  gap: 10px !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .animal-card {
+  min-height: 78px !important;
+  border: 1px solid var(--herd-line) !important;
+  border-radius: 20px !important;
+  background: rgba(255,254,251,.92) !important;
+  box-shadow: none !important;
+  transition: transform 180ms var(--ease-spring), border-color 180ms ease, background 180ms ease !important;
+}
+
+.phone-app .screen:has(> .nfc-inline-card) .animal-card:active {
+  transform: scale(.988) !important;
+  border-color: rgba(31,97,69,.22) !important;
+  background: #fff !important;
+}
+
+/* Dark mode */
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) {
+  --herd-surface: #0e1d15;
+  --herd-soft: #14271c;
+  --herd-warm: #2b2117;
+  --herd-line: #294235;
+}
+
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) .search-box,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) .filter-button,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) .filter-chips button,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) > .herd-care-launch,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) > .empty-state,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) .animal-card {
+  border-color: #294235 !important;
+  background: #0e1d15 !important;
+  color: #eef3ef !important;
+}
+
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card {
+  border-color: #4c3825 !important;
+  background: linear-gradient(135deg, #2b2117 0%, #241c15 100%) !important;
+}
+
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) > .nfc-inline-card > span {
+  background: #38291b !important;
+}
+
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) .nfc-inline-card strong,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) .herd-care-launch strong,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) > .empty-state h3 {
+  color: #eef3ef !important;
+}
+
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) > .herd-care-launch > span,
+.hydra-root.theme-dark .phone-app .screen:has(> .nfc-inline-card) > .empty-state .empty-icon {
+  background: #173326 !important;
+  color: #9dc9a6 !important;
+}
+
+@media (max-width: 380px) {
+  .phone-app .screen:has(> .nfc-inline-card) .screen-action .icon-button.accent {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  .phone-app .screen:has(> .nfc-inline-card) > .search-row {
+    grid-template-columns: minmax(0, 1fr) 50px !important;
+  }
+  .phone-app .screen:has(> .nfc-inline-card) .filter-button {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+  }
+  .phone-app .screen:has(> .nfc-inline-card) > .empty-state {
+    min-height: 265px !important;
+    padding: 28px 20px 26px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-app .screen:has(> .nfc-inline-card) *,
+  .phone-app .screen:has(> .nfc-inline-card) *::before,
+  .phone-app .screen:has(> .nfc-inline-card) *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
