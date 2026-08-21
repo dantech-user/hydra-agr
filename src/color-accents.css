@@ -1,0 +1,356 @@
+/* Hydra Agro — correção final de cores e ícones.
+   Tira o aspecto cinza, cria hierarquia por função e preenche os ícones pequenos. */
+
+.hydra-root:not(.theme-dark) {
+  --muted: #5f7569;
+  --line: #cfd9cf;
+  --accent-green: #176346;
+  --accent-green-dark: #0d432f;
+  --accent-green-soft: #dceadf;
+  --accent-blue: #2f8198;
+  --accent-blue-soft: #dcecf0;
+  --accent-orange: #f47a0b;
+  --accent-orange-soft: #ffead2;
+  --accent-gold: #b87916;
+  --accent-gold-soft: #f7e8c8;
+  --accent-red: #b85447;
+  --accent-red-soft: #f4ddd8;
+  --accent-teal: #347f70;
+  --accent-teal-soft: #dcebe6;
+}
+
+/* Texto secundário deixa de ser cinza frio. */
+.hydra-root:not(.theme-dark) :is(
+  .screen-heading p,
+  .greeting-block p,
+  .subtle-label,
+  .field small,
+  .profile-version,
+  .property-hero p,
+  .post-card small,
+  .animal-card small,
+  .content-section p,
+  .empty-state p
+) {
+  color: #60776a !important;
+}
+
+.hydra-root:not(.theme-dark) :is(.eyebrow, .group-label, .property-kicker) {
+  color: #267252 !important;
+}
+
+/* =========================================================
+   BOTTOM BAR / DOCK — cada área ganha identidade própria
+   ========================================================= */
+.hydra-root:not(.theme-dark) .bottom-nav > button {
+  color: #48675a !important;
+}
+
+.hydra-root:not(.theme-dark) .bottom-nav > button > span:not(.touch-ripple) {
+  border: 1px solid transparent !important;
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1), background 180ms ease, color 180ms ease, box-shadow 180ms ease !important;
+}
+
+.hydra-root:not(.theme-dark) .bottom-nav > button:nth-of-type(1) > span:not(.touch-ripple) {
+  background: var(--accent-green-soft) !important;
+  color: var(--accent-green) !important;
+  border-color: rgba(23,99,70,.08) !important;
+}
+
+.hydra-root:not(.theme-dark) .bottom-nav > button:nth-of-type(2) > span:not(.touch-ripple) {
+  background: var(--accent-blue-soft) !important;
+  color: var(--accent-blue) !important;
+  border-color: rgba(47,129,152,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+.hydra-root:not(.theme-dark) .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+  background: linear-gradient(145deg, #ff9d36, #f47400) !important;
+  color: #fff !important;
+  border-color: #f7efe1 !important;
+}
+
+.hydra-root:not(.theme-dark) .bottom-nav > button:nth-of-type(4) > span:not(.touch-ripple) {
+  background: #e4ead7 !important;
+  color: #5c7b35 !important;
+  border-color: rgba(92,123,53,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .bottom-nav > button:nth-of-type(5) > span:not(.touch-ripple) {
+  background: var(--accent-teal-soft) !important;
+  color: var(--accent-teal) !important;
+  border-color: rgba(52,127,112,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .bottom-nav > button.active:not(:nth-of-type(3)) > span:not(.touch-ripple) {
+  transform: translateY(-1px) scale(1.05) !important;
+  box-shadow: 0 9px 20px -15px currentColor !important;
+}
+
+/* =========================================================
+   HOME — pequenos ícones preenchidos e sem cinza
+   ========================================================= */
+.hydra-root:not(.theme-dark) .shortcut-row > button > span:not(.touch-ripple) {
+  border: 1px solid transparent !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 9px 20px -17px currentColor !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(1) > span:not(.touch-ripple) {
+  background: linear-gradient(145deg, #dce9d8, #cfe1d0) !important;
+  color: #277048 !important;
+  border-color: rgba(39,112,72,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(2) > span:not(.touch-ripple) {
+  background: linear-gradient(145deg, #dcecf1, #cfe5eb) !important;
+  color: #2c7f97 !important;
+  border-color: rgba(44,127,151,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(3) > span:not(.touch-ripple) {
+  background: linear-gradient(145deg, #e0ecdf, #d1e3d5) !important;
+  color: #1f714e !important;
+  border-color: rgba(31,113,78,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(4) > span:not(.touch-ripple) {
+  background: linear-gradient(145deg, #ffe9cf, #f9ddbb) !important;
+  color: #d66b08 !important;
+  border-color: rgba(214,107,8,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button:nth-child(5) > span:not(.touch-ripple) {
+  background: linear-gradient(145deg, #f4e5c7, #eddab0) !important;
+  color: #9f6816 !important;
+  border-color: rgba(159,104,22,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .shortcut-row > button small {
+  color: #315b48 !important;
+  font-weight: 780 !important;
+}
+
+/* Histórico / primeiros passos / tarefas */
+.hydra-root:not(.theme-dark) .history-home-row > span,
+.hydra-root:not(.theme-dark) .first-action-card > span,
+.hydra-root:not(.theme-dark) .task-card-title > svg,
+.hydra-root:not(.theme-dark) .calm-state > svg {
+  flex: none !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 13px !important;
+}
+
+.hydra-root:not(.theme-dark) .history-home-row > span {
+  width: 42px !important;
+  height: 42px !important;
+  background: var(--accent-green-soft) !important;
+  color: var(--accent-green) !important;
+}
+
+.hydra-root:not(.theme-dark) .first-action-card > span {
+  width: 44px !important;
+  height: 44px !important;
+  background: var(--accent-orange-soft) !important;
+  color: var(--accent-orange) !important;
+}
+
+.hydra-root:not(.theme-dark) .task-card-title > svg {
+  width: 38px !important;
+  height: 38px !important;
+  padding: 9px !important;
+  background: var(--accent-green-soft) !important;
+  color: var(--accent-green) !important;
+}
+
+.hydra-root:not(.theme-dark) .calm-state > svg {
+  width: 40px !important;
+  height: 40px !important;
+  padding: 9px !important;
+  background: #dce9dc !important;
+  color: #2b754f !important;
+}
+
+/* Outras áreas: o SVG vira um bloco preenchido de verdade. */
+.hydra-root:not(.theme-dark) .feature-link-grid > button > svg:first-child {
+  width: 42px !important;
+  height: 42px !important;
+  padding: 10px !important;
+  border-radius: 14px !important;
+  background: var(--accent-teal-soft) !important;
+  color: var(--accent-teal) !important;
+}
+
+.hydra-root:not(.theme-dark) .feature-link-grid > button:nth-child(2) > svg:first-child {
+  background: var(--accent-gold-soft) !important;
+  color: var(--accent-gold) !important;
+}
+
+/* =========================================================
+   PERFIL — sem ícones cinza
+   ========================================================= */
+.hydra-root:not(.theme-dark) .profile-menu-icon {
+  background: linear-gradient(145deg, #dbe9df, #cfe1d4) !important;
+  color: #1c704b !important;
+  border: 1px solid rgba(28,112,75,.08) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+
+.hydra-root:not(.theme-dark) .profile-menu-row:nth-child(2) .profile-menu-icon {
+  background: var(--accent-orange-soft) !important;
+  color: var(--accent-orange) !important;
+  border-color: rgba(244,122,11,.08) !important;
+}
+
+.hydra-root:not(.theme-dark) .profile-menu-row:nth-child(3) .profile-menu-icon {
+  background: var(--accent-teal-soft) !important;
+  color: var(--accent-teal) !important;
+  border-color: rgba(52,127,112,.08) !important;
+}
+
+.hydra-root:not(.theme-dark) .profile-menu-row > svg:last-child,
+.hydra-root:not(.theme-dark) .profile-settings-sheet button > svg:last-child {
+  color: #6d8a79 !important;
+}
+
+/* =========================================================
+   REBANHO / ÁGUA / MONITORAMENTO / COMUNIDADE
+   ========================================================= */
+.hydra-root:not(.theme-dark) :is(
+  .animal-card,
+  .nfc-inline-card,
+  .herd-care-launch,
+  .water-overview,
+  .post-card,
+  .community-composer
+) svg {
+  color: inherit;
+}
+
+.hydra-root:not(.theme-dark) .nfc-inline-card > span,
+.hydra-root:not(.theme-dark) .herd-care-launch > span,
+.hydra-root:not(.theme-dark) .manual-heading > svg,
+.hydra-root:not(.theme-dark) .water-total-icon {
+  border: 1px solid transparent !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5) !important;
+}
+
+.hydra-root:not(.theme-dark) .nfc-inline-card > span,
+.hydra-root:not(.theme-dark) .manual-heading > svg {
+  background: var(--accent-orange-soft) !important;
+  color: var(--accent-orange) !important;
+  border-color: rgba(244,122,11,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .herd-care-launch > span {
+  background: var(--accent-green-soft) !important;
+  color: var(--accent-green) !important;
+  border-color: rgba(23,99,70,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .water-total-icon {
+  background: linear-gradient(145deg, #d9edf2, #cce5eb) !important;
+  color: #2e8198 !important;
+  border-color: rgba(46,129,152,.09) !important;
+}
+
+.hydra-root:not(.theme-dark) .community-composer > svg {
+  color: #e0740e !important;
+}
+
+.hydra-root:not(.theme-dark) .post-actions button,
+.hydra-root:not(.theme-dark) .post-actions span {
+  color: #557466 !important;
+}
+
+.hydra-root:not(.theme-dark) .post-actions button.liked {
+  color: #bd5149 !important;
+}
+
+/* Empty states recebem cor da marca. */
+.hydra-root:not(.theme-dark) .empty-state > span,
+.hydra-root:not(.theme-dark) .empty-state > .empty-icon {
+  background: linear-gradient(145deg, #dceadf, #cfe2d4) !important;
+  color: #1c704b !important;
+  border: 1px solid rgba(28,112,75,.08) !important;
+}
+
+/* Pequenos botões de ícone claros deixam de parecer cinza/desabilitado. */
+.hydra-root:not(.theme-dark) .icon-button:not(.accent):not(.bare) {
+  color: #286d4e !important;
+  background: linear-gradient(145deg, #f6f2e7, #e8ede5) !important;
+  border-color: rgba(23,99,70,.13) !important;
+}
+
+.hydra-root:not(.theme-dark) .icon-button:not(.accent):not(.bare):hover {
+  color: #155c3f !important;
+  background: #e1ebe2 !important;
+}
+
+/* Chips inativos usam verde suave, não cinza. */
+.hydra-root:not(.theme-dark) :is(.community-tabs, .filter-chips, .profile-social-tabs) button:not(.active) {
+  color: #4d6d5d !important;
+}
+
+.hydra-root:not(.theme-dark) :is(.community-tabs, .filter-chips, .profile-social-tabs) button:not(.active):hover {
+  background: rgba(23,99,70,.07) !important;
+  color: #176346 !important;
+}
+
+/* Setas e chevrons ficam verdes quentes em vez de cinza. */
+.hydra-root:not(.theme-dark) :is(
+  .history-home-row,
+  .first-action-card,
+  .feature-link-grid > button,
+  .animal-card,
+  .profile-menu-row,
+  .nfc-result-card
+) > svg:last-child {
+  color: #6e8c7b !important;
+}
+
+/* =========================================================
+   DESKTOP — mais presença nos pequenos ícones e na dock
+   ========================================================= */
+@media (min-width: 900px) {
+  .hydra-root:not(.theme-dark) .bottom-nav > button:not(:nth-of-type(3)) > span:not(.touch-ripple) {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 10px 24px -20px currentColor !important;
+  }
+
+  .hydra-root:not(.theme-dark) .bottom-nav > button:not(:nth-of-type(3)):hover > span:not(.touch-ripple) {
+    transform: translateY(-2px) scale(1.06) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .feature-link-grid > button:hover > svg:first-child,
+  .hydra-root:not(.theme-dark) .profile-menu-row:hover .profile-menu-icon,
+  .hydra-root:not(.theme-dark) .history-home-row:hover > span {
+    transform: scale(1.06) rotate(-2deg) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .feature-link-grid > button > svg:first-child,
+  .hydra-root:not(.theme-dark) .profile-menu-icon,
+  .hydra-root:not(.theme-dark) .history-home-row > span {
+    transition: transform 200ms cubic-bezier(.2,.8,.2,1), box-shadow 200ms ease !important;
+  }
+}
+
+/* Dark mode: mantém cor, mas sem clarear demais a interface. */
+.hydra-root.theme-dark {
+  --muted: #8ca496;
+}
+
+.hydra-root.theme-dark .bottom-nav > button:nth-of-type(2) > span:not(.touch-ripple) {
+  color: #75b9ca !important;
+}
+
+.hydra-root.theme-dark .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple) {
+  color: #fff !important;
+}
+
+.hydra-root.theme-dark .bottom-nav > button:nth-of-type(4) > span:not(.touch-ripple) {
+  color: #9bbb76 !important;
+}
+
+.hydra-root.theme-dark .bottom-nav > button:nth-of-type(5) > span:not(.touch-ripple) {
+  color: #78b7a5 !important;
+}
