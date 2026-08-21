@@ -62,36 +62,52 @@ html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(5) { --scroll-
     scale: .97;
   }
 
-  /* Halo/vidro apenas na bottom bar do notebook/PC. */
+  /*
+     Vidro de oclusao da dock do PC/notebook.
+     A area se estende alem da barra e desfoca o conteudo que passa por baixo,
+     evitando que cards, botoes ou textos continuem legiveis atras da navegacao.
+  */
   .hydra-root .phone-app .bottom-nav {
     isolation: isolate;
-    -webkit-backdrop-filter: blur(26px) saturate(1.1) !important;
-    backdrop-filter: blur(26px) saturate(1.1) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(1.05) !important;
+    backdrop-filter: blur(30px) saturate(1.05) !important;
     box-shadow:
-      0 22px 52px -26px rgba(9, 48, 32, .34),
-      0 0 42px 10px rgba(248, 246, 239, .28) !important;
+      0 24px 56px -28px rgba(9, 48, 32, .34),
+      0 0 48px 12px rgba(248, 246, 239, .30) !important;
   }
 
   .hydra-root .phone-app .bottom-nav::before {
     content: "";
     position: absolute;
-    z-index: -1;
-    inset: -18px -22px;
+    z-index: 0;
+    inset: -34px -46px -28px;
     pointer-events: none;
-    border-radius: 40px;
-    background: rgba(248, 246, 239, .20);
-    filter: blur(20px);
-    opacity: .95;
+    border-radius: 52px;
+    background: rgba(248, 246, 239, .72);
+    -webkit-backdrop-filter: blur(34px) saturate(.92) !important;
+    backdrop-filter: blur(34px) saturate(.92) !important;
+    box-shadow:
+      0 0 38px 18px rgba(248, 246, 239, .34),
+      inset 0 0 0 1px rgba(255, 255, 255, .24);
+  }
+
+  .hydra-root .phone-app .bottom-nav > button,
+  .hydra-root .phone-app .bottom-nav > .bottom-nav-indicator {
+    position: relative;
+    z-index: 2;
   }
 
   .hydra-root.theme-dark .phone-app .bottom-nav {
     box-shadow:
-      0 22px 52px -26px rgba(0, 0, 0, .68),
-      0 0 42px 10px rgba(12, 30, 20, .30) !important;
+      0 24px 56px -28px rgba(0, 0, 0, .72),
+      0 0 48px 12px rgba(12, 30, 20, .34) !important;
   }
 
   .hydra-root.theme-dark .phone-app .bottom-nav::before {
-    background: rgba(12, 30, 20, .30);
+    background: rgba(12, 30, 20, .74);
+    box-shadow:
+      0 0 38px 18px rgba(12, 30, 20, .40),
+      inset 0 0 0 1px rgba(255, 255, 255, .035);
   }
 }
 
