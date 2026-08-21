@@ -15,13 +15,13 @@
     margin: 0 !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
-    background: #f8f6ef !important;
+    background: var(--cream) !important;
   }
 
   html,
   body {
     min-height: 100dvh !important;
-    background-color: #f8f6ef !important;
+    background-color: var(--cream) !important;
     overscroll-behavior-x: none;
   }
 
@@ -58,10 +58,7 @@
     width: 100vw !important;
     height: 100dvh !important;
     pointer-events: none !important;
-    background:
-      radial-gradient(circle at 92% 2%, rgba(255, 135, 18, .055), transparent 25%),
-      radial-gradient(circle at 7% 92%, rgba(31, 97, 69, .045), transparent 29%),
-      #f8f6ef !important;
+    background: var(--cream) !important;
   }
 
   /* As telas não desenham um segundo fundo por cima do fundo global. */
@@ -118,7 +115,346 @@
     min-height: 100dvh !important;
   }
 
-  /* Dark mode usa a mesma estratégia: uma superfície única. */
+  /* =========================================================
+     VISUAL DESKTOP = VISUAL MOBILE
+     Mantém dimensões, grids e composição desktop. Só sincroniza
+     cores, ícones, superfícies, bordas e estados visuais.
+     ========================================================= */
+
+  /* Superfícies e textos seguem os tokens originais do mobile. */
+  .hydra-root :is(
+    .content-section,
+    .empty-state,
+    .animal-card,
+    .post-card,
+    .community-composer,
+    .profile-menu-card,
+    .monitor-card,
+    .activity-card,
+    .task-card,
+    .history-home-row,
+    .first-action-card,
+    .assistant-home-card,
+    .today-home-card,
+    .nfc-manual-card,
+    .nfc-result-card,
+    .detail-card,
+    .settings-card,
+    .setting-card,
+    .compact-row,
+    .inline-empty,
+    .plain-empty,
+    .modal-sheet,
+    .quick-sheet
+  ) {
+    background-color: var(--paper) !important;
+    border-color: var(--line) !important;
+  }
+
+  .hydra-root .content-section {
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: var(--shadow) !important;
+  }
+
+  .hydra-root :is(input, select, textarea),
+  .hydra-root .municipality-trigger,
+  .hydra-root .municipality-panel,
+  .hydra-root .municipality-search {
+    background: #fbfaf6 !important;
+    border-color: #dcded8 !important;
+    color: var(--ink) !important;
+  }
+
+  .hydra-root :is(input, select, textarea):focus {
+    border-color: var(--sage) !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 4px rgba(131, 186, 91, .13) !important;
+  }
+
+  .hydra-root .primary-button {
+    background: var(--forest-800) !important;
+    color: #fff !important;
+    box-shadow: 0 13px 28px -17px rgba(15, 55, 39, .8) !important;
+  }
+
+  .hydra-root .secondary-button,
+  .hydra-root .preview-button {
+    background: var(--sage-soft) !important;
+    color: var(--forest-800) !important;
+  }
+
+  .hydra-root .icon-button:not(.accent) {
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+    border-color: var(--line) !important;
+  }
+
+  .hydra-root .icon-button.accent {
+    background: var(--orange) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+  }
+
+  /* Dock: mesmo estilo dos ícones do mobile, mantendo o formato grande do notebook. */
+  .hydra-root .phone-app .bottom-nav {
+    background: rgba(255, 254, 251, .94) !important;
+    border: 1px solid rgba(218, 218, 210, .9) !important;
+    box-shadow: 0 22px 58px -30px rgba(27, 46, 36, .22), 0 -10px 35px rgba(27, 46, 36, .05) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button,
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3),
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active {
+    background: transparent !important;
+    border-color: transparent !important;
+    color: #77817b !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:hover:not(:nth-of-type(3)) {
+    background: transparent !important;
+    color: var(--forest-700) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) {
+    background: transparent !important;
+    border-color: transparent !important;
+    color: var(--forest-700) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button > span:not(.touch-ripple),
+  .hydra-root .phone-app .bottom-nav > button.active > span:not(.touch-ripple) {
+    background: transparent !important;
+    color: inherit !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) > span:not(.touch-ripple) {
+    background: var(--sage-soft) !important;
+    color: var(--forest-700) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3),
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active,
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > small {
+    color: var(--forest-700) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+    background: var(--forest-700) !important;
+    color: #fff !important;
+    border-color: var(--paper) !important;
+    box-shadow: 0 9px 22px -15px rgba(10, 67, 42, .75), 0 0 0 1px rgba(16, 75, 49, .08) !important;
+  }
+
+  /* Home: atalhos exatamente com a linguagem visual do mobile. */
+  .hydra-root .home-screen .shortcut-row > button,
+  .hydra-root .home-screen .shortcut-row > button:nth-child(n) {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: inherit !important;
+  }
+
+  .hydra-root .home-screen .shortcut-row > button > span:not(.touch-ripple),
+  .hydra-root .home-screen .shortcut-row > button:nth-child(n) > span:not(.touch-ripple) {
+    background: var(--paper) !important;
+    color: var(--forest-700) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 8px 28px rgba(30, 50, 40, .035) !important;
+  }
+
+  .hydra-root .home-screen .shortcut-row > button small {
+    color: #405047 !important;
+  }
+
+  /* Card NFC volta ao visual original do mobile: papel + detalhe laranja + ícone verde. */
+  .hydra-root .home-screen .nfc-banner {
+    color: var(--ink) !important;
+    background: var(--paper) !important;
+    border: 1px solid #e5e2d7 !important;
+    border-left: 5px solid var(--orange) !important;
+    box-shadow: var(--shadow) !important;
+  }
+
+  .hydra-root .home-screen .nfc-banner .nfc-banner-icon {
+    background: var(--forest-800) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .home-screen .nfc-banner .nfc-banner-copy small {
+    color: #e66f00 !important;
+  }
+
+  .hydra-root .home-screen .nfc-banner .nfc-banner-copy strong {
+    color: var(--ink) !important;
+  }
+
+  .hydra-root .home-screen .nfc-banner .nfc-banner-copy em {
+    color: var(--muted) !important;
+  }
+
+  .hydra-root .home-screen .nfc-banner > svg:last-child {
+    color: var(--orange) !important;
+  }
+
+  /* Propriedade: mesmo verde do mobile. */
+  .hydra-root .home-screen .property-hero {
+    color: #fff !important;
+    background: linear-gradient(145deg, #0f5b3c 0%, #0a3f2c 100%) !important;
+    border-color: transparent !important;
+    box-shadow: 0 18px 40px -25px rgba(5, 45, 29, .9) !important;
+  }
+
+  .hydra-root .home-screen .property-kicker {
+    color: #b8d2c4 !important;
+  }
+
+  .hydra-root .home-screen .property-hero :is(h2, p, strong),
+  .hydra-root .home-screen .property-link {
+    color: #fff !important;
+  }
+
+  /* Água: identidade original do mobile, sem azul/cinza de camadas posteriores. */
+  .hydra-root .screen:has(> .water-overview) .water-overview {
+    color: #fff !important;
+    background: linear-gradient(145deg, #16654a, #0b4230) !important;
+    border-color: transparent !important;
+    box-shadow: 0 18px 40px -26px rgba(8, 59, 40, .9) !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) .water-total-icon {
+    background: rgba(255,255,255,.1) !important;
+    color: #9fdceb !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) .water-total > span {
+    color: #bdd2c7 !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) .water-total > strong {
+    color: #fff !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) .water-total > small {
+    color: rgba(255,255,255,.72) !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) .action-pair .secondary-button {
+    background: var(--sage-soft) !important;
+    color: var(--forest-800) !important;
+    border-color: transparent !important;
+  }
+
+  /* Perfil: formato em colunas continua desktop; aparência volta ao mobile. */
+  .hydra-root .profile-screen > .profile-social-tabs {
+    background: transparent !important;
+    border-color: var(--line) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs button {
+    background: transparent !important;
+    color: var(--muted) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs button.active {
+    background: transparent !important;
+    color: var(--forest-700) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card {
+    background: #fff4e3 !important;
+    border-color: #efcf9f !important;
+    box-shadow: var(--shadow) !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card .plan-mark {
+    background: #fff !important;
+    color: var(--orange) !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card span {
+    color: #b45f09 !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card > button {
+    background: var(--forest-700) !important;
+    color: #fff !important;
+    border-color: color-mix(in srgb, var(--forest-700) 18%, transparent) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-card {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row {
+    background: var(--paper) !important;
+    border-color: var(--line) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row:hover {
+    background: var(--paper) !important;
+    border-color: rgba(31, 97, 69, .18) !important;
+    box-shadow: 0 12px 26px -22px rgba(15, 55, 39, .75) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-icon,
+  .hydra-root .profile-settings-sheet .profile-menu-icon {
+    background: #f1f2ec !important;
+    color: var(--forest-700) !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row strong {
+    color: var(--forest-950) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row small {
+    color: #68756e !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row > svg:last-child {
+    color: #78827c !important;
+  }
+
+  .hydra-root .profile-screen > .logout-button {
+    background: #fff9f8 !important;
+    color: var(--danger) !important;
+    border-color: #f0d2cf !important;
+  }
+
+  /* Ícones de listas e ações voltam aos tons originais do mobile. */
+  .hydra-root :is(.row-icon, .empty-icon, .first-action-card > span, .history-home-row > span) {
+    color: var(--forest-700) !important;
+  }
+
+  .hydra-root .row-icon.soft-blue {
+    background: var(--blue-soft) !important;
+    color: var(--blue) !important;
+  }
+
+  .hydra-root .row-icon.soft-orange {
+    background: var(--orange-soft) !important;
+    color: #e66f00 !important;
+  }
+
+  /* Dark mode preserva a mesma linguagem do mobile. */
   .hydra-root.theme-dark,
   .hydra-root.theme-dark .app-shell,
   .hydra-root.theme-dark .phone-app,
@@ -128,15 +464,59 @@
   }
 
   .hydra-root.theme-dark .app-content::before {
-    background:
-      radial-gradient(circle at 92% 2%, rgba(108, 160, 118, .045), transparent 25%),
-      radial-gradient(circle at 8% 94%, rgba(255, 135, 18, .018), transparent 27%),
-      #0b1710 !important;
+    background: #0b1710 !important;
   }
 
   .hydra-root.theme-dark .app-content > .screen,
   .hydra-root.theme-dark .app-content .screen.page-enter {
     background: transparent !important;
     background-image: none !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav {
+    background: rgba(13, 29, 21, .97) !important;
+    border-color: #294235 !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav > button,
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3),
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > small {
+    color: #82938a !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) {
+    color: #8fbd99 !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) > span:not(.touch-ripple) {
+    background: #173526 !important;
+    color: #8fbd99 !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3),
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > small {
+    color: #8fbd99 !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+    border-color: #0d1d15 !important;
+    background: #75a883 !important;
+    color: #07150d !important;
+  }
+
+  .hydra-root.theme-dark :is(
+    .content-section,
+    .animal-card,
+    .post-card,
+    .community-composer,
+    .profile-menu-row,
+    .nfc-manual-card,
+    .nfc-result-card,
+    .modal-sheet,
+    .quick-sheet
+  ) {
+    background: #0e1d15 !important;
+    border-color: #294235 !important;
   }
 }
