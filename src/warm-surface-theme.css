@@ -1,0 +1,168 @@
+/* Hydra Agro — paleta clara com superfícies creme/esverdeadas.
+   Remove o aspecto de branco puro sem alterar o modo escuro. */
+
+.hydra-root:not(.theme-dark) {
+  --cream: #ecebe4;
+  --paper: #f5f3ec;
+  --sage-soft: #eef2ec;
+  --line: #daddd4;
+  --surface-soft: #eef2ec;
+  --surface-input: #f8f6f0;
+  --surface-hover: #faf8f2;
+}
+
+/* Fundo geral contínuo */
+html:has(.hydra-root:not(.theme-dark)),
+body:has(.hydra-root:not(.theme-dark)),
+body:has(.hydra-root:not(.theme-dark)) #root,
+.hydra-root:not(.theme-dark),
+.hydra-root:not(.theme-dark) .app-shell,
+.hydra-root:not(.theme-dark) .phone-app,
+.hydra-root:not(.theme-dark) .app-content {
+  background-color: #ecebe4 !important;
+}
+
+/* Mantém o fundo com leve profundidade no desktop, sem faixas brancas. */
+@media (min-width: 1024px) {
+  .hydra-root:not(.theme-dark) .app-content {
+    background:
+      radial-gradient(circle at 90% 2%, rgba(255, 135, 18, .035), transparent 25%),
+      radial-gradient(circle at 6% 94%, rgba(31, 97, 69, .045), transparent 28%),
+      #ecebe4 !important;
+  }
+}
+
+/* Superfícies principais */
+.hydra-root:not(.theme-dark) :is(
+  .content-section,
+  .empty-state,
+  .animal-card,
+  .post-card,
+  .community-composer,
+  .profile-group,
+  .profile-menu-card,
+  .profile-menu-row,
+  .plan-card,
+  .water-overview,
+  .water-card,
+  .monitor-card,
+  .activity-card,
+  .task-card,
+  .history-home-row,
+  .first-action-card,
+  .assistant-home-card,
+  .today-home-card,
+  .nfc-manual-card,
+  .nfc-result-card,
+  .detail-card,
+  .settings-card,
+  .modal-sheet,
+  .theme-dialog,
+  .demo-dialog
+) {
+  background-color: #f5f3ec !important;
+  border-color: #daddd4 !important;
+}
+
+/* Superfícies secundárias / informativas */
+.hydra-root:not(.theme-dark) :is(
+  .profile-social-tabs,
+  .herd-care-intro,
+  .herd-care-card,
+  .nfc-inline-card,
+  .herd-care-launch,
+  .community-tabs,
+  .filter-chips,
+  .water-mini-metrics,
+  .municipality-region-note
+) {
+  border-color: #daddd4 !important;
+}
+
+/* Inputs deixam de ser branco puro, mas continuam claramente editáveis. */
+.hydra-root:not(.theme-dark) :is(
+  input,
+  select,
+  textarea,
+  .municipality-trigger,
+  .municipality-panel,
+  .municipality-search,
+  .state-readonly
+) {
+  background-color: #f8f6f0 !important;
+  border-color: #daddd4 !important;
+}
+
+.hydra-root:not(.theme-dark) :is(input, select, textarea):focus,
+.hydra-root:not(.theme-dark) .municipality-picker.is-open .municipality-trigger {
+  background-color: #fbfaf5 !important;
+}
+
+/* Botões claros e controles */
+.hydra-root:not(.theme-dark) :is(
+  .icon-button:not(.accent),
+  .wide-outline-button,
+  .secondary-button,
+  .upload-button
+) {
+  border-color: #daddd4 !important;
+}
+
+.hydra-root:not(.theme-dark) .icon-button:not(.accent),
+.hydra-root:not(.theme-dark) .wide-outline-button {
+  background-color: #f5f3ec !important;
+}
+
+.hydra-root:not(.theme-dark) .secondary-button {
+  background-color: #eef2ec !important;
+}
+
+/* Hover ganha contraste sutil, sem voltar ao branco. */
+@media (hover: hover) {
+  .hydra-root:not(.theme-dark) :is(
+    .animal-card,
+    .post-card,
+    .profile-menu-row,
+    .nfc-result-card,
+    .history-home-row,
+    .task-card
+  ):hover {
+    background-color: #faf8f2 !important;
+  }
+
+  .hydra-root:not(.theme-dark) .icon-button:not(.accent):hover {
+    background-color: #faf8f2 !important;
+  }
+}
+
+/* Bottom dock do notebook acompanha a nova paleta. */
+@media (min-width: 1024px) {
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav {
+    background: rgba(245, 243, 236, .94) !important;
+    border-color: rgba(31, 97, 69, .11) !important;
+    box-shadow: 0 22px 58px -32px rgba(8, 48, 32, .42), 0 4px 18px rgba(8, 48, 32, .07) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) {
+    background: #e8eee8 !important;
+  }
+
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+    border-color: #f5f3ec !important;
+  }
+}
+
+/* Modais: backdrop permanece escuro, folha usa creme. */
+.hydra-root:not(.theme-dark) .modal-layer {
+  --modal-surface: #f5f3ec;
+}
+
+/* Evita branco puro que ainda venha de regras antigas específicas. */
+.hydra-root:not(.theme-dark) :is(
+  .municipality-panel,
+  .profile-settings-sheet,
+  .quick-sheet
+) {
+  background: #f5f3ec !important;
+}
