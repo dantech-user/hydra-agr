@@ -1,0 +1,508 @@
+/* Hydra Agro — normalização FINAL do layout desktop/notebook.
+   Carregado por último para resolver conflitos entre as camadas desktop anteriores.
+   Mobile continua totalmente fora deste arquivo. */
+
+@media (min-width: 1024px) {
+  .hydra-root {
+    --desktop-page-max: 1240px;
+    --desktop-page-gap: clamp(28px, 4vw, 56px);
+    --desktop-section-gap: 20px;
+    --desktop-radius: 22px;
+  }
+
+  /* =========================================================
+     BASE: todas as telas começam no mesmo eixo
+     ========================================================= */
+  .hydra-root .app-shell,
+  .hydra-root .phone-app,
+  .hydra-root .app-content {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  .hydra-root .app-content {
+    min-height: 100dvh !important;
+    padding: 0 0 138px !important;
+  }
+
+  /* Primeiro neutraliza grids/posições antigos. */
+  .hydra-root .app-content > .screen,
+  .hydra-root .app-content .screen {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    width: min(calc(100% - (var(--desktop-page-gap) * 2)), var(--desktop-page-max)) !important;
+    max-width: var(--desktop-page-max) !important;
+    min-width: 0 !important;
+    min-height: calc(100dvh - 138px) !important;
+    margin: 0 auto !important;
+    padding: 34px 0 48px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Telas comuns voltam para fluxo normal; os dashboards especiais são refeitos abaixo. */
+  .hydra-root .app-content > .screen:not(.home-screen):not(.profile-screen):not(.community-screen):not(:has(> .nfc-inline-card)):not(:has(> .water-overview)) {
+    display: block !important;
+  }
+
+  .hydra-root .screen > .screen-header,
+  .hydra-root .screen > .home-brandbar {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .hydra-root .screen-header {
+    margin-top: 0 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .hydra-root .screen-header-row {
+    width: 100% !important;
+    min-height: 58px !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 16px !important;
+  }
+
+  .hydra-root .screen-heading {
+    min-width: 0 !important;
+    max-width: 760px !important;
+  }
+
+  .hydra-root .screen-heading h1,
+  .hydra-root .screen-heading p {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Containers e seções não podem ficar deslocados por margens mobile antigas. */
+  .hydra-root .screen > :is(
+    .content-section,
+    .empty-state,
+    .action-pair,
+    .search-row,
+    .filter-chips,
+    .community-tabs,
+    .community-composer,
+    .post-list,
+    .animal-list,
+    .water-overview,
+    .nfc-inline-card,
+    .herd-care-launch,
+    .property-hero,
+    .home-section,
+    .profile-group,
+    .plan-card
+  ) {
+    box-sizing: border-box !important;
+  }
+
+  .hydra-root .content-section {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* =========================================================
+     HOME — dashboard equilibrado, sem blocos soltos
+     ========================================================= */
+  .hydra-root .home-screen {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    column-gap: 22px !important;
+    row-gap: 20px !important;
+    align-content: start !important;
+    align-items: stretch !important;
+  }
+
+  .hydra-root .home-screen > :is(.home-brandbar, .greeting-block, .home-announcements, .shortcut-row) {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .home-brandbar {
+    min-height: 56px !important;
+    align-self: center !important;
+  }
+
+  .hydra-root .home-screen > .greeting-block {
+    min-height: 88px !important;
+    padding: 4px 0 !important;
+  }
+
+  .hydra-root .home-screen > .shortcut-row {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+
+  .hydra-root .home-screen > .shortcut-row > button {
+    min-height: 100px !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .nfc-banner {
+    grid-column: 1 / span 5 !important;
+    width: 100% !important;
+    min-height: 140px !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .property-hero {
+    grid-column: 6 / -1 !important;
+    width: 100% !important;
+    min-height: 140px !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .home-summary-section {
+    grid-column: 1 / span 7 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .home-section:not(.home-summary-section) {
+    grid-column: 8 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .home-fab-label {
+    grid-column: 1 / -1 !important;
+    justify-self: start !important;
+    margin: 0 !important;
+  }
+
+  /* =========================================================
+     REBANHO — controles alinhados e módulos pareados
+     ========================================================= */
+  .hydra-root .app-content > .screen:has(> .nfc-inline-card) {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    column-gap: 20px !important;
+    row-gap: 18px !important;
+    align-items: start !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > .screen-header {
+    grid-column: 1 / -1 !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > .search-row {
+    grid-column: 1 / span 7 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > .filter-chips {
+    grid-column: 8 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-self: center !important;
+    justify-content: flex-end !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > .nfc-inline-card,
+  .hydra-root .screen:has(> .nfc-inline-card) > .herd-care-launch {
+    width: 100% !important;
+    min-height: 100px !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > .nfc-inline-card {
+    grid-column: 1 / span 6 !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > .herd-care-launch {
+    grid-column: 7 / -1 !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > :is(.animal-list, .empty-state) {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .screen:has(> .nfc-inline-card) > .animal-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+
+  /* =========================================================
+     ÁGUA — resumo + ações no topo, seções abaixo
+     ========================================================= */
+  .hydra-root .app-content > .screen:has(> .water-overview) {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    column-gap: 20px !important;
+    row-gap: 20px !important;
+    align-items: start !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) > .screen-header {
+    grid-column: 1 / -1 !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) > .water-overview {
+    grid-column: 1 / span 8 !important;
+    width: 100% !important;
+    min-height: 210px !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) > .action-pair {
+    grid-column: 9 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) > .action-pair > button {
+    min-height: 64px !important;
+  }
+
+  /* Neutraliza nth-of-type antigos que jogavam seções em linhas erradas. */
+  .hydra-root .screen:has(> .water-overview) > .content-section,
+  .hydra-root .screen:has(> .water-overview) > .content-section:nth-of-type(2),
+  .hydra-root .screen:has(> .water-overview) > .content-section:nth-of-type(n+3) {
+    grid-column: span 6 !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    align-self: stretch !important;
+  }
+
+  /* =========================================================
+     COMUNIDADE — filtros/composer no mesmo eixo, feed estável
+     ========================================================= */
+  .hydra-root .community-screen {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    column-gap: 20px !important;
+    row-gap: 18px !important;
+    align-items: start !important;
+  }
+
+  .hydra-root .community-screen > .screen-header {
+    grid-column: 1 / -1 !important;
+  }
+
+  .hydra-root .community-screen > .community-tabs {
+    grid-column: 1 / span 6 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .community-screen > .community-composer {
+    grid-column: 7 / -1 !important;
+    width: 100% !important;
+    min-height: 58px !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .community-screen > :is(.community-message, .empty-state, .post-list) {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .community-screen > .post-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    align-items: start !important;
+  }
+
+  .hydra-root .community-screen .post-card {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* =========================================================
+     PERFIL — identidade fixa à esquerda, conteúdo limpo à direita
+     ========================================================= */
+  .hydra-root .profile-screen {
+    display: grid !important;
+    grid-template-columns: minmax(330px, 390px) minmax(0, 1fr) !important;
+    grid-auto-rows: auto !important;
+    grid-auto-flow: row !important;
+    column-gap: 28px !important;
+    row-gap: 18px !important;
+    align-items: start !important;
+  }
+
+  .hydra-root .profile-screen > .profile-hero {
+    grid-column: 1 !important;
+    grid-row: 1 / span 5 !important;
+    width: 100% !important;
+    min-height: 410px !important;
+    margin: 0 !important;
+    padding: 32px 26px 28px !important;
+    position: sticky !important;
+    top: 28px !important;
+    align-self: start !important;
+    border-radius: 28px !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs,
+  .hydra-root .profile-screen > .plan-card,
+  .hydra-root .profile-screen > .profile-group,
+  .hydra-root .profile-screen > .logout-button,
+  .hydra-root .profile-screen > .profile-version {
+    grid-column: 2 !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs {
+    grid-row: auto !important;
+    min-height: 60px !important;
+    margin-top: 0 !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card {
+    grid-row: auto !important;
+    min-height: 116px !important;
+    margin-top: 0 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group {
+    grid-row: auto !important;
+    margin-top: 0 !important;
+  }
+
+  /* Minha conta vira grade, administração continua bloco único. */
+  .hydra-root .profile-screen > .profile-group:not(:has(.admin-access-card)) .profile-menu-card {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group:not(:has(.admin-access-card)) .profile-menu-row {
+    min-height: 112px !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group:has(.admin-access-card) .profile-menu-card {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .hydra-root .profile-screen > .logout-button {
+    grid-row: auto !important;
+    max-width: 360px !important;
+    min-height: 50px !important;
+    justify-self: start !important;
+    margin-top: 2px !important;
+  }
+
+  .hydra-root .profile-screen > .profile-version {
+    grid-row: auto !important;
+    justify-self: start !important;
+    margin-top: -8px !important;
+    text-align: left !important;
+  }
+
+  /* =========================================================
+     TELAS AUXILIARES — todas centralizadas e legíveis
+     ========================================================= */
+  .hydra-root .app-content > .extra-screen:not(.community-screen),
+  .hydra-root .app-content > .nfc-screen,
+  .hydra-root .app-content > .assistant-screen,
+  .hydra-root .app-content > .today-screen,
+  .hydra-root .app-content > .history-screen {
+    width: min(calc(100% - (var(--desktop-page-gap) * 2)), 1120px) !important;
+    max-width: 1120px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Listas/formulários longos ficam confortáveis e não colados nas bordas. */
+  .hydra-root .screen .modal-form,
+  .hydra-root .screen .form-grid,
+  .hydra-root .screen .detail-card,
+  .hydra-root .screen .settings-card {
+    max-width: 100% !important;
+  }
+
+  /* =========================================================
+     DOCK — garante posição final correta
+     ========================================================= */
+  .hydra-root .phone-app .bottom-nav {
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 18px !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav.is-hidden {
+    transform: translate(-50%, 22px) !important;
+  }
+
+  /* Hover consistente, sem deslocar estrutura. */
+  .hydra-root .phone-app :is(.content-section, .property-hero, .nfc-banner, .post-card, .animal-card, .plan-card) {
+    transform-origin: center !important;
+  }
+
+  /* =========================================================
+     RESPONSIVIDADE NOTEBOOK MENOR
+     ========================================================= */
+  @media (max-width: 1180px) {
+    .hydra-root {
+      --desktop-page-gap: 30px;
+    }
+
+    .hydra-root .profile-screen {
+      grid-template-columns: 330px minmax(0, 1fr) !important;
+      column-gap: 22px !important;
+    }
+
+    .hydra-root .profile-screen > .profile-group:not(:has(.admin-access-card)) .profile-menu-card {
+      grid-template-columns: 1fr !important;
+    }
+
+    .hydra-root .profile-screen > .profile-group:not(:has(.admin-access-card)) .profile-menu-row {
+      min-height: 82px !important;
+    }
+
+    .hydra-root .home-screen > .nfc-banner,
+    .hydra-root .home-screen > .property-hero {
+      grid-column: span 6 !important;
+    }
+  }
+
+  /* Dark mode mantém os mesmos eixos. */
+  .hydra-root.theme-dark .app-content {
+    background:
+      radial-gradient(circle at 92% 3%, rgba(109, 160, 118, .035), transparent 24%),
+      #0b1710 !important;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  .hydra-root .app-content *,
+  .hydra-root .bottom-nav * {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
