@@ -1,0 +1,439 @@
+/* Hydra Agro — acabamento premium dos modais de sessão e manejo.
+   Carregado após modal-alignment.css para preservar a estrutura e elevar o visual. */
+
+/* Fundo dos modais: mais profundidade e menos aparência de overlay genérico. */
+.hydra-root .modal-layer:has(.modal-sheet.modal-centered .confirm-action),
+.hydra-root .modal-layer:has(.modal-sheet.modal-tall .herd-care-guide) {
+  background: rgba(7, 35, 24, .58) !important;
+  backdrop-filter: blur(14px) saturate(.92) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(.92) !important;
+}
+
+/* =========================================================
+   FINALIZAR SESSÃO
+   ========================================================= */
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) {
+  width: min(calc(100vw - 34px), 390px) !important;
+  border: 1px solid rgba(255, 255, 255, .72) !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 135, 18, .07), transparent 36%),
+    linear-gradient(180deg, #fffefa 0%, #fbfaf5 100%) !important;
+  box-shadow:
+    0 34px 90px -38px rgba(3, 28, 18, .72),
+    0 2px 10px rgba(11, 46, 31, .06) !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-head {
+  padding: 20px 20px 8px !important;
+  border-bottom: 0 !important;
+  align-items: start !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-head > div {
+  gap: 0 !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-head .eyebrow {
+  width: max-content !important;
+  margin: 0 0 8px !important;
+  padding: 6px 9px !important;
+  border-radius: 999px !important;
+  color: #a65018 !important;
+  background: #fff0df !important;
+  letter-spacing: .1em !important;
+  font-weight: 850 !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-head h2 {
+  color: var(--forest-950) !important;
+  font-size: var(--type-section, 18px) !important;
+  font-weight: 850 !important;
+  letter-spacing: -.035em !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-head .icon-button {
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid #e7e4da !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,.78) !important;
+  color: var(--forest-950) !important;
+  box-shadow: 0 8px 18px -15px rgba(11, 48, 32, .55) !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-head .icon-button:active {
+  transform: scale(.92) rotate(4deg) !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-body {
+  padding: 12px 20px 20px !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .confirm-action {
+  gap: 14px !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .confirm-action > span {
+  position: relative !important;
+  width: 72px !important;
+  height: 72px !important;
+  border: 1px solid #f0d6d2 !important;
+  border-radius: 24px !important;
+  color: #b44f46 !important;
+  background: linear-gradient(145deg, #fff7f5, #f9e7e4) !important;
+  box-shadow: 0 18px 34px -26px rgba(180, 79, 70, .7) !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .confirm-action > span::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: -6px !important;
+  z-index: -1 !important;
+  border-radius: 28px !important;
+  background: rgba(183, 71, 62, .045) !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .confirm-action > p {
+  max-width: 275px !important;
+  color: #65736b !important;
+  font-size: var(--type-body, 12px) !important;
+  line-height: 1.55 !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-action-row {
+  margin-top: 4px !important;
+  gap: 9px !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-action-row > button {
+  min-height: 48px !important;
+  border-radius: 16px !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-action-row .secondary-button {
+  border: 1px solid #dfe5dc !important;
+  background: #f1f5ed !important;
+  color: #24563d !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-action-row .danger-button {
+  border: 1px solid #b45148 !important;
+  background: #b45148 !important;
+  color: #fff !important;
+  box-shadow: 0 14px 26px -20px rgba(180, 81, 72, .9) !important;
+}
+
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-action-row .danger-button:active,
+.hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-action-row .secondary-button:active {
+  transform: scale(.975) !important;
+}
+
+/* =========================================================
+   ALIMENTAÇÃO E MANEJO
+   ========================================================= */
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) {
+  height: min(94dvh, 820px) !important;
+  border: 1px solid rgba(255,255,255,.68) !important;
+  border-bottom: 0 !important;
+  border-radius: 30px 30px 0 0 !important;
+  background:
+    linear-gradient(180deg, #fffefa 0%, #fbfaf5 100%) !important;
+  box-shadow: 0 -20px 70px -34px rgba(4, 37, 24, .52) !important;
+}
+
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) > .sheet-handle {
+  width: 38px !important;
+  height: 4px !important;
+  margin: 10px auto 1px !important;
+  background: #cbd4cd !important;
+  opacity: 1 !important;
+}
+
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-head {
+  position: relative !important;
+  padding: 13px 18px 16px !important;
+  border-bottom: 0 !important;
+  background: linear-gradient(180deg, rgba(255,254,250,.98), rgba(255,254,250,.91)) !important;
+}
+
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-head::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 18px !important;
+  right: 18px !important;
+  bottom: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, #dde3dc 12%, #dde3dc 88%, transparent) !important;
+}
+
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-head .eyebrow {
+  margin-bottom: 7px !important;
+  color: #c76117 !important;
+  font-weight: 850 !important;
+  letter-spacing: .12em !important;
+}
+
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-head h2 {
+  color: var(--forest-950) !important;
+  font-size: var(--type-section, 18px) !important;
+  font-weight: 850 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.035em !important;
+}
+
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-head .icon-button {
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid #e4e2d9 !important;
+  background: #fbfaf6 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 20px -17px rgba(9, 47, 31, .55) !important;
+}
+
+.hydra-root .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-body {
+  padding: 16px 17px calc(26px + env(safe-area-inset-bottom)) !important;
+  background:
+    radial-gradient(circle at 0 0, rgba(131,186,91,.07), transparent 23%),
+    linear-gradient(180deg, #fffefa, #faf8f1) !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-guide {
+  gap: 13px !important;
+}
+
+/* Hero interno */
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-intro {
+  min-height: 82px !important;
+  padding: 15px !important;
+  grid-template-columns: 48px minmax(0,1fr) !important;
+  gap: 13px !important;
+  border: 1px solid rgba(42, 103, 72, .16) !important;
+  border-radius: 20px !important;
+  color: #f7fbf8 !important;
+  background:
+    radial-gradient(circle at 94% 0%, rgba(131,186,91,.2), transparent 38%),
+    linear-gradient(145deg, #1d6949, #12412f) !important;
+  box-shadow: 0 18px 34px -28px rgba(15, 72, 48, .88) !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-intro > span {
+  width: 48px !important;
+  height: 48px !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  border-radius: 15px !important;
+  color: #fff !important;
+  background: rgba(255,255,255,.12) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.1) !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-intro strong {
+  color: #fff !important;
+  font-size: var(--type-card, 13px) !important;
+  font-weight: 820 !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-intro small {
+  margin-top: 5px !important;
+  color: rgba(240, 248, 243, .72) !important;
+  font-size: var(--type-caption, 9.5px) !important;
+}
+
+/* Espécies como seletor premium */
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-species {
+  gap: 7px !important;
+  padding: 2px 1px 5px !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-species button {
+  min-height: 36px !important;
+  padding: 0 14px !important;
+  border: 1px solid #e0e1d9 !important;
+  border-radius: 13px !important;
+  color: #69766e !important;
+  background: rgba(255,255,255,.78) !important;
+  font-size: var(--type-control, 11px) !important;
+  font-weight: 760 !important;
+  box-shadow: 0 7px 16px -15px rgba(16, 58, 39, .55) !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-species button.active {
+  border-color: #1f6849 !important;
+  color: #fff !important;
+  background: #1f6849 !important;
+  box-shadow: 0 12px 22px -17px rgba(31,104,73,.9) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Cards: ícone e título lado a lado, texto abaixo */
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-grid {
+  gap: 11px !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 42px minmax(0,1fr) !important;
+  align-items: center !important;
+  column-gap: 12px !important;
+  row-gap: 11px !important;
+  padding: 15px !important;
+  border: 1px solid #e3e3da !important;
+  border-radius: 19px !important;
+  background: rgba(255,255,255,.82) !important;
+  box-shadow: 0 16px 32px -29px rgba(8, 46, 29, .52) !important;
+  overflow: hidden !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 3px !important;
+  height: 100% !important;
+  border-radius: 3px !important;
+  background: #d6e5d7 !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(1)::after { background: #ef9a43 !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(2)::after { background: #6eab76 !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(3)::after { background: #c67867 !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(4)::after { background: #5b9fb1 !important; }
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card > span {
+  width: 42px !important;
+  height: 42px !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  border-radius: 13px !important;
+  color: #174c36 !important;
+  background: #f3f5ee !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(1) > span { color: #b7611d !important; background: #fff0df !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(2) > span { color: #336c49 !important; background: #eaf3e9 !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(3) > span { color: #9a554a !important; background: #faece8 !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(4) > span { color: #397b8b !important; background: #eaf4f6 !important; }
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card h3 {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  margin: 0 !important;
+  color: var(--forest-950) !important;
+  font-size: var(--type-card, 13px) !important;
+  font-weight: 820 !important;
+  line-height: 1.25 !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card ul {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+  margin: 0 !important;
+  padding: 0 0 0 18px !important;
+  color: #68766e !important;
+  font-size: var(--type-body, 12px) !important;
+  line-height: 1.55 !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card li::marker {
+  color: #73917f !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card li + li {
+  margin-top: 6px !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-warning {
+  padding: 13px 14px !important;
+  border: 1px solid #ead8ae !important;
+  border-radius: 16px !important;
+  color: #6d5932 !important;
+  background: linear-gradient(145deg, #fff8e9, #fffaf2) !important;
+  box-shadow: none !important;
+}
+
+/* Animações discretas do conteúdo */
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-intro,
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-species,
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card,
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-warning {
+  animation: premiumModalItemIn 360ms var(--ease-product, ease) both !important;
+}
+
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-species { animation-delay: 35ms !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(1) { animation-delay: 60ms !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(2) { animation-delay: 90ms !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(3) { animation-delay: 120ms !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card:nth-child(4) { animation-delay: 150ms !important; }
+.hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-warning { animation-delay: 180ms !important; }
+
+@keyframes premiumModalItemIn {
+  from { opacity: 0; transform: translateY(9px) scale(.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Dark mode */
+.hydra-root.theme-dark .modal-sheet.modal-centered:has(.confirm-action),
+.hydra-root.theme-dark .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) {
+  border-color: #294235 !important;
+  background: linear-gradient(180deg, #102219, #0c1a13) !important;
+}
+
+.hydra-root.theme-dark .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-body {
+  background: radial-gradient(circle at 0 0, rgba(91,143,104,.08), transparent 26%), #0c1a13 !important;
+}
+
+.hydra-root.theme-dark .modal-sheet.modal-centered:has(.confirm-action) .modal-head h2,
+.hydra-root.theme-dark .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-head h2,
+.hydra-root.theme-dark .modal-sheet:has(.herd-care-guide) .herd-care-card h3 {
+  color: #eef5f0 !important;
+}
+
+.hydra-root.theme-dark .modal-sheet.modal-centered:has(.confirm-action) .modal-head .icon-button,
+.hydra-root.theme-dark .modal-sheet.modal-wide.modal-tall:has(.herd-care-guide) .modal-head .icon-button {
+  border-color: #294235 !important;
+  background: #12251b !important;
+  color: #e7efe9 !important;
+}
+
+.hydra-root.theme-dark .modal-sheet:has(.herd-care-guide) .herd-care-card {
+  border-color: #294235 !important;
+  background: #102219 !important;
+}
+
+.hydra-root.theme-dark .modal-sheet:has(.herd-care-guide) .herd-care-card ul {
+  color: #9aa9a0 !important;
+}
+
+.hydra-root.theme-dark .modal-sheet:has(.herd-care-guide) .herd-care-species button {
+  border-color: #294235 !important;
+  background: #12251b !important;
+  color: #9fb0a6 !important;
+}
+
+.hydra-root.theme-dark .modal-sheet:has(.herd-care-guide) .herd-care-species button.active {
+  border-color: #4f8d68 !important;
+  background: #397454 !important;
+  color: #fff !important;
+}
+
+@media (max-width: 370px) {
+  .hydra-root .modal-sheet.modal-centered:has(.confirm-action) {
+    width: calc(100vw - 26px) !important;
+  }
+  .hydra-root .modal-sheet.modal-centered:has(.confirm-action) .modal-action-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-intro,
+  .hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-species,
+  .hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-card,
+  .hydra-root .modal-sheet:has(.herd-care-guide) .herd-care-warning {
+    animation: none !important;
+  }
+}
