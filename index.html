@@ -19,18 +19,20 @@
     <!-- O aviso NFC permanece disponível, mas sua própria folha só o exibe no desktop. -->
     <link rel="stylesheet" href="/src/nfc-platform-note.css?v=desktop-nfc-note" />
 
-    <!-- Todas as camadas criadas durante/depois do redesign de notebook ficam isoladas do mobile. -->
+    <!-- Layout notebook/desktop: formato preservado. -->
     <link rel="stylesheet" href="/src/desktop-layout.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/desktop-bottom-dock.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/desktop-refinement.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/desktop-layout-normalize.css" media="(min-width: 1024px)" />
-    <link rel="stylesheet" href="/src/desktop-surface-fix.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/product-finish.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/warm-surface-theme.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/visual-impact.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/color-accents.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/navigation-cleanup.css" media="(min-width: 1024px)" />
     <link rel="stylesheet" href="/src/surface-color-cleanup.css" media="(min-width: 1024px)" />
+
+    <!-- Carrega por último: mantém o formato desktop, mas devolve cores/ícones/superfícies do mobile. -->
+    <link rel="stylesheet" href="/src/desktop-surface-fix.css?v=mobile-visual-sync-1" media="(min-width: 1024px)" />
 
     <title>Hydra Agro</title>
   </head>
