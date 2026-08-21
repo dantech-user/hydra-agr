@@ -1,0 +1,99 @@
+/* Hydra Agro — navegação final.
+   Bottom bar monocromática, exceto NFC. Atalhos da Home centralizados. */
+
+/* Abas comuns: somente traço, sem fundo, sem borda e sem cor por seção. */
+.hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)) {
+  color: #6b776f !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)).active {
+  color: #173f2d !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)) > span:not(.touch-ripple),
+.hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)).active > span:not(.touch-ripple) {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: currentColor !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)) > span:not(.touch-ripple) > svg {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)):hover > span:not(.touch-ripple),
+.hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)):active > span:not(.touch-ripple) {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* NFC: único item colorido e destacado. */
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3),
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active {
+  color: #f47a0b !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+  background: linear-gradient(145deg, #ff9a2e, #f47400) !important;
+  color: #fff !important;
+  border-color: var(--paper, #f5f3ec) !important;
+  box-shadow: 0 14px 28px -15px rgba(244,116,0,.55) !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple) > svg {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > small,
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > small {
+  color: #c96300 !important;
+}
+
+/* Dark mode: mesmas regras, com contraste ajustado. */
+.hydra-root.theme-dark .phone-app .bottom-nav > button:not(:nth-of-type(3)) {
+  color: #8e9c94 !important;
+}
+
+.hydra-root.theme-dark .phone-app .bottom-nav > button:not(:nth-of-type(3)).active {
+  color: #d2dfd6 !important;
+}
+
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+  border-color: #10251a !important;
+}
+
+/* Home: atalhos realmente centralizados. */
+.hydra-root .home-screen .shortcut-row {
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+}
+
+.hydra-root .home-screen .shortcut-row > button {
+  margin: 0 !important;
+  text-align: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@media (min-width: 900px) {
+  .hydra-root .home-screen .shortcut-row {
+    width: min(100%, 920px) !important;
+    grid-template-columns: repeat(5, minmax(130px, 1fr)) !important;
+    gap: 14px !important;
+    justify-self: center !important;
+  }
+}
