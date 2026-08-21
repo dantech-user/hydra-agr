@@ -1,0 +1,398 @@
+/* Hydra Agro — acabamento final de produto.
+   Mantém celulares pequenos intactos e fecha lacunas de tablet/notebook/desktop. */
+
+/* ============================
+   Notebook/tablet landscape
+   ============================ */
+@media (min-width: 900px) and (max-width: 1023px) {
+  .hydra-root {
+    --type-display: 30px;
+    --type-section: 18px;
+    --type-card: 13px;
+    --type-body: 12px;
+    --type-control: 11px;
+    --type-caption: 9.5px;
+  }
+
+  .hydra-root .app-shell,
+  .hydra-root .phone-app,
+  .hydra-root .app-content {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .app-content {
+    padding-bottom: 118px !important;
+  }
+
+  .hydra-root .app-content > .screen,
+  .hydra-root .app-content .screen {
+    width: min(calc(100% - 48px), 880px) !important;
+    max-width: 880px !important;
+    margin: 0 auto !important;
+    padding: 28px 0 38px !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: 16px !important;
+    width: min(720px, calc(100vw - 48px)) !important;
+    height: 88px !important;
+    min-height: 88px !important;
+    padding: 8px 12px !important;
+    border-radius: 26px !important;
+    transform: translateX(-50%) !important;
+    background: rgba(255, 254, 250, .94) !important;
+    border: 1px solid rgba(23, 77, 53, .1) !important;
+    box-shadow: 0 18px 48px -28px rgba(8, 48, 32, .5) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(20px) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button {
+    min-height: 68px !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) {
+    transform: translateY(-10px) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple) {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    min-height: 58px !important;
+    border-radius: 20px !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav .touch-ripple {
+    display: none !important;
+  }
+
+  .hydra-root .home-screen > .shortcut-row {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .hydra-root .home-screen > .shortcut-row > button {
+    min-height: 92px !important;
+  }
+
+  .hydra-root .community-screen > .post-list,
+  .hydra-root .screen:has(> .nfc-inline-card) > .animal-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav {
+    background: rgba(12, 28, 20, .94) !important;
+    border-color: rgba(255,255,255,.07) !important;
+  }
+}
+
+/* ============================
+   Desktop polish
+   ============================ */
+@media (min-width: 1024px) {
+  /* Conteúdo sempre respira acima da dock. */
+  .hydra-root .app-content {
+    padding-bottom: 148px !important;
+  }
+
+  .hydra-root .screen {
+    scroll-margin-top: 24px;
+  }
+
+  /* Cabeçalhos mais consistentes. */
+  .hydra-root .screen-header {
+    min-height: 66px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .hydra-root .screen-header-row {
+    width: 100% !important;
+  }
+
+  .hydra-root .screen-heading p {
+    margin-top: 5px !important;
+    color: var(--muted) !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Cards comuns ganham a mesma linguagem visual. */
+  .hydra-root .phone-app :is(
+    .content-section,
+    .empty-state,
+    .task-card,
+    .activity-card,
+    .monitor-card,
+    .water-card,
+    .history-home-row,
+    .first-action-card,
+    .assistant-home-card,
+    .today-home-card,
+    .nfc-manual-card,
+    .nfc-result-card
+  ) {
+    border-radius: 20px !important;
+  }
+
+  .hydra-root .content-section {
+    padding: 20px !important;
+    border: 1px solid rgba(18, 72, 48, .075) !important;
+    background: rgba(255, 255, 252, .74) !important;
+    box-shadow: 0 18px 42px -38px rgba(8, 48, 32, .46) !important;
+  }
+
+  .hydra-root .section-heading {
+    margin-bottom: 15px !important;
+  }
+
+  /* Empty states não ficam perdidos em painéis largos. */
+  .hydra-root .empty-state {
+    min-height: 220px !important;
+    padding: 34px 28px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .hydra-root .empty-state > span,
+  .hydra-root .empty-state > .empty-icon {
+    margin-bottom: 12px !important;
+  }
+
+  .hydra-root .empty-state p {
+    max-width: 520px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Formulários desktop: campos não ocupam 1200px sem necessidade. */
+  .hydra-root .screen > form:not(.comment-form),
+  .hydra-root .screen .form-card,
+  .hydra-root .screen .form-section {
+    max-width: 900px !important;
+  }
+
+  .hydra-root .field {
+    min-width: 0 !important;
+  }
+
+  .hydra-root .field input,
+  .hydra-root .field select,
+  .hydra-root .field textarea,
+  .hydra-root .search-box input,
+  .hydra-root .comment-form input {
+    min-height: 48px !important;
+    border-radius: 14px !important;
+  }
+
+  .hydra-root .field textarea {
+    min-height: 118px !important;
+    resize: vertical !important;
+  }
+
+  .hydra-root .field input:focus,
+  .hydra-root .field select:focus,
+  .hydra-root .field textarea:focus,
+  .hydra-root .search-box input:focus,
+  .hydra-root .comment-form input:focus {
+    border-color: rgba(31, 104, 73, .36) !important;
+    box-shadow: 0 0 0 4px rgba(31, 104, 73, .07) !important;
+    outline: none !important;
+  }
+
+  /* Botões ficam com área de clique uniforme. */
+  .hydra-root .phone-app :is(.primary-button, .secondary-button, .danger-button, .wide-outline-button) {
+    min-height: 46px !important;
+    border-radius: 14px !important;
+  }
+
+  .hydra-root .icon-button {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border-radius: 14px !important;
+  }
+
+  /* Estados hover discretos, sem mover o grid. */
+  .hydra-root .phone-app :is(
+    .content-section,
+    .post-card,
+    .animal-card,
+    .activity-card,
+    .monitor-card,
+    .water-card,
+    .history-home-row,
+    .first-action-card
+  ) {
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease !important;
+  }
+
+  .hydra-root .phone-app :is(.post-card, .animal-card, .activity-card, .monitor-card):hover {
+    border-color: rgba(31, 104, 73, .14) !important;
+    box-shadow: 0 20px 44px -36px rgba(7, 48, 31, .42) !important;
+  }
+
+  /* Listas em desktop ficam mais legíveis. */
+  .hydra-root :is(.animal-list, .post-list, .activity-list, .monitor-list, .history-list) {
+    align-items: start !important;
+  }
+
+  .hydra-root .animal-card,
+  .hydra-root .post-card {
+    height: 100% !important;
+  }
+
+  /* Modais centrais, com largura controlada e scroll interno. */
+  .hydra-root .modal-layer {
+    padding: 32px !important;
+  }
+
+  .hydra-root .modal-sheet:not(.modal-tall) {
+    width: min(620px, calc(100vw - 64px)) !important;
+    max-width: 620px !important;
+    max-height: min(780px, calc(100dvh - 64px)) !important;
+    border-radius: 26px !important;
+  }
+
+  .hydra-root .modal-sheet.modal-wide:not(.modal-tall) {
+    width: min(820px, calc(100vw - 64px)) !important;
+    max-width: 820px !important;
+  }
+
+  .hydra-root .modal-sheet .modal-head {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  .hydra-root .modal-sheet .modal-body {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+
+  .hydra-root .modal-action-row {
+    gap: 10px !important;
+  }
+
+  /* Quick actions ficam com aparência de painel desktop. */
+  .hydra-root .quick-layer {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 32px !important;
+  }
+
+  .hydra-root .quick-sheet {
+    width: min(760px, calc(100vw - 64px)) !important;
+    max-height: calc(100dvh - 64px) !important;
+    border-radius: 28px !important;
+  }
+
+  .hydra-root .quick-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .hydra-root .quick-grid > button {
+    min-height: 82px !important;
+    border-radius: 17px !important;
+  }
+
+  /* NFC desktop: aviso não fica perdido e entrada manual vira a ação principal. */
+  .hydra-root .nfc-screen .nfc-desktop-note {
+    margin-bottom: 18px !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-manual-card {
+    max-width: 760px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Foco de teclado: produto utilizável em notebook sem mouse. */
+  .hydra-root button:focus-visible,
+  .hydra-root a:focus-visible,
+  .hydra-root [role="button"]:focus-visible {
+    outline: 3px solid rgba(255, 135, 18, .34) !important;
+    outline-offset: 3px !important;
+  }
+
+  .hydra-root .bottom-nav button:focus-visible {
+    outline-color: rgba(31, 104, 73, .34) !important;
+  }
+
+  /* Scrollbar discreta só no desktop. */
+  .hydra-root,
+  .hydra-root .modal-body,
+  .hydra-root .quick-sheet {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(46, 92, 67, .25) transparent;
+  }
+
+  .hydra-root ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+
+  .hydra-root ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .hydra-root ::-webkit-scrollbar-thumb {
+    background: rgba(46, 92, 67, .22);
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+
+  .hydra-root ::-webkit-scrollbar-thumb:hover {
+    background: rgba(46, 92, 67, .34);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  /* Dark mode final. */
+  .hydra-root.theme-dark .content-section {
+    border-color: rgba(255,255,255,.065) !important;
+    background: rgba(15, 33, 24, .78) !important;
+    box-shadow: 0 18px 42px -38px rgba(0,0,0,.7) !important;
+  }
+
+  .hydra-root.theme-dark .field input:focus,
+  .hydra-root.theme-dark .field select:focus,
+  .hydra-root.theme-dark .field textarea:focus,
+  .hydra-root.theme-dark .search-box input:focus,
+  .hydra-root.theme-dark .comment-form input:focus {
+    border-color: rgba(136, 185, 145, .32) !important;
+    box-shadow: 0 0 0 4px rgba(136, 185, 145, .07) !important;
+  }
+
+  .hydra-root.theme-dark ::-webkit-scrollbar-thumb {
+    background: rgba(151, 183, 159, .18);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+}
+
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .hydra-root *,
+  .hydra-root *::before,
+  .hydra-root *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
