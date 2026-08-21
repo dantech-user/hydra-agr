@@ -1,0 +1,142 @@
+/* Hydra Agro — superfície contínua para notebook/desktop.
+   Corrige recortes, faixas e fundos desalinhados causados por camadas antigas.
+   Somente desktop; mobile permanece intacto. */
+
+@media (min-width: 1024px) {
+  html,
+  body,
+  #root,
+  .hydra-root,
+  .hydra-root .app-shell,
+  .hydra-root .phone-app {
+    width: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    background: #f8f6ef !important;
+  }
+
+  html,
+  body {
+    min-height: 100dvh !important;
+    background-color: #f8f6ef !important;
+    overscroll-behavior-x: none;
+  }
+
+  .hydra-root .app-shell,
+  .hydra-root .phone-app {
+    position: relative !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Uma única superfície visual ocupa sempre toda a viewport. */
+  .hydra-root .app-content {
+    position: relative !important;
+    z-index: 0 !important;
+    isolation: isolate !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    margin: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  .hydra-root .app-content::before {
+    content: "" !important;
+    position: fixed !important;
+    z-index: -2 !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    pointer-events: none !important;
+    background:
+      radial-gradient(circle at 92% 2%, rgba(255, 135, 18, .055), transparent 25%),
+      radial-gradient(circle at 7% 92%, rgba(31, 97, 69, .045), transparent 29%),
+      #f8f6ef !important;
+  }
+
+  /* As telas não desenham um segundo fundo por cima do fundo global. */
+  .hydra-root .app-content > .screen,
+  .hydra-root .app-content .screen.page-enter,
+  .hydra-root .app-content > .home-screen,
+  .hydra-root .app-content > .profile-screen,
+  .hydra-root .app-content > .community-screen,
+  .hydra-root .app-content > .extra-screen,
+  .hydra-root .app-content > .nfc-screen,
+  .hydra-root .app-content > .assistant-screen,
+  .hydra-root .app-content > .today-screen,
+  .hydra-root .app-content > .history-screen {
+    position: relative !important;
+    z-index: 1 !important;
+    background: transparent !important;
+    background-image: none !important;
+    background-color: transparent !important;
+  }
+
+  /* Evita faixas laterais vindas de larguras ou transforms antigos. */
+  .hydra-root .route-motion-forward,
+  .hydra-root .route-motion-back {
+    width: 100% !important;
+    min-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    transform-origin: center top !important;
+  }
+
+  /* Elementos de página nunca podem criar overflow horizontal invisível. */
+  .hydra-root .app-content,
+  .hydra-root .app-content > .screen,
+  .hydra-root .screen > *,
+  .hydra-root .home-screen > *,
+  .hydra-root .profile-screen > *,
+  .hydra-root .community-screen > * {
+    box-sizing: border-box !important;
+    min-width: 0;
+  }
+
+  /* A dock fica acima da superfície e não recorta o fundo. */
+  .hydra-root .phone-app .bottom-nav {
+    z-index: 100 !important;
+  }
+
+  /* Modais sempre cobrem a viewport completa, sem herdar largura da página. */
+  .hydra-root .modal-layer {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+  }
+
+  /* Dark mode usa a mesma estratégia: uma superfície única. */
+  .hydra-root.theme-dark,
+  .hydra-root.theme-dark .app-shell,
+  .hydra-root.theme-dark .phone-app,
+  .hydra-root.theme-dark .app-content,
+  body:has(.hydra-root.theme-dark) {
+    background: #0b1710 !important;
+  }
+
+  .hydra-root.theme-dark .app-content::before {
+    background:
+      radial-gradient(circle at 92% 2%, rgba(108, 160, 118, .045), transparent 25%),
+      radial-gradient(circle at 8% 94%, rgba(255, 135, 18, .018), transparent 27%),
+      #0b1710 !important;
+  }
+
+  .hydra-root.theme-dark .app-content > .screen,
+  .hydra-root.theme-dark .app-content .screen.page-enter {
+    background: transparent !important;
+    background-image: none !important;
+  }
+}
