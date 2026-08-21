@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   ChevronRight,
   CircleHelp,
-  ClipboardList,
   Crown,
   Droplets,
   ExternalLink,
@@ -18,10 +17,11 @@ import {
   LockKeyhole,
   LogOut,
   Mail,
-  Nfc,
+  Menu,
+  Palette,
   Pencil,
+  Presentation,
   ShieldCheck,
-  Sparkles,
   Sprout,
   UserRound,
   UsersRound,
@@ -75,6 +75,7 @@ function MenuRow({ icon, title, subtitle, onClick, end }: { icon: ReactNode; tit
 
 export function ProfileScreen({ account, links, updateAccount, navigate, logout, saveAvatar, savePropertyCover, changeCredentials }: Props) {
   const [editOpen, setEditOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [securityOpen, setSecurityOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
@@ -92,6 +93,8 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
   const coverFileRef = useRef<HTMLInputElement>(null);
   const initials = account.profile.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "HA";
   const isPlus = account.profile.plan === "Hydra Agro+";
+  const isDemoAccount = account.email.trim().toLowerCase() === "projeto2026@gmail.com";
+  const ownPosts = account.posts.filter((post) => post.authorId === account.id).length;
   const heroStyle = account.property.coverUrl
     ? { backgroundImage: `linear-gradient(145deg, rgba(9,58,40,.89), rgba(5,38,26,.94)), url("${account.property.coverUrl}")` } as CSSProperties
     : undefined;
@@ -100,6 +103,11 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
     setProfile(draftFromAccount(account));
     setError("");
     setEditOpen(true);
+  }
+
+  function openInjectedMenu(selector: ".theme-menu-row" | ".demo-menu-row") {
+    setSettingsOpen(false);
+    window.setTimeout(() => document.querySelector<HTMLButtonElement>(selector)?.click(), 180);
   }
 
   async function saveProfile(event: FormEvent) {
@@ -246,6 +254,7 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
       <section className="profile-hero" style={heroStyle}>
         <div className="profile-rings" />
         <button className="profile-top-edit" onClick={openEditor} aria-label="Editar perfil"><Pencil size={18} /></button>
+        <button className="profile-settings-trigger" onClick={() => setSettingsOpen(true)} aria-label="Abrir menu do perfil"><Menu size={20} /></button>
         <div className="profile-avatar-wrap">
           {account.profile.avatarUrl ? <img className="profile-avatar image" src={account.profile.avatarUrl} alt={`Foto de ${account.profile.name}`} /> : <span className="profile-avatar">{initials}</span>}
           <button className="avatar-edit-button" onClick={() => Capacitor.isNativePlatform() ? void chooseAvatar() : avatarFileRef.current?.click()} aria-label="Alterar foto do perfil" disabled={uploading === "avatar"}>{uploading === "avatar" ? <LoaderCircle size={17} className="spin" /> : <Camera size={17} />}</button>
@@ -256,6 +265,11 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
         <p>{account.property.municipality ? `${account.property.locationDetails ? `${account.property.locationDetails} · ` : ""}${account.property.municipality}, ${account.property.state}` : "Localização não informada"}</p>
         {account.profile.bio && <small className="profile-bio">{account.profile.bio}</small>}
       </section>
+
+      <nav className="profile-social-tabs" aria-label="Áreas do perfil">
+        <button className="active" aria-current="page"><UserRound size={19} /><span>Perfil</span></button>
+        <button onClick={() => navigate("community")}><UsersRound size={19} /><span>Comunidade</span>{ownPosts > 0 && <small>{ownPosts}</small>}</button>
+      </nav>
 
       <section className={`plan-card ${isPlus ? "is-plus" : "is-free"}`}>
         <div className="plan-mark">{isPlus ? <Crown size={24} /> : <Sprout size={24} />}</div>
@@ -269,39 +283,40 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
         <span className="group-label">MINHA CONTA</span>
         <div className="profile-menu-card">
           <MenuRow icon={<UserRound size={21} />} title="Dados pessoais" subtitle={account.email} onClick={openEditor} />
-          <MenuRow icon={<Sparkles size={21} />} title="Hydra Agro+" subtitle={isPlus ? "Abrir painel de recursos premium" : "Plano oficial por R$ 6/mês"} onClick={() => navigate("plus")} />
-          <MenuRow icon={<UsersRound size={21} />} title="Comunidade" subtitle={`${account.posts.filter((post) => post.authorId === account.id).length} publicaç${account.posts.filter((post) => post.authorId === account.id).length === 1 ? "ão" : "ões"}`} onClick={() => navigate("community")} />
-          <MenuRow icon={<ClipboardList size={21} />} title="Atividades" subtitle={`${account.activities.length} registro${account.activities.length === 1 ? "" : "s"}`} onClick={() => navigate("activities")} />
-          <MenuRow icon={<Bell size={21} />} title="Notificações" subtitle={`${account.notifications.length} aviso${account.notifications.length === 1 ? "" : "s"}`} onClick={() => navigate("notifications")} />
+          <MenuRow icon={<Sprout size={21} />} title="Minha propriedade" subtitle="Dados, produção, água e tecnologia" onClick={() => navigate("property")} />
+          <MenuRow icon={<UsersRound size={21} />} title="Equipe e operações" subtitle="Funcionários, relatórios e ocorrências" onClick={() => navigate("operations" as AppRoute)} />
         </div>
       </section>
-
-      <section className="profile-group">
-        <span className="group-label">MINHA PROPRIEDADE</span>
-        <div className="profile-menu-card">
-          <MenuRow icon={<Sprout size={21} />} title="Ver todos os dados cadastrados" subtitle="Visão geral, produção, água e tecnologia" onClick={() => navigate("property")} />
-          <MenuRow icon={<UsersRound size={21} />} title="Equipe e operações" subtitle="Funcionários, relatórios, ocorrências e tarefas" onClick={() => navigate("operations" as AppRoute)} />
-          <MenuRow icon={<Nfc size={21} />} title="Central NFC/RFID" subtitle={`${account.animals.filter((animal) => animal.electronicId).length} identificações · ${account.nfcReadCount} leituras reais`} onClick={() => navigate("nfc")} />
-          <MenuRow icon={<Droplets size={21} />} title="Alertas de consumo de água" subtitle="Análises dependem dos seus registros" end={<Toggle checked={account.settings.waterAlerts} label="Alertas de água" onChange={(waterAlerts) => updateAccount((current) => ({ ...current, settings: { ...current.settings, waterAlerts } }))} />} />
-        </div>
-      </section>
-
-      <section className="profile-group">
-        <span className="group-label">PREFERÊNCIAS E SEGURANÇA</span>
-        <div className="profile-menu-card">
-          <MenuRow icon={<Bell size={21} />} title="Notificações do aplicativo" subtitle={account.settings.pushNotifications ? "Avisos da propriedade e administração ativados" : "Avisos pausados nesta conta"} onClick={openNotificationPreferences} />
-          <MenuRow icon={<LockKeyhole size={21} />} title="Segurança" subtitle="Alterar e-mail ou senha" onClick={() => { setSecurity({ email: account.email, password: "", confirmPassword: "" }); setSecurityFeedback(null); setSecurityOpen(true); }} />
-          <MenuRow icon={<HeartHandshake size={21} />} title="Apoie o Hydra Agro" subtitle="Apoio voluntário, separado da assinatura" onClick={() => setSupportOpen(true)} />
-          <MenuRow icon={<FileText size={21} />} title="Termos de uso" onClick={() => setInfo("terms")} />
-          <MenuRow icon={<ShieldCheck size={21} />} title="Política de privacidade" onClick={() => setInfo("privacy")} />
-          <MenuRow icon={<CircleHelp size={21} />} title="Sobre o Hydra Agro" onClick={() => setInfo("about")} />
-        </div>
-      </section>
-
-      <section className="profile-group"><span className="group-label">SUPORTE E LINKS OFICIAIS</span><div className="profile-menu-card"><MenuRow icon={<Mail size={21} />} title="Suporte por e-mail" subtitle={hydraSupport.email} onClick={() => { window.location.href = `mailto:${hydraSupport.email}?subject=Suporte%20Hydra%20Agro`; }} /><MenuRow icon={<Instagram size={21} />} title="Instagram" subtitle={hydraSupport.instagramHandle} onClick={() => window.open(hydraSupport.instagramUrl, "_blank", "noopener,noreferrer")} />{links.map((link) => <MenuRow key={link.id} icon={<ExternalLink size={21} />} title={link.label} subtitle={link.description} onClick={() => window.open(link.url, "_blank", "noopener,noreferrer")} />)}</div></section>
 
       <button className="logout-button" onClick={() => setLogoutConfirm(true)}><LogOut size={19} /> Sair desta conta</button>
       <p className="profile-version">Hydra Agro · versão 1.2.2</p>
+
+      <Modal open={settingsOpen} onClose={() => setSettingsOpen(false)} eyebrow="PERFIL" title="Menu e configurações" wide>
+        <div className="profile-settings-sheet">
+          <div className="profile-menu-card">
+            <MenuRow icon={<Palette size={21} />} title="Aparência" subtitle="Modo claro ou escuro" onClick={() => openInjectedMenu(".theme-menu-row")} />
+            <MenuRow icon={<Bell size={21} />} title="Notificações" subtitle="Avisos e alertas de água" onClick={() => { setSettingsOpen(false); openNotificationPreferences(); }} />
+            <MenuRow icon={<LockKeyhole size={21} />} title="Segurança" subtitle="Alterar e-mail ou senha" onClick={() => { setSettingsOpen(false); setSecurity({ email: account.email, password: "", confirmPassword: "" }); setSecurityFeedback(null); setSecurityOpen(true); }} />
+            {isDemoAccount && <MenuRow icon={<Presentation size={21} />} title="Modo demonstração" subtitle="Roteiro da apresentação" onClick={() => openInjectedMenu(".demo-menu-row")} />}
+          </div>
+
+          <span className="profile-settings-label">INFORMAÇÕES</span>
+          <div className="profile-menu-card">
+            <MenuRow icon={<FileText size={21} />} title="Termos de uso" onClick={() => { setSettingsOpen(false); setInfo("terms"); }} />
+            <MenuRow icon={<ShieldCheck size={21} />} title="Política de privacidade" onClick={() => { setSettingsOpen(false); setInfo("privacy"); }} />
+            <MenuRow icon={<CircleHelp size={21} />} title="Créditos" subtitle="Projeto, desenvolvimento e tecnologias" onClick={() => { setSettingsOpen(false); setInfo("credits"); }} />
+            <MenuRow icon={<Sprout size={21} />} title="Sobre o Hydra Agro" onClick={() => { setSettingsOpen(false); setInfo("about"); }} />
+          </div>
+
+          <span className="profile-settings-label">SUPORTE</span>
+          <div className="profile-menu-card">
+            <MenuRow icon={<HeartHandshake size={21} />} title="Apoie o Hydra Agro" onClick={() => { setSettingsOpen(false); setSupportOpen(true); }} />
+            <MenuRow icon={<Mail size={21} />} title="Suporte por e-mail" subtitle={hydraSupport.email} onClick={() => openSupportEmail()} />
+            <MenuRow icon={<Instagram size={21} />} title="Instagram" subtitle={hydraSupport.instagramHandle} onClick={() => window.open(hydraSupport.instagramUrl, "_blank", "noopener,noreferrer")} />
+            {links.map((link) => <MenuRow key={link.id} icon={<ExternalLink size={21} />} title={link.label} subtitle={link.description} onClick={() => window.open(link.url, "_blank", "noopener,noreferrer")} />)}
+          </div>
+        </div>
+      </Modal>
 
       <Modal open={editOpen} onClose={() => setEditOpen(false)} eyebrow="PERFIL" title="Editar seus dados" wide dismissible={saving !== "profile" && !uploading}>
         <form className="modal-form" onSubmit={saveProfile}>
@@ -372,7 +387,7 @@ export function ProfileScreen({ account, links, updateAccount, navigate, logout,
         </div>
       </Modal>
 
-      <Modal open={Boolean(info)} onClose={() => setInfo(null)} eyebrow="HYDRA AGRO" title={info === "terms" ? "Termos de uso" : info === "privacy" ? "Política de privacidade" : "Sobre o Hydra Agro"} wide>
+      <Modal open={Boolean(info)} onClose={() => setInfo(null)} eyebrow="HYDRA AGRO" title={info === "terms" ? "Termos de uso" : info === "privacy" ? "Política de privacidade" : info === "credits" ? "Créditos" : "Sobre o Hydra Agro"} wide>
         {info && <ProfileInformation kind={info} onClose={() => setInfo(null)} onEmail={() => openSupportEmail(info === "privacy" ? "Privacidade e dados — Hydra Agro" : "Informações — Hydra Agro")} onInstagram={() => openInstagram("support")} />}
       </Modal>
 
