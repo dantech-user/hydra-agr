@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState, type ReactNode } from "react";
 import "../../product-polish.css";
 import {
   Bell,
@@ -21,6 +22,7 @@ import {
 import { HydraWordmark } from "../../components/brand";
 import { SectionHeader } from "../../components/ui";
 import type { Announcement, AppRoute, HydraAccount } from "../../lib/hydra-types";
+import { requireSupabase } from "../../services/supabase";
 import { WeatherWidget } from "./weather-widget";
 
 type Props = {
@@ -38,23 +40,53 @@ function greeting() {
 }
 
 export function HomeScreen({ account, navigate, onQuickAction, announcements }: Props) {
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const firstName = account.profile.name.split(/\s+/)[0] || "Produtor";
   const today = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date());
   const waterTotal = account.waterRecords.reduce((total, record) => total + record.amount, 0);
   const pendingActivities = account.activities.filter((activity) => !activity.done);
   const propertyReady = Boolean(account.property.municipality && account.property.mainActivity);
 
+  useEffect(() => {
+    let active = true;
+    const client = requireSupabase();
+
+    async function refreshUnread() {
+      const { count, error } = await client
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("recipient_user_id", account.id)
+        .is("read_at", null);
+      if (active && !error) setHasUnreadNotifications((count ?? 0) > 0);
+    }
+
+    void refreshUnread();
+    const channel = client
+      .channel(`hydra-home-notifications-${account.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications", filter: `recipient_user_id=eq.${account.id}` },
+        () => { void refreshUnread(); },
+      )
+      .subscribe();
+
+    return () => {
+      active = false;
+      void client.removeChannel(channel);
+    };
+  }, [account.id]);
+
   const pendingSetup = [
     account.waterRecords.length === 0 && { label: "Registrar a primeira leitura de água", icon: <Droplets size={21} />, route: "water" as AppRoute },
     account.animals.length === 0 && { label: "Cadastrar o primeiro animal", icon: <Cow size={21} />, route: "herd" as AppRoute },
     account.sectors.length === 0 && { label: "Criar o primeiro setor", icon: <Map size={21} />, route: "monitor" as AppRoute },
-  ].filter(Boolean) as { label: string; icon: React.ReactNode; route: AppRoute }[];
+  ].filter(Boolean) as { label: string; icon: ReactNode; route: AppRoute }[];
 
   return (
     <div className="screen home-screen page-enter">
       <div className="home-brandbar">
         <HydraWordmark />
-        <button className="icon-button bare" onClick={() => navigate("notifications")} aria-label="Notificações"><Bell size={23} />{account.notifications.length > 0 && <span className="notification-dot" />}</button>
+        <button className="icon-button bare" onClick={() => navigate("notifications")} aria-label="Notificações"><Bell size={23} />{hasUnreadNotifications && <span className="notification-dot" />}</button>
       </div>
 
       <section className="greeting-block"><div><h1>{greeting()}, {firstName}</h1><p className="capitalize">{today}</p></div><WeatherWidget municipality={account.property.municipality} onCompleteProperty={() => navigate("property")} /></section>
