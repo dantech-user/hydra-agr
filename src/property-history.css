@@ -92,6 +92,7 @@
 .property-history-icon.water { background: #eef6f7; color: #3b7d8d; }
 .property-history-icon.activities { background: #f4f1e9; color: #7f6a38; }
 .property-history-icon.monitor { background: #eef1ed; color: #5e7466; }
+.property-history-icon.actions { background: #fff0dc; color: #d96f08; }
 .property-history-copy { min-width: 0; display: flex; flex-direction: column; }
 .property-history-copy strong { overflow: hidden; color: var(--ink); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .property-history-copy small { margin-top: 3px; overflow: hidden; color: #7b867f; font-size: 7.4px; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
@@ -103,6 +104,19 @@
   color: #7d8781;
   font-size: 8.5px;
   text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+.property-history-empty button {
+  min-height: 31px;
+  padding: 0 12px;
+  border: 1px solid #f0d7b6;
+  border-radius: 9px;
+  background: #fff6e9;
+  color: #d96f08;
+  font-size: 7.8px;
+  font-weight: 800;
 }
 
 .hydra-root.theme-dark .property-history-screen { background: #07110d; }
@@ -121,6 +135,7 @@
 .hydra-root.theme-dark .property-history-icon.water { background: #132b2e; color: #7fb4bf; }
 .hydra-root.theme-dark .property-history-icon.activities { background: #292519; color: #c2aa6d; }
 .hydra-root.theme-dark .property-history-icon.monitor { background: #1a2820; color: #9bb0a1; }
+.hydra-root.theme-dark .property-history-icon.actions { background: #382413; color: #ffac55; }
 .hydra-root.theme-dark .property-history-summary small,
 .hydra-root.theme-dark .property-history-copy small,
 .hydra-root.theme-dark .property-history-group h2,
@@ -128,3 +143,4 @@
 .hydra-root.theme-dark .property-history-copy strong { color: #eef3ef; }
 .hydra-root.theme-dark .property-history-list button { border-bottom-color: #21392d; }
 .hydra-root.theme-dark .property-history-filters button.active { border-color: #397454; background: #397454; color: #fff; }
+.hydra-root.theme-dark .property-history-empty button { border-color: #4c3320; background: #2b1e13; color: #ffad5a; }
