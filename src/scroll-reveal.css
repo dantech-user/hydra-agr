@@ -47,6 +47,41 @@ html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(3) { --scroll-
 html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(4) { --scroll-reveal-delay: 135ms !important; }
 html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(5) { --scroll-reveal-delay: 180ms !important; }
 
+/* Bottom bar: vidro + halo desfocado ao redor, sem alterar formato ou identidade. */
+.phone-app .bottom-nav {
+  isolation: isolate;
+  -webkit-backdrop-filter: blur(22px) saturate(1.08) !important;
+  backdrop-filter: blur(22px) saturate(1.08) !important;
+  box-shadow:
+    0 -18px 42px -20px rgba(9, 48, 32, .28),
+    0 0 30px 5px rgba(248, 246, 239, .24) !important;
+}
+
+.phone-app .bottom-nav::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: -20px;
+  bottom: -8px;
+  pointer-events: none;
+  border-radius: 28px 28px 0 0;
+  background: rgba(248, 246, 239, .18);
+  filter: blur(15px);
+  opacity: .92;
+}
+
+.hydra-root.theme-dark .phone-app .bottom-nav {
+  box-shadow:
+    0 -18px 42px -20px rgba(0, 0, 0, .62),
+    0 0 30px 5px rgba(12, 30, 20, .26) !important;
+}
+
+.hydra-root.theme-dark .phone-app .bottom-nav::before {
+  background: rgba(12, 30, 20, .24);
+}
+
 /* Em telas largas, listas em colunas recebem um deslocamento lateral discreto. */
 @media (min-width: 1024px) {
   html.scroll-motion-ready .scroll-reveal.scroll-reveal-left {
@@ -60,6 +95,33 @@ html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(5) { --scroll-
   html.scroll-motion-ready .scroll-reveal.scroll-reveal-pop {
     translate: 0 20px;
     scale: .97;
+  }
+
+  /* No notebook a barra flutua: o blur envolve os quatro lados da dock. */
+  .hydra-root .phone-app .bottom-nav {
+    -webkit-backdrop-filter: blur(26px) saturate(1.1) !important;
+    backdrop-filter: blur(26px) saturate(1.1) !important;
+    box-shadow:
+      0 22px 52px -26px rgba(9, 48, 32, .34),
+      0 0 42px 10px rgba(248, 246, 239, .28) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav::before {
+    inset: -18px -22px;
+    border-radius: 40px;
+    background: rgba(248, 246, 239, .20);
+    filter: blur(20px);
+    opacity: .95;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav {
+    box-shadow:
+      0 22px 52px -26px rgba(0, 0, 0, .68),
+      0 0 42px 10px rgba(12, 30, 20, .30) !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav::before {
+    background: rgba(12, 30, 20, .30);
   }
 }
 
