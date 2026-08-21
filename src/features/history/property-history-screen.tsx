@@ -1,7 +1,8 @@
-import { Beef as Cow, CalendarDays, ClipboardCheck, Droplets, RadioTower, ScanLine } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Beef as Cow, CalendarDays, ClipboardCheck, Droplets, ListChecks, RadioTower, ScanLine } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { ScreenHeader } from "../../components/ui";
 import type { AppRoute, HydraAccount } from "../../lib/hydra-types";
+import { loadActivityLog, type ActivityLogEntry } from "../../services/activity-log";
 
 type Props = {
   account: HydraAccount;
@@ -9,7 +10,9 @@ type Props = {
   navigate: (route: AppRoute) => void;
 };
 
-type HistoryKind = "herd" | "water" | "activities" | "monitor";
+type BaseHistoryKind = "herd" | "water" | "activities" | "monitor";
+type HistoryKind = BaseHistoryKind | "actions";
+type HistoryFilter = "all" | HistoryKind;
 
 type HistoryItem = {
   id: string;
@@ -20,8 +23,9 @@ type HistoryItem = {
   route: AppRoute;
 };
 
-const filters: Array<{ id: "all" | HistoryKind; label: string }> = [
+const filters: Array<{ id: HistoryFilter; label: string }> = [
   { id: "all", label: "Todos" },
+  { id: "actions", label: "Ações" },
   { id: "herd", label: "Rebanho" },
   { id: "water", label: "Água" },
   { id: "activities", label: "Atividades" },
@@ -52,11 +56,40 @@ function HistoryIcon({ kind }: { kind: HistoryKind }) {
   if (kind === "water") return <Droplets size={17} />;
   if (kind === "activities") return <ClipboardCheck size={17} />;
   if (kind === "monitor") return <RadioTower size={17} />;
+  if (kind === "actions") return <ListChecks size={17} />;
   return <Cow size={17} />;
 }
 
+function actionRoute(entry: ActivityLogEntry): AppRoute {
+  if (entry.entityType === "animals") return "herd";
+  if (entry.entityType === "water_records") return "water";
+  if (entry.entityType === "activities") return "activities";
+  if (entry.entityType === "nfc_tags") return "nfc";
+  if (entry.entityType === "properties") return "property";
+  return "monitor";
+}
+
 export function PropertyHistoryScreen({ account, onBack, navigate }: Props) {
-  const [filter, setFilter] = useState<"all" | HistoryKind>("all");
+  const [filter, setFilter] = useState<HistoryFilter>("all");
+  const [actions, setActions] = useState<ActivityLogEntry[]>([]);
+  const [actionsLoading, setActionsLoading] = useState(true);
+  const [actionsError, setActionsError] = useState("");
+
+  async function refreshActions() {
+    setActionsLoading(true);
+    setActionsError("");
+    try {
+      setActions(await loadActivityLog());
+    } catch {
+      setActionsError("Não foi possível carregar as ações sincronizadas agora.");
+    } finally {
+      setActionsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refreshActions();
+  }, [account.id]);
 
   const items = useMemo(() => {
     const result: HistoryItem[] = [];
@@ -120,7 +153,25 @@ export function PropertyHistoryScreen({ account, onBack, navigate }: Props) {
     return result.sort((a, b) => b.date.getTime() - a.date.getTime());
   }, [account]);
 
-  const visibleItems = filter === "all" ? items : items.filter((item) => item.kind === filter);
+  const actionItems = useMemo(() => actions.flatMap<HistoryItem>((entry) => {
+    const date = parseDate(entry.createdAt);
+    if (!date) return [];
+    return [{
+      id: `action-${entry.id}`,
+      date,
+      kind: "actions",
+      title: entry.title,
+      detail: `${entry.actorName}${entry.detail ? ` · ${entry.detail}` : ""}`,
+      route: actionRoute(entry),
+    }];
+  }), [actions]);
+
+  const visibleItems = filter === "actions"
+    ? actionItems
+    : filter === "all"
+      ? items
+      : items.filter((item) => item.kind === filter);
+
   const groups = visibleItems.reduce<Array<{ key: string; label: string; items: HistoryItem[] }>>((result, item) => {
     const key = dayKey(item.date);
     const current = result[result.length - 1];
@@ -129,13 +180,19 @@ export function PropertyHistoryScreen({ account, onBack, navigate }: Props) {
     return result;
   }, []);
 
+  const emptyMessage = filter === "actions"
+    ? actionsLoading
+      ? "Carregando ações sincronizadas…"
+      : actionsError || "Ainda não há ações sincronizadas nesse histórico."
+    : "Nenhum registro encontrado nesse filtro.";
+
   return (
     <div className="screen page-enter property-history-screen">
-      <ScreenHeader eyebrow="REGISTROS" title="Histórico da propriedade" subtitle="Água, atividades, rebanho e monitoramentos em ordem de data." onBack={onBack} />
+      <ScreenHeader eyebrow="REGISTROS" title="Histórico da propriedade" subtitle="Registros da operação e ações sincronizadas no Supabase." onBack={onBack} />
 
       <div className="property-history-summary">
         <span><CalendarDays size={18} /></span>
-        <div><strong>{items.length} registros encontrados</strong><small>O histórico é montado a partir dos dados já cadastrados no app.</small></div>
+        <div><strong>{items.length} registros · {actions.length} ações</strong><small>Alterações feitas offline entram em Ações assim que a sincronização terminar.</small></div>
         <em><ScanLine size={14} /> {account.nfcReadCount} NFC</em>
       </div>
 
@@ -144,7 +201,10 @@ export function PropertyHistoryScreen({ account, onBack, navigate }: Props) {
       </div>
 
       {groups.length === 0 ? (
-        <div className="property-history-empty">Nenhum registro encontrado nesse filtro.</div>
+        <div className="property-history-empty">
+          <span>{emptyMessage}</span>
+          {filter === "actions" && !actionsLoading && <button onClick={() => void refreshActions()}>Atualizar</button>}
+        </div>
       ) : (
         <div className="property-history-groups">
           {groups.map((group) => (
