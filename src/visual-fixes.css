@@ -1,7 +1,11 @@
-/* Correções finais de navegação e cabeçalho da Home. */
+/* Correções finais de navegação, cabeçalho e motion system do Hydra Agro. */
 
-/* Remove qualquer camada/indicador residual atrás do NFC ativo. */
+/* -------------------------------------------------------------------------- */
+/* NFC CENTRAL — remove definitivamente o quadrado/halo verde fantasma.       */
+/* O touch-ripple é um span filho do botão e estava herdando o estilo do NFC. */
+/* -------------------------------------------------------------------------- */
 .phone-app .bottom-nav-indicator,
+.phone-app .bottom-nav .touch-ripple,
 .phone-app .bottom-nav > button:nth-of-type(3)::before,
 .phone-app .bottom-nav > button:nth-of-type(3)::after,
 .phone-app .bottom-nav > button:nth-of-type(3) > span::before,
@@ -19,18 +23,35 @@
   outline: 0 !important;
 }
 
-.phone-app .bottom-nav > button:nth-of-type(3) > span,
-.phone-app .bottom-nav > button:nth-of-type(3).active > span {
+/* Só o primeiro span (o invólucro real do ícone) recebe o visual do NFC. */
+.phone-app .bottom-nav > button:nth-of-type(3) > span:first-of-type,
+.phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
   width: 52px !important;
   height: 52px !important;
+  margin-bottom: 0 !important;
+  border: 3px solid var(--paper) !important;
   border-radius: 17px !important;
+  display: grid !important;
+  place-items: center !important;
   transform: translateY(-9px) !important;
   background: var(--forest-700) !important;
+  color: #fff !important;
   box-shadow: 0 8px 18px -14px rgba(10, 67, 42, .72) !important;
   filter: none !important;
 }
 
-/* Hydra Agro alinhado e ocupando corretamente o espaço do cabeçalho. */
+.phone-app .bottom-nav > button:nth-of-type(3) > span:first-of-type svg {
+  width: 23px !important;
+  height: 23px !important;
+}
+
+.phone-app .bottom-nav > button:nth-of-type(3):active > span:first-of-type {
+  transform: translateY(-7px) scale(.95) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* HOME — Hydra Agro alinhado no espaço útil do cabeçalho.                    */
+/* -------------------------------------------------------------------------- */
 .phone-app .home-brandbar {
   width: 100% !important;
   display: flex !important;
@@ -69,7 +90,226 @@
   margin-left: auto !important;
 }
 
-.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > span,
-.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3).active > span {
+/* -------------------------------------------------------------------------- */
+/* MOTION SYSTEM — transições curtas e consistentes no app inteiro.           */
+/* -------------------------------------------------------------------------- */
+:root {
+  --hydra-ease-out: cubic-bezier(.2,.8,.2,1);
+  --hydra-ease-spring: cubic-bezier(.2,1.18,.35,1);
+  --hydra-fast: 150ms;
+  --hydra-normal: 260ms;
+  --hydra-slow: 380ms;
+}
+
+@keyframes hydra-page-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0) scale(.995); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes hydra-page-back {
+  from { opacity: 0; transform: translate3d(-9px, 0, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes hydra-surface-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes hydra-pop-in {
+  0% { opacity: 0; transform: scale(.94); }
+  70% { opacity: 1; transform: scale(1.025); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hydra-icon-bounce {
+  0% { transform: translateY(-9px) scale(.92); }
+  65% { transform: translateY(-11px) scale(1.045); }
+  100% { transform: translateY(-9px) scale(1); }
+}
+
+@keyframes hydra-dot-in {
+  0% { opacity: 0; transform: scale(.45); }
+  70% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Entrada de rota. */
+.phone-app .app-content.route-motion-forward > *,
+.phone-app .app-content.route-motion-forward .page-enter {
+  animation: hydra-page-in var(--hydra-normal) var(--hydra-ease-out) both;
+}
+
+.phone-app .app-content.route-motion-back > *,
+.phone-app .app-content.route-motion-back .page-enter {
+  animation: hydra-page-back var(--hydra-normal) var(--hydra-ease-out) both;
+}
+
+/* Cards e superfícies aparecem suavemente, sem delay exagerado. */
+.phone-app .screen > section,
+.phone-app .screen > article,
+.phone-app .screen > .nfc-banner,
+.phone-app .screen > .shortcut-row,
+.phone-app .screen > .search-row,
+.phone-app .screen > .filter-chips,
+.phone-app .screen > .profile-social-tabs,
+.phone-app .screen > .plan-card,
+.phone-app .screen > .profile-menu-card,
+.phone-app .screen > .animal-list,
+.phone-app .screen > .notification-list,
+.phone-app .screen > .quick-grid,
+.phone-app .screen > .feature-link-grid {
+  animation: hydra-surface-in var(--hydra-slow) var(--hydra-ease-out) both;
+}
+
+/* Todos os controles ganham resposta de toque rápida. */
+.phone-app button,
+.phone-app a,
+.phone-app input,
+.phone-app select,
+.phone-app textarea,
+.phone-app [role="button"] {
+  transition:
+    transform var(--hydra-fast) var(--hydra-ease-out),
+    background-color var(--hydra-normal) var(--hydra-ease-out),
+    border-color var(--hydra-normal) var(--hydra-ease-out),
+    color var(--hydra-normal) var(--hydra-ease-out),
+    box-shadow var(--hydra-normal) var(--hydra-ease-out),
+    opacity var(--hydra-normal) var(--hydra-ease-out) !important;
+}
+
+.phone-app button:not(:disabled):active,
+.phone-app [role="button"]:active {
+  transform: scale(.975);
+}
+
+/* Inputs: foco perceptível sem pular layout. */
+.phone-app input:focus,
+.phone-app select:focus,
+.phone-app textarea:focus,
+.phone-app .search-box:focus-within {
+  transform: translateY(-1px);
+}
+
+/* Ícones e atalhos da Home. */
+.phone-app .shortcut-row button > span,
+.phone-app .feature-link-grid button > svg,
+.phone-app .history-home-row > span,
+.phone-app .nfc-banner-icon,
+.phone-app .profile-menu-icon,
+.phone-app .notification-item-icon {
+  transition: transform var(--hydra-normal) var(--hydra-ease-spring), background-color var(--hydra-normal) var(--hydra-ease-out) !important;
+}
+
+.phone-app .shortcut-row button:active > span,
+.phone-app .feature-link-grid button:active > svg,
+.phone-app .history-home-row:active > span,
+.phone-app .nfc-banner:active .nfc-banner-icon,
+.phone-app .profile-menu-row:active .profile-menu-icon,
+.phone-app .notification-item:active .notification-item-icon {
+  transform: scale(.9) !important;
+}
+
+/* Bottom bar: troca de aba com microanimação, sem ripple no NFC. */
+.phone-app .bottom-nav > button {
+  transition: color var(--hydra-normal) var(--hydra-ease-out), opacity var(--hydra-normal) var(--hydra-ease-out) !important;
+}
+
+.phone-app .bottom-nav > button > span:first-of-type {
+  transition:
+    transform var(--hydra-normal) var(--hydra-ease-spring),
+    background-color var(--hydra-normal) var(--hydra-ease-out),
+    color var(--hydra-normal) var(--hydra-ease-out),
+    box-shadow var(--hydra-normal) var(--hydra-ease-out) !important;
+}
+
+.phone-app .bottom-nav > button.active:not(:nth-of-type(3)) > span:first-of-type {
+  transform: translateY(-2px) scale(1.04) !important;
+}
+
+.phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
+  animation: hydra-icon-bounce 340ms var(--hydra-ease-spring) both;
+}
+
+/* Notificação entra como badge, sem pulsar para sempre. */
+.phone-app .notification-dot {
+  animation: hydra-dot-in 280ms var(--hydra-ease-spring) both;
+}
+
+/* Modais, sheets e menus. */
+.phone-app .modal-sheet,
+.phone-app .quick-sheet,
+.phone-app .profile-settings-sheet {
+  animation: hydra-pop-in var(--hydra-normal) var(--hydra-ease-out) both;
+}
+
+.phone-app .modal-backdrop,
+.phone-app .quick-layer {
+  transition: opacity var(--hydra-normal) var(--hydra-ease-out), background-color var(--hydra-normal) var(--hydra-ease-out) !important;
+}
+
+/* Listas: linhas respondem ao toque sem deslocamentos grandes. */
+.phone-app .animal-card,
+.phone-app .activity-card,
+.phone-app .monitoring-card,
+.phone-app .compact-row,
+.phone-app .notification-item,
+.phone-app .community-post,
+.phone-app .sector-board-row,
+.phone-app .ranking-row,
+.phone-app .profile-menu-row {
+  transition:
+    transform var(--hydra-fast) var(--hydra-ease-out),
+    border-color var(--hydra-normal) var(--hydra-ease-out),
+    background-color var(--hydra-normal) var(--hydra-ease-out),
+    box-shadow var(--hydra-normal) var(--hydra-ease-out) !important;
+}
+
+.phone-app .animal-card:active,
+.phone-app .activity-card:active,
+.phone-app .monitoring-card:active,
+.phone-app .compact-row:active,
+.phone-app .notification-item:active,
+.phone-app .community-post:active,
+.phone-app .sector-board-row:active,
+.phone-app .ranking-row:active,
+.phone-app .profile-menu-row:active {
+  transform: scale(.988) !important;
+}
+
+/* Toggles e elementos de estado. */
+.phone-app .toggle,
+.phone-app .toggle::before,
+.phone-app .toggle span,
+.phone-app .filter-chip,
+.phone-app .status-pill,
+.phone-app .tab-button {
+  transition: all var(--hydra-normal) var(--hydra-ease-out) !important;
+}
+
+/* Imagens e avatares têm entrada suave quando carregam. */
+.phone-app img,
+.phone-app .profile-avatar,
+.phone-app .animal-photo,
+.phone-app .property-cover {
+  transition: opacity var(--hydra-slow) var(--hydra-ease-out), transform var(--hydra-slow) var(--hydra-ease-out) !important;
+}
+
+/* Dark mode mantém o NFC limpo. */
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > span:first-of-type,
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
+  border-color: #0d1d15 !important;
   box-shadow: 0 8px 18px -14px rgba(0,0,0,.58) !important;
+}
+
+/* Acessibilidade e desempenho: sem movimento quando o sistema pedir redução. */
+@media (prefers-reduced-motion: reduce) {
+  .phone-app *,
+  .phone-app *::before,
+  .phone-app *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
