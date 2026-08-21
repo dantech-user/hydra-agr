@@ -245,3 +245,227 @@ body:has(.hydra-root:not(.theme-dark)) #root,
     background-color: var(--neutral-hover) !important;
   }
 }
+
+/* =========================================================
+   MOBILE — correção visual baseada no uso real em iPhone
+   ========================================================= */
+@media (max-width: 899px) {
+  .hydra-root:not(.theme-dark) .app-content {
+    background: #f1ede4 !important;
+  }
+
+  /* Home: atalhos limpos, centralizados e sem blocos coloridos nos ícones. */
+  .hydra-root:not(.theme-dark) .home-screen .shortcut-row {
+    width: 100% !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    margin: 0 auto !important;
+  }
+
+  .hydra-root:not(.theme-dark) .home-screen .shortcut-row > button {
+    min-width: 0 !important;
+    min-height: 88px !important;
+    padding: 12px 5px 10px !important;
+    border: 1px solid #d9dfd4 !important;
+    border-radius: 18px !important;
+    background: #f8f3e7 !important;
+    box-shadow: 0 10px 24px -22px rgba(15,55,39,.28) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .hydra-root:not(.theme-dark) .home-screen .shortcut-row > button > span:not(.touch-ripple),
+  .hydra-root:not(.theme-dark) .home-screen .shortcut-row > button:nth-child(n) > span:not(.touch-ripple) {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    margin: 0 auto 6px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #174a35 !important;
+  }
+
+  .hydra-root:not(.theme-dark) .home-screen .shortcut-row > button small {
+    color: #315746 !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+  }
+
+  /* NFC laranja e centralizado; Propriedade verde. */
+  .hydra-root:not(.theme-dark) .home-screen .nfc-banner {
+    min-height: 178px !important;
+    padding: 22px 52px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
+    align-content: center !important;
+    gap: 8px !important;
+    text-align: center !important;
+    border-radius: 28px !important;
+  }
+
+  .hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy :is(small, strong, em) {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .hydra-root:not(.theme-dark) .home-screen .property-hero {
+    border-radius: 28px !important;
+    box-shadow: 0 22px 44px -34px rgba(8,53,35,.58) !important;
+  }
+
+  /* Água: overview azul de verdade e texto sempre legível. */
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-overview {
+    min-height: 220px !important;
+    padding: 22px !important;
+    border: 1px solid #bfdde3 !important;
+    border-radius: 28px !important;
+    background:
+      radial-gradient(circle at 92% 8%, rgba(255,255,255,.58), transparent 32%),
+      linear-gradient(145deg, #eaf6f8 0%, #deeff2 58%, #d5e9ed 100%) !important;
+    color: #164f5d !important;
+    box-shadow: 0 18px 38px -32px rgba(40,111,130,.42) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-total-icon {
+    background: #d2ebf1 !important;
+    color: #2e8198 !important;
+    border: 1px solid #b9dce4 !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-total > span {
+    color: #5b8088 !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-total > strong {
+    color: #0f4654 !important;
+    text-shadow: none !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-total > small {
+    color: #66878d !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-mini-metrics {
+    border-top-color: rgba(41,117,135,.15) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-mini-metrics > div {
+    background: rgba(255,255,255,.28) !important;
+    border-color: rgba(41,117,135,.12) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-mini-metrics span {
+    color: #678991 !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-mini-metrics strong {
+    color: #164f5d !important;
+  }
+
+  /* Remove as molduras quadradas externas vistas no mobile. */
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) > .content-section {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) > .content-section > .section-heading {
+    margin: 0 2px 12px !important;
+  }
+
+  /* Evolução vira um único card arredondado, sem caixa dupla. */
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .water-chart {
+    padding: 24px 16px 18px !important;
+    border: 1px solid #d5ded5 !important;
+    border-radius: 24px !important;
+    background: #f8f3e7 !important;
+    box-shadow: 0 14px 30px -28px rgba(15,55,39,.34) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .chart-track {
+    background: #dcece9 !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .chart-track > i {
+    background: linear-gradient(180deg, #58a8ba 0%, #2d7f94 100%) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .chart-value {
+    color: #246f82 !important;
+  }
+
+  /* Fontes: linha clara/azulada, não cinza. */
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .compact-list {
+    display: grid !important;
+    gap: 10px !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .compact-row {
+    min-height: 78px !important;
+    border: 1px solid #d4ded7 !important;
+    border-radius: 22px !important;
+    background: #f7f4ea !important;
+    box-shadow: 0 12px 26px -24px rgba(15,55,39,.28) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .row-icon.soft-blue {
+    background: #dceff3 !important;
+    color: #2e8198 !important;
+  }
+
+  /* Alertas: card próprio, sem moldura externa quadrada. */
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .setting-card {
+    border: 1px solid #d6ddd3 !important;
+    border-radius: 22px !important;
+    background: #f8f3e7 !important;
+    box-shadow: 0 12px 26px -24px rgba(15,55,39,.28) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .info-strip {
+    margin-top: 10px !important;
+    border-radius: 18px !important;
+  }
+
+  /* Histórico: um único card arredondado. */
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .timeline-list {
+    overflow: hidden !important;
+    padding: 4px 12px !important;
+    border: 1px solid #d5ddd4 !important;
+    border-radius: 22px !important;
+    background: #f8f3e7 !important;
+    box-shadow: 0 12px 26px -24px rgba(15,55,39,.28) !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .timeline-list > button {
+    background: transparent !important;
+  }
+
+  .hydra-root:not(.theme-dark) .screen:has(> .water-overview) .timeline-dot {
+    background: #2f8095 !important;
+    box-shadow: 0 0 0 5px #e0eef1 !important;
+  }
+
+  /* Bottom bar mobile sem cinza frio. */
+  .hydra-root:not(.theme-dark) .phone-app .bottom-nav {
+    background: rgba(248,243,231,.98) !important;
+    border-top-color: #d8ddd2 !important;
+    box-shadow: 0 -10px 28px rgba(15,55,39,.06) !important;
+  }
+}
