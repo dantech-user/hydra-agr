@@ -92,30 +92,55 @@
 }
 
 /* Perfil clássico preservado. Apenas adiciona menu, abas e reduz opções visíveis. */
+.phone-app .profile-hero {
+  position: relative;
+}
+
+/* Lápis maior e com área de toque confortável. */
 .phone-app .profile-screen .profile-top-edit {
-  right: 58px !important;
+  top: 14px !important;
+  right: 64px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 14px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.phone-app .profile-screen .profile-top-edit svg {
+  width: 22px !important;
+  height: 22px !important;
+  stroke-width: 2.25;
 }
 
 .phone-app .profile-settings-trigger {
   position: absolute;
   z-index: 6;
-  top: 16px;
-  right: 16px;
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 13px;
+  top: 14px;
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255,255,255,.20);
+  border-radius: 14px;
   display: grid;
   place-items: center;
-  background: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.13);
   color: #fff;
+  box-shadow: 0 8px 20px -16px rgba(0,0,0,.55);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.phone-app .profile-settings-trigger svg {
+  width: 22px;
+  height: 22px;
 }
 
 .phone-app .profile-settings-trigger:active {
   transform: scale(.95);
+  background: rgba(255,255,255,.20);
 }
 
 .phone-app .profile-social-tabs {
@@ -181,21 +206,97 @@
   display: none !important;
 }
 
+/* Menu do perfil: vira um sheet compacto e organizado, em vez de um modal genérico. */
+.modal-sheet:has(.profile-settings-sheet) {
+  width: min(100%, 460px) !important;
+  max-width: 460px !important;
+  max-height: min(86dvh, 720px) !important;
+  border-radius: 26px 26px 0 0 !important;
+  overflow: hidden !important;
+}
+
+.modal-sheet:has(.profile-settings-sheet) .modal-head {
+  padding: 4px 18px 14px !important;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-sheet:has(.profile-settings-sheet) .modal-head .eyebrow {
+  font-size: 7px !important;
+  letter-spacing: .12em !important;
+}
+
+.modal-sheet:has(.profile-settings-sheet) .modal-head h2 {
+  margin-top: 3px !important;
+  font-size: 20px !important;
+  letter-spacing: -.025em !important;
+}
+
+.modal-sheet:has(.profile-settings-sheet) .modal-body {
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom)) !important;
+}
+
 .profile-settings-sheet {
   display: grid;
-  gap: 13px;
+  gap: 18px;
 }
 
 .profile-settings-sheet .profile-menu-card {
-  margin: 0;
+  margin: 0 !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: var(--paper) !important;
+  box-shadow: none !important;
+}
+
+.profile-settings-sheet .profile-menu-row {
+  min-height: 60px !important;
+  padding: 9px 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.profile-settings-sheet .profile-menu-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.profile-settings-sheet .profile-menu-row:active {
+  background: var(--sage-soft) !important;
+  transform: none !important;
+}
+
+.profile-settings-sheet .profile-menu-icon {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 12px !important;
+  background: var(--sage-soft) !important;
+  color: var(--forest-700) !important;
+}
+
+.profile-settings-sheet .profile-menu-row strong {
+  font-size: 10px !important;
+  line-height: 1.25 !important;
+}
+
+.profile-settings-sheet .profile-menu-row small {
+  margin-top: 2px !important;
+  font-size: 8px !important;
+  line-height: 1.35 !important;
 }
 
 .profile-settings-label {
-  margin: 6px 4px -5px;
+  margin: 0 5px -10px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 7.5px;
   font-weight: 850;
-  letter-spacing: .09em;
+  letter-spacing: .11em;
+}
+
+/* O menu não precisa repetir uma coleção inteira de links externos. */
+.profile-settings-sheet .profile-menu-card:last-child .profile-menu-row:nth-child(n + 4) {
+  display: none !important;
 }
 
 .hydra-root.theme-dark .phone-app .bottom-nav {
@@ -236,6 +337,25 @@
   color: #8fbd99;
 }
 
+.hydra-root.theme-dark .modal-sheet:has(.profile-settings-sheet) .modal-head {
+  border-bottom-color: #294235;
+}
+
+.hydra-root.theme-dark .profile-settings-sheet .profile-menu-card {
+  border-color: #294235 !important;
+  background: #0e1d15 !important;
+}
+
+.hydra-root.theme-dark .profile-settings-sheet .profile-menu-row {
+  border-bottom-color: #294235 !important;
+}
+
+.hydra-root.theme-dark .profile-settings-sheet .profile-menu-row:active,
+.hydra-root.theme-dark .profile-settings-sheet .profile-menu-icon {
+  background: #173526 !important;
+  color: #8fbd99 !important;
+}
+
 @media (max-width: 370px) {
   .phone-app .bottom-nav > button > small {
     font-size: 7.2px !important;
@@ -248,12 +368,14 @@
   }
 
   .phone-app .profile-screen .profile-top-edit {
-    right: 54px !important;
+    right: 60px !important;
+    width: 40px !important;
+    height: 40px !important;
   }
 
   .phone-app .profile-settings-trigger {
-    right: 13px;
-    width: 36px;
-    height: 36px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
   }
 }
