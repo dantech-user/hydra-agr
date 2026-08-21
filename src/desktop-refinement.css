@@ -1,0 +1,393 @@
+/* Hydra Agro — refinamento final do layout notebook/desktop.
+   Carregado depois do desktop-bottom-dock.css. Mobile não é alterado. */
+
+@media (min-width: 1024px) {
+  /* =========================================================
+     BOTTOM DOCK — correção robusta do efeito fantasma/ripple
+     ========================================================= */
+  .hydra-root .phone-app .bottom-nav {
+    isolation: isolate !important;
+    contain: layout style !important;
+  }
+
+  /* O ripple é um span criado por JS. Ele nunca pode herdar o visual do ícone. */
+  .hydra-root .phone-app .bottom-nav button > .touch-ripple,
+  .hydra-root .phone-app .bottom-nav button .touch-ripple,
+  .hydra-root .phone-app .bottom-nav .touch-ripple {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    pointer-events: none !important;
+  }
+
+  /* Remove efeitos antigos/pseudo-elementos que podem aparecer atrás das abas. */
+  .hydra-root .phone-app .bottom-nav > button::before,
+  .hydra-root .phone-app .bottom-nav > button::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button {
+    overflow: hidden !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) {
+    overflow: visible !important;
+  }
+
+  /* Somente o span real do ícone recebe dimensão visual. */
+  .hydra-root .phone-app .bottom-nav > button > span:not(.touch-ripple) {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button > small {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  /* Active state sem quadrado verde exagerado. */
+  .hydra-root .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) {
+    background: rgba(30, 106, 73, .075) !important;
+    border-color: rgba(30, 106, 73, .07) !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.34) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) > span:not(.touch-ripple) {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* NFC: um único botão visual, sem segunda camada atrás. */
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3),
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active,
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3):focus,
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3):focus-visible {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+    background: linear-gradient(145deg, #256f50, #175c3f) !important;
+    border: 5px solid #fffef9 !important;
+    box-shadow: 0 15px 30px -14px rgba(19, 91, 61, .5), 0 4px 10px rgba(19, 91, 61, .12) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3):active > span:not(.touch-ripple) {
+    transform: scale(.95) !important;
+  }
+
+  /* =========================================================
+     PERFIL DESKTOP — composição mais profissional
+     ========================================================= */
+  .hydra-root .profile-screen {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important;
+    column-gap: 24px !important;
+    row-gap: 18px !important;
+    align-items: start !important;
+  }
+
+  .hydra-root .profile-screen > .profile-hero {
+    grid-column: 1 / span 4 !important;
+    grid-row: 1 / span 4 !important;
+    width: 100% !important;
+    min-height: 430px !important;
+    margin: 0 !important;
+    padding: 34px 28px 30px !important;
+    position: sticky !important;
+    top: 28px !important;
+    align-self: start !important;
+    border-radius: 28px !important;
+    box-shadow: 0 24px 55px -34px rgba(7, 48, 31, .42) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs {
+    grid-column: 5 / -1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-height: 62px !important;
+    margin: 0 !important;
+    padding: 6px !important;
+    border: 1px solid rgba(22, 78, 53, .09) !important;
+    border-radius: 20px !important;
+    background: rgba(255,255,255,.66) !important;
+    box-shadow: 0 12px 30px -26px rgba(9, 55, 37, .35) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs button {
+    min-height: 48px !important;
+    border-radius: 15px !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs button.active {
+    background: #eef4ed !important;
+    color: #1f6849 !important;
+    box-shadow: inset 0 0 0 1px rgba(31,104,73,.065) !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card {
+    grid-column: 5 / -1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    min-height: 118px !important;
+    margin: 0 !important;
+    padding: 22px 24px !important;
+    border-radius: 24px !important;
+    display: grid !important;
+    grid-template-columns: 56px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 18px !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card .plan-mark {
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 18px !important;
+  }
+
+  .hydra-root .profile-screen > .plan-card > button {
+    min-width: 132px !important;
+    min-height: 46px !important;
+    border-radius: 14px !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group {
+    grid-column: 5 / -1 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .group-label {
+    display: block !important;
+    margin: 0 0 9px 4px !important;
+  }
+
+  /* As três opções principais viram cards independentes no desktop. */
+  .hydra-root .profile-screen > .profile-group .profile-menu-card {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row {
+    min-width: 0 !important;
+    min-height: 112px !important;
+    padding: 17px !important;
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 12px !important;
+    border: 1px solid rgba(20, 77, 52, .085) !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 252, .86) !important;
+    box-shadow: 0 15px 34px -31px rgba(8, 51, 34, .44) !important;
+    overflow: hidden !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row:hover {
+    border-color: rgba(31, 104, 73, .16) !important;
+    background: #fffefa !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 20px 38px -30px rgba(8, 51, 34, .38) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 14px !important;
+    display: grid !important;
+    place-items: center !important;
+    background: #edf4ed !important;
+    color: #24694a !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row > div {
+    min-width: 0 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row strong,
+  .hydra-root .profile-screen > .profile-group .profile-menu-row small {
+    display: block !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row small {
+    margin-top: 4px !important;
+    white-space: normal !important;
+    line-height: 1.45 !important;
+  }
+
+  .hydra-root .profile-screen > .logout-button {
+    grid-column: 5 / span 4 !important;
+    width: 100% !important;
+    min-height: 50px !important;
+    margin: 4px 0 0 !important;
+    border-radius: 16px !important;
+  }
+
+  .hydra-root .profile-screen > .profile-version {
+    grid-column: 9 / -1 !important;
+    align-self: center !important;
+    justify-self: end !important;
+    margin: 4px 6px 0 0 !important;
+    text-align: right !important;
+  }
+
+  /* Admin fica alinhado com o restante, mas sem forçar 3 colunas. */
+  .hydra-root .profile-screen > .profile-group:has(.admin-access-card) .profile-menu-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group:has(.admin-access-card) .profile-menu-row {
+    min-height: 82px !important;
+  }
+
+  /* =========================================================
+     ANIMAÇÕES DESKTOP
+     ========================================================= */
+  @keyframes hydraDesktopScreenIn {
+    from { opacity: 0; transform: translateY(13px) scale(.995); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes hydraDesktopDockIn {
+    from { opacity: 0; transform: translate(-50%, 24px) scale(.97); }
+    to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  }
+
+  @keyframes hydraDesktopCardIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hydra-root .phone-app .bottom-nav:not(.is-hidden) {
+    animation: hydraDesktopDockIn 420ms cubic-bezier(.2,.8,.2,1) both !important;
+  }
+
+  .hydra-root .app-content > .screen.page-enter,
+  .hydra-root .app-content .screen.page-enter {
+    animation: hydraDesktopScreenIn 360ms cubic-bezier(.2,.8,.2,1) both !important;
+  }
+
+  .hydra-root .profile-screen > .profile-hero,
+  .hydra-root .profile-screen > .profile-social-tabs,
+  .hydra-root .profile-screen > .plan-card,
+  .hydra-root .profile-screen > .profile-group,
+  .hydra-root .profile-screen > .logout-button {
+    animation: hydraDesktopCardIn 420ms cubic-bezier(.2,.8,.2,1) both !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs { animation-delay: 35ms !important; }
+  .hydra-root .profile-screen > .plan-card { animation-delay: 70ms !important; }
+  .hydra-root .profile-screen > .profile-group { animation-delay: 105ms !important; }
+  .hydra-root .profile-screen > .logout-button { animation-delay: 140ms !important; }
+
+  .hydra-root .phone-app button,
+  .hydra-root .phone-app .post-card,
+  .hydra-root .phone-app .animal-card,
+  .hydra-root .phone-app .property-hero,
+  .hydra-root .phone-app .nfc-banner,
+  .hydra-root .phone-app .plan-card,
+  .hydra-root .phone-app .profile-menu-row {
+    transition:
+      transform 180ms cubic-bezier(.2,.8,.2,1),
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      color 180ms ease !important;
+  }
+
+  .hydra-root .phone-app button:active {
+    transition-duration: 70ms !important;
+  }
+
+  /* Dark mode */
+  .hydra-root.theme-dark .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) {
+    background: rgba(124, 174, 139, .09) !important;
+    border-color: rgba(124, 174, 139, .09) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple),
+  .hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3).active > span:not(.touch-ripple) {
+    border-color: #0d1f16 !important;
+    background: linear-gradient(145deg, #3f7f5b, #2b6848) !important;
+  }
+
+  .hydra-root.theme-dark .profile-screen > .profile-social-tabs,
+  .hydra-root.theme-dark .profile-screen > .profile-group .profile-menu-row {
+    border-color: rgba(255,255,255,.07) !important;
+    background: rgba(17, 37, 27, .88) !important;
+  }
+
+  .hydra-root.theme-dark .profile-screen > .profile-group .profile-menu-icon,
+  .hydra-root.theme-dark .profile-screen > .profile-social-tabs button.active {
+    background: #193727 !important;
+    color: #a8c8ae !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1160px) {
+  .hydra-root .profile-screen > .profile-hero {
+    grid-column: 1 / span 5 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs,
+  .hydra-root .profile-screen > .plan-card,
+  .hydra-root .profile-screen > .profile-group {
+    grid-column: 6 / -1 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row {
+    min-height: 78px !important;
+  }
+
+  .hydra-root .profile-screen > .logout-button {
+    grid-column: 6 / span 4 !important;
+  }
+
+  .hydra-root .profile-screen > .profile-version {
+    grid-column: 10 / -1 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @media (min-width: 1024px) {
+    .hydra-root .phone-app .bottom-nav,
+    .hydra-root .app-content > .screen.page-enter,
+    .hydra-root .profile-screen > * {
+      animation: none !important;
+    }
+  }
+}
