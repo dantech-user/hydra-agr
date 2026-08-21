@@ -1,6 +1,6 @@
-import { ExternalLink, FileCheck2, Instagram, Mail, ShieldCheck, Sprout } from "lucide-react";
+import { Code2, ExternalLink, FileCheck2, Instagram, Mail, ShieldCheck, Sprout } from "lucide-react";
 
-export type ProfileInformationKind = "terms" | "privacy" | "about";
+export type ProfileInformationKind = "terms" | "privacy" | "credits" | "about";
 
 const information = {
   terms: {
@@ -29,6 +29,18 @@ const information = {
       ["Direitos do usuário", "O titular pode solicitar acesso, correção ou exclusão de dados pelos canais oficiais. Algumas informações poderão ser preservadas quando houver obrigação legal ou necessidade de segurança."],
     ],
   },
+  credits: {
+    eyebrow: "CRÉDITOS DO PROJETO",
+    title: "Créditos",
+    icon: <Code2 size={28} />,
+    introduction: "O Hydra Agro é um projeto independente de tecnologia rural, desenvolvido para reunir gestão da propriedade, sustentabilidade e identificação de animais em uma experiência simples.",
+    sections: [
+      ["Produto e desenvolvimento", "Concepção, interface e desenvolvimento do Hydra Agro são mantidos de forma independente, com evolução contínua a partir dos testes reais do aplicativo."],
+      ["Tecnologias", "A aplicação utiliza React e TypeScript na interface, Supabase para autenticação e dados e Capacitor para integração com recursos do aplicativo móvel."],
+      ["Identificação animal", "A área de identificação foi construída para trabalhar com NFC/RFID e links públicos de animais quando o aparelho e o ambiente oferecem suporte compatível."],
+      ["Princípio do projeto", "Indicadores, leituras, consumo e resultados só devem aparecer quando existirem registros reais. O aplicativo evita preencher métricas com dados inventados."],
+    ],
+  },
   about: {
     eyebrow: "TECNOLOGIA RURAL",
     title: "Sobre o Hydra Agro",
@@ -54,7 +66,7 @@ export function ProfileInformation({ kind, onClose, onEmail, onInstagram }: { ki
       <div className="legal-sections">
         {content.sections.map(([title, text]) => <section key={title}><h3>{title}</h3><p>{text}</p></section>)}
       </div>
-      <div className="legal-meta"><strong>Hydra Agro · versão 1.2.2</strong><span>Última atualização: 16 de agosto de 2026</span></div>
+      <div className="legal-meta"><strong>Hydra Agro · versão 1.2.2</strong><span>Última atualização: 21 de agosto de 2026</span></div>
       <div className="legal-contact-actions">
         <button className="secondary-button" onClick={onEmail}><Mail size={18} /> Suporte</button>
         <button className="secondary-button" onClick={onInstagram}><Instagram size={18} /> Instagram <ExternalLink size={14} /></button>
