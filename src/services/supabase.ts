@@ -1,4 +1,5 @@
 import { Preferences } from "@capacitor/preferences";
+import { Capacitor } from "@capacitor/core";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() ?? "";
@@ -42,10 +43,27 @@ export function requireSupabase() {
   return supabase;
 }
 
-export async function handleAuthCallbackUrl(url: string) {
-  const client = requireSupabase();
+function authCallbackParts(url: string) {
   const parsed = new URL(url);
   const hash = new URLSearchParams(parsed.hash.replace(/^#/, ""));
+  const type = hash.get("type") || parsed.searchParams.get("type") || "";
+  const hasCredentials = Boolean(
+    parsed.searchParams.get("code") ||
+    (hash.get("access_token") && hash.get("refresh_token")),
+  );
+  const recovery = type === "recovery" || parsed.pathname.includes("/auth/recovery");
+  const callbackError = parsed.searchParams.get("error_description") || hash.get("error_description");
+  return { parsed, hash, type, hasCredentials, recovery, callbackError };
+}
+
+export async function handleAuthCallbackUrl(url: string) {
+  const client = requireSupabase();
+  const { parsed, hash, recovery, callbackError } = authCallbackParts(url);
+
+  if (callbackError) {
+    throw new Error(decodeURIComponent(callbackError.replace(/\+/g, " ")));
+  }
+
   const accessToken = hash.get("access_token");
   const refreshToken = hash.get("refresh_token");
   const code = parsed.searchParams.get("code");
@@ -60,25 +78,48 @@ export async function handleAuthCallbackUrl(url: string) {
     throw new Error("Link de autenticação inválido ou expirado.");
   }
 
-  return hash.get("type") === "recovery" || parsed.searchParams.get("type") === "recovery" || parsed.pathname.includes("recovery");
+  return recovery;
 }
 
+/* Mantém esta função específica para o fluxo de recuperação usado pelo HydraApp. */
 export function isAuthCallbackUrl(url: string) {
   try {
-    const parsed = new URL(url);
-    const hash = new URLSearchParams(parsed.hash.replace(/^#/, ""));
-    const hasCredentials = Boolean(
-      parsed.searchParams.get("code") ||
-      (hash.get("access_token") && hash.get("refresh_token")),
-    );
-    const isRecovery =
-      hash.get("type") === "recovery" ||
-      parsed.searchParams.get("type") === "recovery" ||
-      parsed.pathname.includes("/auth/recovery");
-    return hasCredentials && isRecovery;
+    const { hasCredentials, recovery } = authCallbackParts(url);
+    return hasCredentials && recovery;
   } catch {
     return false;
   }
+}
+
+function isSignupConfirmationUrl(url: string) {
+  try {
+    const { hasCredentials, recovery, type } = authCallbackParts(url);
+    if (!hasCredentials || recovery) return false;
+    return type === "signup" || type === "email" || type === "magiclink" || type === "";
+  } catch {
+    return false;
+  }
+}
+
+/*
+ * O app desativa detectSessionInUrl porque o fluxo nativo usa deep link manual.
+ * No navegador isso fazia o retorno da confirmação de cadastro ser ignorado.
+ * Processamos somente confirmações de conta aqui; recovery continua no HydraApp.
+ */
+if (
+  supabase &&
+  typeof window !== "undefined" &&
+  !Capacitor.isNativePlatform() &&
+  isSignupConfirmationUrl(window.location.href)
+) {
+  void handleAuthCallbackUrl(window.location.href)
+    .then(() => {
+      const cleanUrl = `${window.location.pathname}${window.location.search ? "" : ""}`;
+      window.history.replaceState({}, document.title, cleanUrl || "/");
+    })
+    .catch((error) => {
+      console.error("Hydra Agro: falha ao confirmar e-mail", error);
+    });
 }
 
 export function publicMediaUrl(bucket: "avatars" | "community-media", path?: string | null) {
