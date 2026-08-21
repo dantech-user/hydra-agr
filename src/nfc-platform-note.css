@@ -1,0 +1,108 @@
+/* Hydra Agro — esclarece onde a leitura NFC realmente funciona. */
+
+/* O aviso é exclusivo de notebook/desktop. */
+.nfc-desktop-notice {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hydra-root .nfc-screen .nfc-desktop-notice {
+    display: grid !important;
+    grid-template-columns: 58px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 16px !important;
+    width: 100% !important;
+    margin: 0 0 20px !important;
+    padding: 18px 20px !important;
+    border: 1px solid rgba(255, 135, 18, .22) !important;
+    border-radius: 20px !important;
+    background: linear-gradient(135deg, #fffaf0 0%, #fffdf8 100%) !important;
+    box-shadow: 0 18px 38px -32px rgba(99, 58, 15, .28) !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-desktop-notice > span {
+    width: 58px !important;
+    height: 58px !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 18px !important;
+    background: var(--orange-soft) !important;
+    color: #a9560c !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-desktop-notice > div {
+    min-width: 0 !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-desktop-notice small,
+  .hydra-root .nfc-screen .nfc-desktop-notice strong,
+  .hydra-root .nfc-screen .nfc-desktop-notice p {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-desktop-notice small {
+    margin-bottom: 5px !important;
+    color: #b36217 !important;
+    font-size: var(--type-eyebrow, 9.5px) !important;
+    font-weight: 850 !important;
+    letter-spacing: .09em !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-desktop-notice strong {
+    color: var(--ink) !important;
+    font-size: 15px !important;
+    line-height: 1.3 !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-desktop-notice p {
+    max-width: 860px !important;
+    margin-top: 6px !important;
+    color: var(--muted) !important;
+    font-size: var(--type-body, 13px) !important;
+    line-height: 1.55 !important;
+  }
+
+  /* No desktop o CTA deixa claro que a ação depende do celular. */
+  .hydra-root .nfc-screen .nfc-hero .nfc-native-read-button {
+    border: 1px solid rgba(31, 104, 73, .14) !important;
+    background: rgba(255,255,255,.84) !important;
+    color: #205f43 !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-hero .nfc-native-read-button:hover {
+    background: #f2f7f2 !important;
+    border-color: rgba(31, 104, 73, .22) !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-hero > small {
+    padding: 7px 10px !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,.55) !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-desktop-notice {
+    border-color: rgba(218, 139, 58, .18) !important;
+    background: linear-gradient(135deg, #251d12 0%, #171b16 100%) !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-desktop-notice > span {
+    background: #3a2817 !important;
+    color: #e9a45b !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-desktop-notice small {
+    color: #e1a05e !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-desktop-notice strong {
+    color: #edf3ee !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-hero .nfc-native-read-button {
+    border-color: rgba(143, 194, 155, .15) !important;
+    background: rgba(19, 43, 30, .82) !important;
+    color: #b8d0bf !important;
+  }
+}
