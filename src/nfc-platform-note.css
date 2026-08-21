@@ -63,7 +63,7 @@
     line-height: 1.55 !important;
   }
 
-  /* CTA principal NFC em laranja, mantendo claro que a leitura depende do celular. */
+  /* CTA principal NFC em laranja. */
   .hydra-root .nfc-screen .nfc-hero .nfc-native-read-button {
     border: 1px solid #ef7909 !important;
     background: var(--orange) !important;
@@ -82,10 +82,38 @@
     color: #fff !important;
   }
 
+  /* Remove a faixa/pilula cinza de status abaixo do CTA. */
   .hydra-root .nfc-screen .nfc-hero > small {
-    padding: 7px 10px !important;
-    border-radius: 999px !important;
-    background: rgba(255,255,255,.55) !important;
+    padding: 7px 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--muted) !important;
+  }
+
+  /* Barra de modo NFC sem cinza: identidade laranja. */
+  .hydra-root .nfc-screen .nfc-segment {
+    border: 1px solid rgba(255, 135, 18, .20) !important;
+    background: var(--orange-soft) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-segment > button {
+    background: transparent !important;
+    color: #9f5b18 !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-segment > button.active {
+    background: var(--orange) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px -13px rgba(221, 103, 0, .72) !important;
+  }
+
+  .hydra-root .nfc-screen .nfc-segment > button:hover:not(.active) {
+    background: rgba(255, 135, 18, .09) !important;
+    color: #8f4d0e !important;
   }
 
   .hydra-root.theme-dark .nfc-screen .nfc-desktop-notice {
@@ -116,6 +144,25 @@
   .hydra-root.theme-dark .nfc-screen .nfc-hero .nfc-native-read-button:hover {
     background: #f07808 !important;
     border-color: #dd6800 !important;
+    color: #fff !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-hero > small {
+    background: transparent !important;
+    color: #a9b9af !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-segment {
+    border-color: rgba(255, 135, 18, .22) !important;
+    background: rgba(255, 135, 18, .10) !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-segment > button {
+    color: #dca064 !important;
+  }
+
+  .hydra-root.theme-dark .nfc-screen .nfc-segment > button.active {
+    background: var(--orange) !important;
     color: #fff !important;
   }
 }
