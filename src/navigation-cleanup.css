@@ -1,7 +1,9 @@
-/* Hydra Agro — navegação final.
-   Bottom bar monocromática, exceto NFC. Atalhos da Home centralizados. */
+/* Hydra Agro — navegação e Home final.
+   Bottom bar monocromática, exceto NFC. Atalhos limpos e cards principais verdes. */
 
-/* Abas comuns: somente traço, sem fundo, sem borda e sem cor por seção. */
+/* =========================================================
+   BOTTOM BAR — somente NFC com cor
+   ========================================================= */
 .hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)) {
   color: #6b776f !important;
 }
@@ -73,7 +75,9 @@
   border-color: #10251a !important;
 }
 
-/* Home: atalhos realmente centralizados. */
+/* =========================================================
+   ATALHOS DA HOME — centralizados e ícones só no traço
+   ========================================================= */
 .hydra-root .home-screen .shortcut-row {
   width: 100% !important;
   margin-left: auto !important;
@@ -89,6 +93,43 @@
   justify-content: center !important;
 }
 
+/* Remove cores/blocos adicionados anteriormente aos atalhos. */
+.hydra-root .home-screen .shortcut-row > button > span:not(.touch-ripple),
+.hydra-root .home-screen .shortcut-row > button:nth-child(n) > span:not(.touch-ripple) {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #234b39 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+.hydra-root .home-screen .shortcut-row > button > span:not(.touch-ripple) > svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+}
+
+.hydra-root .home-screen .shortcut-row > button small {
+  color: #315746 !important;
+  text-align: center !important;
+}
+
+.hydra-root .home-screen .shortcut-row > button:hover > span:not(.touch-ripple) {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 @media (min-width: 900px) {
   .hydra-root .home-screen .shortcut-row {
     width: min(100%, 920px) !important;
@@ -96,4 +137,130 @@
     gap: 14px !important;
     justify-self: center !important;
   }
+}
+
+/* =========================================================
+   NFC / RFID — card verde e conteúdo centralizado
+   ========================================================= */
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner {
+  position: relative !important;
+  min-height: 160px !important;
+  padding: 24px 58px !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  place-items: center !important;
+  align-content: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 50% -25%, rgba(135,190,112,.2), transparent 48%),
+    linear-gradient(145deg, #176044 0%, #0f4b35 58%, #0b3d2b 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 24px 50px -34px rgba(8,53,35,.68) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-icon {
+  width: 50px !important;
+  height: 50px !important;
+  margin: 0 auto 2px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid rgba(255,255,255,.13) !important;
+  border-radius: 16px !important;
+  background: rgba(255,255,255,.1) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy small,
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy strong,
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy em {
+  width: 100% !important;
+  text-align: center !important;
+  color: inherit !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy strong {
+  margin-top: 3px !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner .nfc-banner-copy em {
+  margin-top: 5px !important;
+  color: rgba(239,248,242,.7) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .nfc-banner > svg:last-child {
+  position: absolute !important;
+  right: 20px !important;
+  top: 50% !important;
+  color: rgba(255,255,255,.7) !important;
+  transform: translateY(-50%) !important;
+}
+
+/* =========================================================
+   PROPRIEDADE — fundo verde com contraste correto
+   ========================================================= */
+.hydra-root:not(.theme-dark) .home-screen .property-hero {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 94% 0%, rgba(255,142,34,.16), transparent 32%),
+    linear-gradient(145deg, #1a6548 0%, #114b36 58%, #0b3d2b 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 24px 50px -34px rgba(8,53,35,.68) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .property-hero :is(
+  h2,
+  p,
+  strong,
+  small,
+  .property-kicker,
+  .property-link,
+  svg
+) {
+  color: inherit !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .property-hero p,
+.hydra-root:not(.theme-dark) .home-screen .property-hero .property-kicker,
+.hydra-root:not(.theme-dark) .home-screen .property-hero .property-metrics small {
+  color: rgba(239,248,242,.72) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .property-hero .property-hero-top > div > button,
+.hydra-root:not(.theme-dark) .home-screen .property-hero .property-hero-top > button {
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background: rgba(255,255,255,.1) !important;
+  color: #fff !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .property-hero .property-metrics > div {
+  border: 1px solid rgba(255,255,255,.1) !important;
+  background: rgba(255,255,255,.07) !important;
+}
+
+.hydra-root:not(.theme-dark) .home-screen .property-hero .property-link {
+  border-color: rgba(255,255,255,.13) !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+/* Dark mode mantém a mesma ideia sem clarear demais. */
+.hydra-root.theme-dark .home-screen .nfc-banner,
+.hydra-root.theme-dark .home-screen .property-hero {
+  background: linear-gradient(145deg, #164b36, #0e3828) !important;
+  color: #f0f7f2 !important;
 }
