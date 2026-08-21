@@ -1,0 +1,422 @@
+/* Hydra Agro — acabamento pontual da navegação e do perfil.
+   Mantém o design clássico e corrige apenas o NFC central + apresentação profissional da conta. */
+
+/* Bottom bar: cinco destinos reais, com NFC como ação central. */
+.phone-app .bottom-nav {
+  overflow: visible !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  align-items: end !important;
+  min-height: calc(76px + env(safe-area-inset-bottom)) !important;
+  padding: 7px 7px max(6px, env(safe-area-inset-bottom)) !important;
+  border-top: 1px solid var(--line) !important;
+  background: color-mix(in srgb, var(--paper) 96%, transparent) !important;
+  box-shadow: 0 -10px 28px -25px rgba(11, 54, 35, .58) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.phone-app .bottom-nav-indicator {
+  display: none !important;
+}
+
+.phone-app .bottom-nav > button {
+  min-width: 0 !important;
+  min-height: 58px !important;
+  padding: 4px 2px 2px !important;
+  border: 0 !important;
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 3px !important;
+  color: var(--muted) !important;
+  overflow: visible !important;
+}
+
+.phone-app .bottom-nav > button > span {
+  width: 38px !important;
+  height: 34px !important;
+  border-radius: 12px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.phone-app .bottom-nav > button > small {
+  margin: 0 !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  color: inherit !important;
+}
+
+.phone-app .bottom-nav > button.active {
+  color: var(--forest-700) !important;
+}
+
+.phone-app .bottom-nav > button.active:not(:nth-of-type(3)) > span {
+  background: var(--sage-soft) !important;
+}
+
+/* NFC: sempre visível como botão central elevado, não apenas quando ativo. */
+.phone-app .bottom-nav > button:nth-of-type(3) {
+  position: relative !important;
+  z-index: 8 !important;
+  color: var(--forest-700) !important;
+}
+
+.phone-app .bottom-nav > button:nth-of-type(3) > span,
+.phone-app .bottom-nav > button:nth-of-type(3).active > span {
+  width: 58px !important;
+  height: 58px !important;
+  margin-bottom: -2px !important;
+  border: 4px solid var(--paper) !important;
+  border-radius: 50% !important;
+  background: var(--forest-700) !important;
+  color: #fff !important;
+  transform: translateY(-12px) !important;
+  box-shadow: 0 13px 26px -16px rgba(10, 67, 42, .95), 0 0 0 1px rgba(16, 75, 49, .08) !important;
+}
+
+.phone-app .bottom-nav > button:nth-of-type(3) > small {
+  margin-top: -10px !important;
+  color: var(--forest-700) !important;
+  font-weight: 850 !important;
+}
+
+.phone-app .bottom-nav > button:nth-of-type(3):active > span {
+  transform: translateY(-10px) scale(.96) !important;
+}
+
+/* Perfil: cabeçalho compacto e informativo, estilo conta de app de produção. */
+.phone-app .profile-screen {
+  padding-bottom: calc(112px + env(safe-area-inset-bottom)) !important;
+}
+
+.phone-app .profile-hero {
+  position: relative !important;
+  min-height: 128px !important;
+  margin-bottom: 18px !important;
+  padding: 20px 18px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 22px !important;
+  display: grid !important;
+  grid-template-columns: 72px minmax(0, 1fr) 38px !important;
+  grid-template-rows: auto auto auto auto !important;
+  column-gap: 14px !important;
+  align-items: center !important;
+  text-align: left !important;
+  background: var(--paper) !important;
+  background-image: none !important;
+  box-shadow: 0 14px 34px -31px rgba(15, 55, 39, .72) !important;
+  overflow: visible !important;
+}
+
+.phone-app .profile-rings {
+  display: none !important;
+}
+
+.phone-app .profile-avatar-wrap {
+  grid-column: 1 !important;
+  grid-row: 1 / 4 !important;
+  margin: 0 !important;
+  align-self: center !important;
+}
+
+.phone-app .profile-avatar {
+  width: 68px !important;
+  height: 68px !important;
+  border: 3px solid var(--paper) !important;
+  border-radius: 20px !important;
+  background: var(--forest-700) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 1px var(--line), 0 9px 22px -17px rgba(9, 53, 34, .75) !important;
+  font-size: 18px !important;
+}
+
+.phone-app .profile-avatar.image {
+  object-fit: cover !important;
+}
+
+.phone-app .avatar-edit-button {
+  right: -3px !important;
+  bottom: -3px !important;
+  width: 27px !important;
+  height: 27px !important;
+  border: 3px solid var(--paper) !important;
+  background: var(--forest-700) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.phone-app .profile-top-edit {
+  position: static !important;
+  grid-column: 3 !important;
+  grid-row: 1 / 3 !important;
+  align-self: start !important;
+  justify-self: end !important;
+  width: 36px !important;
+  height: 36px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  background: var(--paper) !important;
+  color: var(--forest-700) !important;
+  box-shadow: none !important;
+}
+
+.phone-app .profile-hero > h1 {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  margin: 0 !important;
+  color: var(--ink) !important;
+  font-size: 20px !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.025em !important;
+  font-weight: 800 !important;
+}
+
+.phone-app .profile-hero > strong {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  margin: 4px 0 0 !important;
+  color: var(--forest-700) !important;
+  font-size: 10px !important;
+  line-height: 1.3 !important;
+  font-weight: 800 !important;
+}
+
+.phone-app .profile-hero > p {
+  grid-column: 2 / 4 !important;
+  grid-row: 3 !important;
+  margin: 4px 0 0 !important;
+  color: var(--muted) !important;
+  font-size: 8.5px !important;
+  line-height: 1.4 !important;
+}
+
+.phone-app .profile-hero .profile-bio {
+  grid-column: 1 / -1 !important;
+  grid-row: 4 !important;
+  margin: 14px 0 0 !important;
+  padding-top: 13px !important;
+  border-top: 1px solid var(--line) !important;
+  color: var(--muted) !important;
+  font-size: 9px !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+}
+
+/* Plano e grupos passam a parecer configurações reais, sem cards gigantes. */
+.phone-app .plan-card {
+  min-height: 78px !important;
+  margin-bottom: 24px !important;
+  padding: 13px 14px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 18px !important;
+  background: var(--paper) !important;
+  box-shadow: none !important;
+}
+
+.phone-app .plan-mark {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 13px !important;
+}
+
+.phone-app .plan-card > div > span {
+  color: var(--muted) !important;
+  font-size: 7px !important;
+  letter-spacing: .08em !important;
+}
+
+.phone-app .plan-card > div > strong {
+  margin-top: 2px !important;
+  color: var(--ink) !important;
+  font-size: 11px !important;
+}
+
+.phone-app .plan-card > div > small {
+  margin-top: 2px !important;
+  color: var(--muted) !important;
+  font-size: 7.5px !important;
+  line-height: 1.35 !important;
+}
+
+.phone-app .plan-card > button {
+  min-height: 34px !important;
+  padding: 0 10px !important;
+  border-radius: 11px !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+}
+
+.phone-app .profile-group {
+  margin-bottom: 24px !important;
+}
+
+.phone-app .profile-group .group-label {
+  display: block !important;
+  margin: 0 4px 8px !important;
+  color: var(--muted) !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  letter-spacing: .08em !important;
+}
+
+.phone-app .profile-menu-card {
+  border: 1px solid var(--line) !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: var(--paper) !important;
+  box-shadow: none !important;
+}
+
+.phone-app .profile-menu-row {
+  min-height: 66px !important;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.phone-app .profile-menu-row:last-child {
+  border-bottom: 0 !important;
+}
+
+.phone-app .profile-menu-row:active {
+  background: var(--sage-soft) !important;
+  transform: none !important;
+}
+
+.phone-app .profile-menu-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  background: var(--sage-soft) !important;
+  color: var(--forest-700) !important;
+}
+
+.phone-app .profile-menu-row > div {
+  min-width: 0 !important;
+}
+
+.phone-app .profile-menu-row strong {
+  color: var(--ink) !important;
+  font-size: 10px !important;
+  line-height: 1.3 !important;
+  font-weight: 780 !important;
+}
+
+.phone-app .profile-menu-row small {
+  margin-top: 3px !important;
+  color: var(--muted) !important;
+  font-size: 8px !important;
+  line-height: 1.35 !important;
+}
+
+.phone-app .admin-access-card {
+  border-color: color-mix(in srgb, var(--forest-700) 22%, var(--line)) !important;
+}
+
+.phone-app .logout-button {
+  min-height: 48px !important;
+  border-radius: 15px !important;
+  box-shadow: none !important;
+}
+
+.phone-app .profile-version {
+  margin: 15px 0 8px !important;
+  color: var(--muted) !important;
+  font-size: 8px !important;
+  text-align: center !important;
+}
+
+/* Dark mode */
+.hydra-root.theme-dark .phone-app .bottom-nav {
+  border-top-color: #294235 !important;
+  background: rgba(13, 29, 21, .96) !important;
+}
+
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > span,
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3).active > span {
+  border-color: #0d1d15 !important;
+  background: #75a883 !important;
+  color: #07150d !important;
+}
+
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3),
+.hydra-root.theme-dark .phone-app .bottom-nav > button:nth-of-type(3) > small {
+  color: #8fbd99 !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-hero,
+.hydra-root.theme-dark .phone-app .plan-card,
+.hydra-root.theme-dark .phone-app .profile-menu-card {
+  border-color: #294235 !important;
+  background: #0e1d15 !important;
+  box-shadow: none !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-avatar,
+.hydra-root.theme-dark .phone-app .avatar-edit-button {
+  border-color: #0e1d15 !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-top-edit {
+  border-color: #294235 !important;
+  background: #102319 !important;
+  color: #8fbd99 !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-hero > h1,
+.hydra-root.theme-dark .phone-app .plan-card > div > strong,
+.hydra-root.theme-dark .phone-app .profile-menu-row strong {
+  color: #eef3ef !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-hero > strong {
+  color: #8fbd99 !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-hero > p,
+.hydra-root.theme-dark .phone-app .profile-hero .profile-bio,
+.hydra-root.theme-dark .phone-app .plan-card > div > span,
+.hydra-root.theme-dark .phone-app .plan-card > div > small,
+.hydra-root.theme-dark .phone-app .profile-group .group-label,
+.hydra-root.theme-dark .phone-app .profile-menu-row small,
+.hydra-root.theme-dark .phone-app .profile-version {
+  color: #91a098 !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-menu-row,
+.hydra-root.theme-dark .phone-app .profile-hero .profile-bio {
+  border-color: #294235 !important;
+}
+
+.hydra-root.theme-dark .phone-app .profile-menu-icon,
+.hydra-root.theme-dark .phone-app .profile-menu-row:active {
+  background: #173526 !important;
+  color: #8fbd99 !important;
+}
+
+@media (max-width: 370px) {
+  .phone-app .bottom-nav > button > small { font-size: 7.2px !important; }
+  .phone-app .bottom-nav > button:nth-of-type(3) > span,
+  .phone-app .bottom-nav > button:nth-of-type(3).active > span {
+    width: 54px !important;
+    height: 54px !important;
+  }
+  .phone-app .profile-hero {
+    grid-template-columns: 62px minmax(0, 1fr) 34px !important;
+    padding-inline: 14px !important;
+    column-gap: 11px !important;
+  }
+  .phone-app .profile-avatar { width: 60px !important; height: 60px !important; }
+  .phone-app .profile-menu-row { padding-inline: 10px !important; }
+}
