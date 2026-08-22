@@ -1,0 +1,58 @@
+/* Hydra Agro — transição entre funções/rotas.
+   A tela troca como um único bloco; nenhum elemento do topo anima sozinho. */
+
+@keyframes hydra-route-forward {
+  from {
+    opacity: .965;
+    transform: translate3d(10px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hydra-route-back {
+  from {
+    opacity: .965;
+    transform: translate3d(-10px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Só a tela inteira se move ao trocar de função. */
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter {
+  animation: hydra-route-forward 145ms cubic-bezier(.22, .75, .28, 1) both !important;
+  transform-origin: center center !important;
+  will-change: transform, opacity !important;
+}
+
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter {
+  animation: hydra-route-back 145ms cubic-bezier(.22, .75, .28, 1) both !important;
+  transform-origin: center center !important;
+  will-change: transform, opacity !important;
+}
+
+/* Evita animações duplicadas dentro da tela durante a troca. */
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > *,
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > * {
+  animation: none !important;
+  animation-delay: 0ms !important;
+}
+
+/* A barra inferior permanece fixa; só o estado ativo muda rapidamente. */
+.hydra-root .phone-app .bottom-nav {
+  transform: translate3d(-50%, 0, 0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter,
+  .hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
