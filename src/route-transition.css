@@ -1,64 +1,99 @@
-/* Hydra Agro — transição entre funções/rotas.
-   A tela troca como um único bloco, com fade-in curto e deslize leve. */
+/* Hydra Agro — transição premium entre funções/rotas.
+   A tela troca como um bloco único: fade forte, deslize, zoom e blur curto. */
 
 @keyframes hydra-route-forward {
   0% {
-    opacity: .84;
-    transform: translate3d(9px, 0, 0);
+    opacity: .42;
+    transform: translate3d(28px, 0, 0) scale(.978);
+    filter: blur(4px);
   }
   58% {
-    opacity: .97;
+    opacity: .95;
+    transform: translate3d(-2px, 0, 0) scale(1.004);
+    filter: blur(.6px);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
   }
 }
 
 @keyframes hydra-route-back {
   0% {
-    opacity: .84;
-    transform: translate3d(-9px, 0, 0);
+    opacity: .42;
+    transform: translate3d(-28px, 0, 0) scale(.978);
+    filter: blur(4px);
   }
   58% {
-    opacity: .97;
+    opacity: .95;
+    transform: translate3d(2px, 0, 0) scale(1.004);
+    filter: blur(.6px);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
   }
 }
 
-/* Só a tela inteira se move ao trocar de função. */
+@keyframes hydra-tab-pop {
+  0% { transform: translateY(0) scale(.88); }
+  62% { transform: translateY(-3px) scale(1.09); }
+  100% { transform: translateY(-2px) scale(1.04); }
+}
+
+@keyframes hydra-nfc-pop {
+  0% { transform: translateY(-9px) scale(.88); }
+  62% { transform: translateY(-12px) scale(1.08); }
+  100% { transform: translateY(-9px) scale(1); }
+}
+
+/* A tela inteira faz a transição; os elementos internos não entram separados. */
 .hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter {
-  animation: hydra-route-forward 170ms cubic-bezier(.22, .72, .25, 1) both !important;
+  animation: hydra-route-forward 240ms cubic-bezier(.16, 1, .3, 1) both !important;
   transform-origin: center center !important;
-  will-change: transform, opacity !important;
+  will-change: transform, opacity, filter !important;
+  backface-visibility: hidden;
 }
 
 .hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter {
-  animation: hydra-route-back 170ms cubic-bezier(.22, .72, .25, 1) both !important;
+  animation: hydra-route-back 240ms cubic-bezier(.16, 1, .3, 1) both !important;
   transform-origin: center center !important;
-  will-change: transform, opacity !important;
+  will-change: transform, opacity, filter !important;
+  backface-visibility: hidden;
 }
 
-/* Evita animações duplicadas dentro da tela durante a troca. */
 .hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > *,
 .hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > * {
   animation: none !important;
   animation-delay: 0ms !important;
 }
 
-/* A barra inferior permanece fixa; só o estado ativo muda rapidamente. */
+/* A barra fica fixa, mas o ícone da nova função dá um pop sincronizado. */
 .hydra-root .phone-app .bottom-nav {
   transform: translate3d(-50%, 0, 0) !important;
 }
 
+.hydra-root .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) > span:first-of-type {
+  animation: hydra-tab-pop 230ms cubic-bezier(.2, 1.2, .3, 1) both !important;
+}
+
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
+  animation: hydra-nfc-pop 250ms cubic-bezier(.2, 1.18, .3, 1) both !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter,
-  .hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter {
+  .hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter,
+  .hydra-root .phone-app .bottom-nav > button.active > span:first-of-type {
     animation: none !important;
     transform: none !important;
     opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
+    transform: translateY(-9px) !important;
   }
 }
