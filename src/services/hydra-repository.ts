@@ -9,6 +9,7 @@ import {
   type CommunityPost,
   type HydraAccount,
   type SignupPayload,
+  type StaffRole,
   type UserRole,
 } from "../lib/hydra-types";
 import { signedPrivateUrl, uploadPublicImage } from "./media-service";
@@ -68,22 +69,41 @@ export async function loadCommunityFeed(): Promise<CommunityPost[]> {
 
 export async function loadAccount(user: User): Promise<HydraAccount> {
   const client = requireSupabase();
-  const [profileResult, roleResult, subscriptionResult] = await Promise.all([
+  const [profileResult, roleResult, subscriptionResult, memberResult] = await Promise.all([
     client.from("profiles").select("*").eq("id", user.id).single(),
     client.from("roles").select("role").eq("user_id", user.id).single(),
     client.from("subscriptions").select("plan,status,created_at,premium_started_at,premium_expires_at,premium_deactivated_at").eq("user_id", user.id).single(),
+    client.from("property_members").select("id,property_id,owner_user_id,member_role,area,active").eq("user_id", user.id).eq("active", true).maybeSingle(),
   ]);
   throwIfError(profileResult.error);
   throwIfError(roleResult.error);
   throwIfError(subscriptionResult.error);
+  throwIfError(memberResult.error);
 
+  const member = memberResult.data as Row | null;
+  const isStaffAccount = String(user.user_metadata?.account_type || "") === "staff";
+  if (isStaffAccount && !member) {
+    throw new Error("Seu acesso de funcionário foi desativado. Peça ao dono da propriedade para liberar um novo código.");
+  }
+
+  const dataOwnerId = member ? String(member.owner_user_id) : user.id;
   const profile = profileResult.data as Row;
   const base = createEmptyAccount({
     id: user.id,
-    email: user.email ?? "",
+    email: isStaffAccount ? "" : (user.email ?? ""),
     name: String(profile.full_name || user.user_metadata.full_name || "Produtor"),
     phone: String(profile.phone || ""),
   });
+  base.access = member
+    ? {
+        kind: "staff",
+        ownerUserId: dataOwnerId,
+        memberId: String(member.id),
+        staffRole: (String(member.member_role) === "manager" ? "manager" : "employee") as StaffRole,
+        area: String(member.area || "Geral"),
+      }
+    : { kind: "owner", ownerUserId: user.id };
+
   const subscription = subscriptionResult.data as Row | null;
   const premiumExpiresAt = subscription?.premium_expires_at ? String(subscription.premium_expires_at) : undefined;
   const plusActive = String(subscription?.plan) === "plus"
@@ -117,10 +137,11 @@ export async function loadAccount(user: User): Promise<HydraAccount> {
 
   if (base.bannedAt) return base;
 
-  const propertyResult = await client.from("properties").select("*").eq("owner_user_id", user.id).maybeSingle();
+  const propertyResult = await client.from("properties").select("*").eq("owner_user_id", dataOwnerId).maybeSingle();
   throwIfError(propertyResult.error);
   const property = propertyResult.data as Row | null;
-  const propertyId = String(property?.id ?? `property-${user.id}`);
+  if (member && !property) throw new Error("A propriedade vinculada a este funcionário não está disponível.");
+  const propertyId = String(property?.id ?? `property-${dataOwnerId}`);
   base.property = {
     id: propertyId,
     name: String(property?.name ?? ""),
@@ -139,13 +160,13 @@ export async function loadAccount(user: User): Promise<HydraAccount> {
   };
 
   const [sources, records, animals, sectors, activities, monitoring, tags, notifications, posts] = await Promise.all([
-    client.from("water_sources").select("*").eq("owner_user_id", user.id).order("created_at"),
-    client.from("water_records").select("*").eq("owner_user_id", user.id).order("recorded_on", { ascending: false }),
-    client.from("animals").select("*").eq("owner_user_id", user.id).order("created_at", { ascending: false }),
-    client.from("property_sectors").select("*").eq("owner_user_id", user.id).order("created_at"),
-    client.from("activities").select("*").eq("owner_user_id", user.id).order("activity_date", { ascending: false }),
-    client.from("monitoring_records").select("*").eq("owner_user_id", user.id).order("monitored_on", { ascending: false }),
-    client.from("nfc_tags").select("read_count").eq("owner_user_id", user.id),
+    client.from("water_sources").select("*").eq("owner_user_id", dataOwnerId).order("created_at"),
+    client.from("water_records").select("*").eq("owner_user_id", dataOwnerId).order("recorded_on", { ascending: false }),
+    client.from("animals").select("*").eq("owner_user_id", dataOwnerId).order("created_at", { ascending: false }),
+    client.from("property_sectors").select("*").eq("owner_user_id", dataOwnerId).order("created_at"),
+    client.from("activities").select("*").eq("owner_user_id", dataOwnerId).order("activity_date", { ascending: false }),
+    client.from("monitoring_records").select("*").eq("owner_user_id", dataOwnerId).order("monitored_on", { ascending: false }),
+    client.from("nfc_tags").select("read_count").eq("owner_user_id", dataOwnerId),
     client.from("notifications").select("*").eq("recipient_user_id", user.id).order("created_at", { ascending: false }),
     loadCommunityFeed(),
   ]);
@@ -220,7 +241,8 @@ async function syncCollection<T extends { id: string }>(
 
 export async function syncAccountDelta(previous: HydraAccount, next: HydraAccount) {
   const client = requireSupabase();
-  const owner = next.id;
+  const actor = next.id;
+  const owner = next.access?.ownerUserId || next.id;
   const propertyId = next.property.id ?? `property-${owner}`;
 
   if (changed(previous.profile, next.profile) || previous.phone !== next.phone || changed(previous.settings, next.settings)) {
@@ -231,7 +253,7 @@ export async function syncAccountDelta(previous: HydraAccount, next: HydraAccoun
       water_alerts: next.settings.waterAlerts,
       push_notifications: next.settings.pushNotifications,
       premium_goals: next.settings.premiumGoals,
-    }).eq("id", owner);
+    }).eq("id", actor);
     throwIfError(error);
   }
 
