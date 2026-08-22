@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
-import { ClipboardCheck, Beef as Cow, Droplets, Home, MapPin, Nfc, Plus, Send, UserRound, UsersRound, X } from "lucide-react";
+import { ClipboardCheck, Beef as Cow, Droplets, History, Home, MapPin, Nfc, Plus, Send, UserRound, UsersRound, X } from "lucide-react";
 import { SplashBrand } from "./components/brand";
 import { requestCloseTopOverlay, useAppOverlay, useModalNavigation } from "./components/modal-system";
 import { BackendSetupScreen, BannedScreen, PasswordRecoveryScreen, SyncBanner } from "./components/system-state";
@@ -9,8 +9,10 @@ import { AppToastRegion } from "./components/ui";
 import { AuthFlow } from "./features/auth/auth-flow";
 import { HomeScreen } from "./features/home/home-screen";
 import { PublicAnimalScreen, clearPublicAnimalParams, readPublicAnimalSnapshot } from "./features/herd/public-animal-card";
+import { StaffHomeScreen } from "./features/staff/staff-home-screen";
+import { StaffProfileScreen } from "./features/staff/staff-profile-screen";
 import { useHydraStore } from "./hooks/use-hydra-store";
-import type { AppRoute } from "./lib/hydra-types";
+import type { AppRoute, StaffRole } from "./lib/hydra-types";
 import { handleAuthCallbackUrl, isAuthCallbackUrl } from "./services/supabase";
 
 const WaterScreen = lazy(() => import("./features/water/water-screen").then((module) => ({ default: module.WaterScreen })));
@@ -30,7 +32,9 @@ const NotificationsScreen = lazy(() => import("./features/notifications/notifica
 const PlusScreen = lazy(() => import("./features/premium/plus-screen").then((module) => ({ default: module.PlusScreen })));
 const AdminScreen = lazy(() => import("./features/admin/admin-screen").then((module) => ({ default: module.AdminScreen })));
 
-const mainTabs: { id: AppRoute; label: string; icon: typeof Home }[] = [
+type NavTab = { id: AppRoute; label: string; icon: typeof Home };
+
+const ownerMainTabs: NavTab[] = [
   { id: "home", label: "Início", icon: Home },
   { id: "water", label: "Água", icon: Droplets },
   { id: "nfc", label: "NFC", icon: Nfc },
@@ -38,10 +42,25 @@ const mainTabs: { id: AppRoute; label: string; icon: typeof Home }[] = [
   { id: "profile", label: "Perfil", icon: UserRound },
 ];
 
-const mainRouteIds: AppRoute[] = mainTabs.map((tab) => tab.id);
+const staffMainTabs: NavTab[] = [
+  { id: "home", label: "Início", icon: Home },
+  { id: "history", label: "Histórico", icon: History },
+  { id: "nfc", label: "NFC", icon: Nfc },
+  { id: "operations", label: "Rotina", icon: ClipboardCheck },
+  { id: "profile", label: "Perfil", icon: UserRound },
+];
+
+const employeeRoutes = new Set<AppRoute>(["home", "history", "nfc", "operations", "profile", "notifications"]);
+const managerRoutes = new Set<AppRoute>([...employeeRoutes, "water", "herd", "monitor", "activities", "assistant", "today"]);
+
+function staffRouteAllowed(route: AppRoute, role?: StaffRole) {
+  return (role === "manager" ? managerRoutes : employeeRoutes).has(route);
+}
 
 export default function HydraApp() {
   const store = useHydraStore();
+  const mainTabs = store.account?.access.kind === "staff" ? staffMainTabs : ownerMainTabs;
+  const mainRouteIds: AppRoute[] = mainTabs.map((tab) => tab.id);
   const [splash, setSplash] = useState(true);
   const [route, setRoute] = useState<AppRoute>("home");
   const [backRoute, setBackRoute] = useState<AppRoute>("home");
@@ -105,8 +124,14 @@ export default function HydraApp() {
       setNfcAnimalId(undefined);
       return;
     }
+    if (store.account.access.kind === "staff" && !staffRouteAllowed(route, store.account.access.staffRole)) {
+      setRoute("home");
+      setBackRoute("home");
+      setQuickOpen(false);
+      return;
+    }
     if (route === "admin" && !["moderator", "admin", "owner"].includes(store.account.role)) setRoute("home");
-  }, [store.account?.id, store.account?.role]);
+  }, [route, store.account?.id, store.account?.role, store.account?.access.kind, store.account?.access.staffRole]);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
@@ -154,7 +179,7 @@ export default function HydraApp() {
   }, [store.configured]);
 
   useEffect(() => {
-    if (Capacitor.isNativePlatform() || !store.account || publicAnimal) return;
+    if (Capacitor.isNativePlatform() || !store.account || publicAnimal || store.account.access.kind === "staff") return;
     const url = new URL(window.location.href);
     const animalId = url.searchParams.get("animal");
     const nfcCode = url.searchParams.get("nfc")?.trim().toLowerCase();
@@ -172,10 +197,12 @@ export default function HydraApp() {
     url.searchParams.delete("animal");
     url.searchParams.delete("nfc");
     window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
-  }, [store.account?.id, store.account?.animals, publicAnimal]);
+  }, [store.account?.id, store.account?.animals, store.account?.access.kind, publicAnimal]);
 
   function navigate(next: AppRoute) {
     if (next === route) return;
+    const access = store.account?.access;
+    if (access?.kind === "staff" && !staffRouteAllowed(next, access.staffRole)) return;
     if (next === "admin" && !["moderator", "admin", "owner"].includes(store.account?.role ?? "user")) return;
     const currentIndex = mainTabs.findIndex((tab) => tab.id === route);
     const nextIndex = mainTabs.findIndex((tab) => tab.id === next);
@@ -190,6 +217,7 @@ export default function HydraApp() {
   }
 
   function openQuick() {
+    if (store.account?.access.kind === "staff") return;
     if (quickTimer.current) window.clearTimeout(quickTimer.current);
     setQuickClosing(false);
     setQuickOpen(true);
@@ -236,14 +264,19 @@ export default function HydraApp() {
   if (passwordRecovery) return <PasswordRecoveryScreen save={async (password) => { const result = await store.changeCredentials({ password }); if (result.ok) window.setTimeout(() => setPasswordRecovery(false), 650); return result; }} logout={async () => { setPasswordRecovery(false); await store.logout(); }} />;
 
   const account = store.account;
+  const isStaff = account.access.kind === "staff";
+  const canOpenAnimalManagement = !isStaff || account.access.staffRole === "manager";
 
   function mainContent() {
+    if (isStaff && !staffRouteAllowed(route, account.access.staffRole)) {
+      return <StaffHomeScreen account={account} announcements={store.announcements} navigate={navigate} />;
+    }
     switch (route) {
-      case "home": return <HomeScreen account={account} announcements={store.announcements} navigate={navigate} onQuickAction={openQuick} />;
+      case "home": return isStaff ? <StaffHomeScreen account={account} announcements={store.announcements} navigate={navigate} /> : <HomeScreen account={account} announcements={store.announcements} navigate={navigate} onQuickAction={openQuick} />;
       case "water": return <WaterScreen account={account} updateAccount={store.updateAccount} createRecordRequest={quickIntent?.kind === "water" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "herd": return <HerdScreen account={account} updateAccount={store.updateAccount} openNfc={openNfc} focusAnimalId={animalToOpen} saveAnimalPhoto={store.saveAnimalPhoto} createRequest={quickIntent?.kind === "animal" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "monitor": return <MonitorScreen account={account} updateAccount={store.updateAccount} saveMonitoringPhoto={store.saveMonitoringPhoto} createSectorRequest={quickIntent?.kind === "sector" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
-      case "profile": return <ProfileScreen account={account} links={store.links} updateAccount={store.updateAccount} navigate={navigate} logout={store.logout} saveAvatar={store.saveAvatar} savePropertyCover={store.savePropertyCover} changeCredentials={store.changeCredentials} />;
+      case "profile": return isStaff ? <StaffProfileScreen account={account} navigate={navigate} logout={store.logout} /> : <ProfileScreen account={account} links={store.links} updateAccount={store.updateAccount} navigate={navigate} logout={store.logout} saveAvatar={store.saveAvatar} savePropertyCover={store.savePropertyCover} changeCredentials={store.changeCredentials} />;
       case "community": return <CommunityScreen account={account} onBack={goBack} publishPost={store.publishPost} likePost={store.likePost} commentPost={store.commentPost} deletePost={store.deletePost} refreshCommunity={store.refreshCommunity} createRequest={quickIntent?.kind === "post" ? quickIntent.request : undefined} onRequestHandled={() => setQuickIntent(undefined)} />;
       case "challenges": return <ChallengesScreen account={account} onBack={goBack} />;
       case "property": return <PropertyScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
@@ -252,17 +285,17 @@ export default function HydraApp() {
       case "assistant": return <HydraAssistantScreen account={account} onBack={goBack} />;
       case "today": return <TodayScreen account={account} syncStatus={store.syncStatus} lastError={store.lastError} onBack={goBack} navigate={navigate} retrySync={store.retrySync} />;
       case "history": return <PropertyHistoryScreen account={account} onBack={goBack} navigate={navigate} />;
-      case "nfc": return <NfcScreen account={account} updateAccount={store.updateAccount} onBack={goBack} initialAnimalId={nfcAnimalId} onRealRead={store.registerNfcRead} onFound={(animal) => { setAnimalToOpen(animal.id); navigate("herd"); }} />;
+      case "nfc": return <NfcScreen account={account} updateAccount={store.updateAccount} onBack={goBack} initialAnimalId={nfcAnimalId} onRealRead={store.registerNfcRead} onFound={(animal) => { if (!canOpenAnimalManagement) return; setAnimalToOpen(animal.id); navigate("herd"); }} />;
       case "notifications": return <NotificationsScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
       case "plus": return <PlusScreen account={account} updateAccount={store.updateAccount} onBack={goBack} />;
-      case "admin": return ["moderator", "admin", "owner"].includes(account.role) ? <AdminScreen account={account} onBack={goBack} /> : <HomeScreen account={account} announcements={store.announcements} navigate={navigate} onQuickAction={openQuick} />;
+      case "admin": return ["moderator", "admin", "owner"].includes(account.role) ? <AdminScreen account={account} onBack={goBack} /> : isStaff ? <StaffHomeScreen account={account} announcements={store.announcements} navigate={navigate} /> : <HomeScreen account={account} announcements={store.announcements} navigate={navigate} onQuickAction={openQuick} />;
       default: return null;
     }
   }
 
   const activeTab: AppRoute = mainRouteIds.includes(route)
     ? route
-    : route === "monitor" || route === "property" || route === "plus" || route === "admin" || route === "operations" ? "profile"
+    : !isStaff && (route === "monitor" || route === "property" || route === "plus" || route === "admin" || route === "operations") ? "profile"
     : "home";
   const activeIndex = mainTabs.findIndex((tab) => tab.id === activeTab);
   const navStyle = { "--active-index": activeIndex } as CSSProperties;
@@ -281,7 +314,7 @@ export default function HydraApp() {
           })}
         </nav>
 
-        {quickOpen && <div className={`quick-layer ${quickClosing ? "is-closing" : ""}`} onMouseDown={() => closeQuick()}><section className="quick-sheet" onMouseDown={(event) => event.stopPropagation()}><div className="sheet-handle" /><header><div><span className="eyebrow orange">Nova ação</span><h2>O que você quer registrar?</h2></div><button className="icon-button" onClick={() => closeQuick()} aria-label="Fechar ações rápidas"><X size={22} /></button></header><div className="quick-grid"><QuickAction index={0} icon={<Droplets size={22} />} title="Registrar água" subtitle="Adicionar uma leitura" onClick={() => closeQuick(() => launchQuick("water", "water"))} /><QuickAction index={1} icon={<Cow size={22} />} title="Cadastrar animal" subtitle="Adicionar ao rebanho" onClick={() => closeQuick(() => launchQuick("animal", "herd"))} /><QuickAction index={2} icon={<Nfc size={22} />} title="Ler identificação" subtitle="NFC/RFID ou código" onClick={() => closeQuick(() => openNfc())} /><QuickAction index={3} icon={<ClipboardCheck size={22} />} title="Nova atividade" subtitle="Adicionar à rotina" onClick={() => closeQuick(() => launchQuick("activity", "activities"))} /><QuickAction index={4} icon={<MapPin size={22} />} title="Criar setor" subtitle="Organizar a propriedade" onClick={() => closeQuick(() => launchQuick("sector", "monitor"))} /><QuickAction index={5} icon={<UsersRound size={22} />} title="Equipe e operações" subtitle="Relatórios e ocorrências" onClick={() => closeQuick(() => navigate("operations"))} /><QuickAction index={6} icon={<Send size={22} />} title="Nova publicação" subtitle="Publicar na comunidade" onClick={() => closeQuick(() => launchQuick("post", "community"))} /></div></section></div>}
+        {quickOpen && !isStaff && <div className={`quick-layer ${quickClosing ? "is-closing" : ""}`} onMouseDown={() => closeQuick()}><section className="quick-sheet" onMouseDown={(event) => event.stopPropagation()}><div className="sheet-handle" /><header><div><span className="eyebrow orange">Nova ação</span><h2>O que você quer registrar?</h2></div><button className="icon-button" onClick={() => closeQuick()} aria-label="Fechar ações rápidas"><X size={22} /></button></header><div className="quick-grid"><QuickAction index={0} icon={<Droplets size={22} />} title="Registrar água" subtitle="Adicionar uma leitura" onClick={() => closeQuick(() => launchQuick("water", "water"))} /><QuickAction index={1} icon={<Cow size={22} />} title="Cadastrar animal" subtitle="Adicionar ao rebanho" onClick={() => closeQuick(() => launchQuick("animal", "herd"))} /><QuickAction index={2} icon={<Nfc size={22} />} title="Ler identificação" subtitle="NFC/RFID ou código" onClick={() => closeQuick(() => openNfc())} /><QuickAction index={3} icon={<ClipboardCheck size={22} />} title="Nova atividade" subtitle="Adicionar à rotina" onClick={() => closeQuick(() => launchQuick("activity", "activities"))} /><QuickAction index={4} icon={<MapPin size={22} />} title="Criar setor" subtitle="Organizar a propriedade" onClick={() => closeQuick(() => launchQuick("sector", "monitor"))} /><QuickAction index={5} icon={<UsersRound size={22} />} title="Equipe e operações" subtitle="Relatórios e ocorrências" onClick={() => closeQuick(() => navigate("operations"))} /><QuickAction index={6} icon={<Send size={22} />} title="Nova publicação" subtitle="Publicar na comunidade" onClick={() => closeQuick(() => launchQuick("post", "community"))} /></div></section></div>}
         <AppToastRegion />
       </div>
     </main>
