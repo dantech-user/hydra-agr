@@ -1,0 +1,414 @@
+/* Hydra Agro — acabamento visual exclusivo do notebook/PC.
+   Mantém a identidade do mobile e não altera nenhuma tela abaixo de 1024px. */
+
+@media (min-width: 1024px) {
+  .hydra-root {
+    --desktop-surface: rgba(255, 254, 251, .86);
+    --desktop-surface-strong: rgba(255, 254, 251, .96);
+    --desktop-border: rgba(219, 222, 214, .88);
+    --desktop-shadow: 0 22px 58px -40px rgba(17, 55, 39, .42);
+    --desktop-shadow-hover: 0 28px 64px -38px rgba(17, 55, 39, .50);
+  }
+
+  .hydra-root .app-shell,
+  .hydra-root .phone-app,
+  .hydra-root .app-content {
+    background:
+      radial-gradient(circle at 7% 0%, rgba(131, 186, 91, .11), transparent 28%),
+      radial-gradient(circle at 92% 9%, rgba(255, 135, 18, .07), transparent 22%),
+      linear-gradient(180deg, #fbfaf5 0%, #f6f5ef 52%, #f2f2eb 100%) !important;
+  }
+
+  .hydra-root .app-content > .screen,
+  .hydra-root .app-content .screen {
+    position: relative;
+    isolation: isolate;
+    background: transparent !important;
+  }
+
+  .hydra-root .screen::after {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    right: -120px;
+    top: 120px;
+    width: 330px;
+    height: 330px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(131, 186, 91, .08), transparent 68%);
+    pointer-events: none;
+  }
+
+  /* Cabeçalhos com presença de painel, sem mudar o conteúdo. */
+  .hydra-root .screen > .screen-header,
+  .hydra-root .community-screen > .screen-header {
+    min-height: 112px;
+    margin-bottom: 4px !important;
+    padding: 22px 24px !important;
+    border: 1px solid var(--desktop-border) !important;
+    border-radius: 24px !important;
+    background: var(--desktop-surface) !important;
+    box-shadow: var(--desktop-shadow) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.05);
+    backdrop-filter: blur(18px) saturate(1.05);
+  }
+
+  .hydra-root .screen-header h1 {
+    font-size: clamp(24px, 2vw, 31px) !important;
+    letter-spacing: -.035em !important;
+  }
+
+  .hydra-root .screen-header p,
+  .hydra-root .screen-header small {
+    max-width: 720px;
+    line-height: 1.55 !important;
+  }
+
+  /* Home mais forte para apresentação. */
+  .hydra-root .home-screen > .home-brandbar {
+    padding: 4px 2px 2px !important;
+  }
+
+  .hydra-root .home-screen > .greeting-block {
+    position: relative;
+    padding: 10px 0 10px 18px !important;
+  }
+
+  .hydra-root .home-screen > .greeting-block::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 4px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--orange), #f4b24c);
+  }
+
+  .hydra-root .home-screen > .greeting-block h1,
+  .hydra-root .home-screen > .greeting-block strong {
+    letter-spacing: -.035em;
+  }
+
+  .hydra-root .shortcut-row {
+    gap: 12px !important;
+    margin-top: 8px !important;
+  }
+
+  .hydra-root .shortcut-row > button {
+    min-height: 108px;
+    padding: 15px 9px 12px !important;
+    border: 1px solid var(--desktop-border) !important;
+    border-radius: 21px !important;
+    background: var(--desktop-surface-strong) !important;
+    box-shadow: 0 18px 38px -34px rgba(18, 56, 40, .48) !important;
+    transition: translate 220ms var(--ease-product), box-shadow 220ms var(--ease-product), border-color 220ms ease !important;
+  }
+
+  .hydra-root .shortcut-row > button:hover {
+    translate: 0 -4px;
+    border-color: color-mix(in srgb, var(--sage) 45%, var(--line)) !important;
+    box-shadow: var(--desktop-shadow-hover) !important;
+  }
+
+  .hydra-root .shortcut-row > button > span:not(.touch-ripple) {
+    width: 58px !important;
+    height: 58px !important;
+    box-shadow: 0 14px 28px -24px rgba(17, 70, 47, .55) !important;
+  }
+
+  .hydra-root .shortcut-row > button small {
+    font-size: 10px !important;
+  }
+
+  .hydra-root .home-screen > .nfc-banner,
+  .hydra-root .home-screen > .property-hero {
+    min-height: 184px !important;
+    box-shadow: var(--desktop-shadow) !important;
+    transition: translate 240ms var(--ease-product), box-shadow 240ms var(--ease-product) !important;
+  }
+
+  .hydra-root .home-screen > .nfc-banner:hover,
+  .hydra-root .home-screen > .property-hero:hover {
+    translate: 0 -4px;
+    box-shadow: var(--desktop-shadow-hover) !important;
+  }
+
+  .hydra-root .home-screen > .nfc-banner {
+    padding: 22px !important;
+  }
+
+  .hydra-root .home-screen > .nfc-banner .nfc-banner-icon {
+    width: 66px !important;
+    height: 66px !important;
+    border-radius: 20px !important;
+  }
+
+  .hydra-root .home-screen > .property-hero {
+    padding: 24px !important;
+  }
+
+  /* Superfícies principais com profundidade sutil. */
+  .hydra-root :is(
+    .content-section,
+    .animal-card,
+    .post-card,
+    .nfc-inline-card,
+    .herd-care-launch,
+    .community-tabs,
+    .community-composer,
+    .today-sync-card,
+    .today-report-card,
+    .today-history-link,
+    .property-history-summary,
+    .property-history-list,
+    .nfc-manual-card,
+    .nfc-result-card
+  ) {
+    border-color: var(--desktop-border) !important;
+    box-shadow: var(--desktop-shadow) !important;
+  }
+
+  .hydra-root :is(.animal-card, .post-card, .content-section, .today-report-card, .today-history-link) {
+    transition: translate 220ms var(--ease-product), box-shadow 220ms var(--ease-product), border-color 220ms ease !important;
+  }
+
+  .hydra-root :is(.animal-card, .post-card, .content-section, .today-report-card, .today-history-link):hover {
+    translate: 0 -3px;
+    border-color: color-mix(in srgb, var(--sage) 35%, var(--line)) !important;
+    box-shadow: var(--desktop-shadow-hover) !important;
+  }
+
+  /* Água */
+  .hydra-root .water-overview {
+    min-height: 230px !important;
+    padding: 28px !important;
+    border-radius: 28px !important;
+    box-shadow: 0 28px 62px -38px rgba(8, 59, 40, .74) !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) > .action-pair > button {
+    min-height: 78px !important;
+    border-radius: 20px !important;
+    transition: translate 220ms var(--ease-product), box-shadow 220ms var(--ease-product) !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) > .action-pair > button:hover {
+    translate: 0 -3px;
+    box-shadow: var(--desktop-shadow-hover) !important;
+  }
+
+  /* Rebanho */
+  .hydra-root .screen:has(> .nfc-inline-card) > .search-row,
+  .hydra-root .screen:has(> .nfc-inline-card) > .filter-chips {
+    padding: 10px !important;
+    border: 1px solid var(--desktop-border) !important;
+    border-radius: 18px !important;
+    background: var(--desktop-surface) !important;
+    box-shadow: 0 16px 36px -34px rgba(18, 56, 40, .48) !important;
+  }
+
+  .hydra-root .animal-list > .animal-card {
+    min-height: 160px;
+  }
+
+  /* Comunidade */
+  .hydra-root .community-screen > .community-tabs,
+  .hydra-root .community-screen > .community-composer {
+    min-height: 92px;
+    border-radius: 22px !important;
+    background: var(--desktop-surface-strong) !important;
+  }
+
+  .hydra-root .community-screen > .post-list {
+    gap: 22px !important;
+  }
+
+  /* Perfil em duas áreas com acabamento de painel. */
+  .hydra-root .profile-screen > .profile-hero {
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .46) !important;
+    border-radius: 30px !important;
+    box-shadow: 0 34px 70px -46px rgba(9, 51, 34, .78) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs,
+  .hydra-root .profile-screen > .plan-card,
+  .hydra-root .profile-screen > .profile-group {
+    border-radius: 22px !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-card {
+    gap: 12px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row {
+    min-height: 92px !important;
+    padding: 16px !important;
+    border: 1px solid var(--desktop-border) !important;
+    border-radius: 19px !important;
+    background: var(--desktop-surface-strong) !important;
+    box-shadow: 0 18px 38px -34px rgba(18, 56, 40, .46) !important;
+    transition: translate 210ms var(--ease-product), box-shadow 210ms var(--ease-product), border-color 210ms ease !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row:hover {
+    translate: 0 -3px;
+    border-color: color-mix(in srgb, var(--sage) 42%, var(--line)) !important;
+    box-shadow: var(--desktop-shadow-hover) !important;
+  }
+
+  .hydra-root .profile-screen > .profile-group .profile-menu-row:last-child {
+    border-bottom: 1px solid var(--desktop-border) !important;
+  }
+
+  .hydra-root .profile-screen .profile-menu-icon {
+    width: 46px !important;
+    height: 46px !important;
+    border-radius: 15px !important;
+  }
+
+  /* Central Hoje e Histórico ficam melhores em tela grande. */
+  .hydra-root .today-screen .today-hero {
+    padding: 24px !important;
+    border-radius: 26px !important;
+    box-shadow: var(--desktop-shadow) !important;
+  }
+
+  .hydra-root .today-screen .today-metrics {
+    gap: 14px !important;
+  }
+
+  .hydra-root .today-screen .today-metrics > article {
+    min-height: 112px !important;
+    padding: 18px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 18px 38px -34px rgba(18, 56, 40, .46) !important;
+  }
+
+  .hydra-root .property-history-summary {
+    padding: 16px 18px !important;
+    border-radius: 18px !important;
+  }
+
+  .hydra-root .property-history-filters {
+    padding: 8px !important;
+    border: 1px solid var(--desktop-border);
+    border-radius: 16px;
+    background: var(--desktop-surface);
+  }
+
+  .hydra-root .property-history-filters button {
+    min-height: 38px !important;
+    padding-inline: 14px !important;
+  }
+
+  .hydra-root .property-history-list {
+    border-radius: 18px !important;
+  }
+
+  .hydra-root .property-history-list button {
+    min-height: 68px !important;
+    padding: 12px 14px !important;
+  }
+
+  /* Inputs e botões ganham acabamento desktop. */
+  .hydra-root :is(input, textarea, select) {
+    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease !important;
+  }
+
+  .hydra-root :is(input, textarea, select):focus {
+    border-color: color-mix(in srgb, var(--sage) 72%, var(--forest-700)) !important;
+    box-shadow: 0 0 0 4px rgba(131, 186, 91, .12) !important;
+  }
+
+  .hydra-root :is(.primary-button, .secondary-button, .text-button, .icon-button) {
+    transition: translate 180ms var(--ease-product), box-shadow 180ms var(--ease-product), filter 180ms ease !important;
+  }
+
+  .hydra-root :is(.primary-button, .secondary-button):hover:not(:disabled) {
+    translate: 0 -2px;
+    filter: brightness(1.015);
+  }
+
+  /* Dock: mantém o blur de oclusão já existente e melhora só o acabamento. */
+  .hydra-root .phone-app .bottom-nav {
+    border: 1px solid rgba(255, 255, 255, .78) !important;
+    box-shadow:
+      0 26px 64px -30px rgba(10, 54, 36, .42),
+      0 0 0 1px rgba(16, 75, 49, .035) inset !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)) {
+    border-radius: 18px !important;
+    transition: background 180ms ease, color 180ms ease, translate 180ms var(--ease-product) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)):hover {
+    background: color-mix(in srgb, var(--sage-soft) 74%, transparent) !important;
+    translate: 0 -2px;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) > span:not(.touch-ripple) {
+    box-shadow:
+      0 18px 34px -20px rgba(10, 67, 42, .78),
+      0 0 0 1px rgba(16, 75, 49, .08) !important;
+    transition: translate 180ms var(--ease-product), box-shadow 180ms var(--ease-product) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3):hover > span:not(.touch-ripple) {
+    translate: 0 -3px;
+    box-shadow:
+      0 22px 38px -18px rgba(10, 67, 42, .86),
+      0 0 0 1px rgba(16, 75, 49, .10) !important;
+  }
+
+  /* Modais mais confortáveis para demonstração no notebook. */
+  .hydra-root .modal-sheet,
+  .hydra-root .quick-sheet {
+    border: 1px solid rgba(255, 255, 255, .78) !important;
+    box-shadow: 0 36px 90px -46px rgba(9, 42, 29, .72) !important;
+  }
+
+  /* Dark mode equivalente, sem perder contraste. */
+  .hydra-root.theme-dark {
+    --desktop-surface: rgba(14, 29, 21, .84);
+    --desktop-surface-strong: rgba(14, 29, 21, .95);
+    --desktop-border: rgba(48, 73, 59, .86);
+    --desktop-shadow: 0 24px 58px -38px rgba(0, 0, 0, .64);
+    --desktop-shadow-hover: 0 30px 68px -36px rgba(0, 0, 0, .72);
+  }
+
+  .hydra-root.theme-dark .app-shell,
+  .hydra-root.theme-dark .phone-app,
+  .hydra-root.theme-dark .app-content {
+    background:
+      radial-gradient(circle at 7% 0%, rgba(71, 121, 84, .14), transparent 28%),
+      radial-gradient(circle at 92% 8%, rgba(255, 135, 18, .055), transparent 22%),
+      linear-gradient(180deg, #08130e 0%, #0a1711 54%, #07110d 100%) !important;
+  }
+
+  .hydra-root.theme-dark .screen::after {
+    background: radial-gradient(circle, rgba(97, 153, 104, .07), transparent 68%);
+  }
+
+  .hydra-root.theme-dark .phone-app .bottom-nav {
+    border-color: rgba(255, 255, 255, .06) !important;
+    box-shadow:
+      0 30px 70px -34px rgba(0, 0, 0, .84),
+      0 0 0 1px rgba(255, 255, 255, .025) inset !important;
+  }
+
+  .hydra-root.theme-dark .shortcut-row > button,
+  .hydra-root.theme-dark .screen:has(> .nfc-inline-card) > .search-row,
+  .hydra-root.theme-dark .screen:has(> .nfc-inline-card) > .filter-chips,
+  .hydra-root.theme-dark .community-screen > .community-tabs,
+  .hydra-root.theme-dark .community-screen > .community-composer,
+  .hydra-root.theme-dark .profile-screen > .profile-group .profile-menu-row {
+    background: var(--desktop-surface-strong) !important;
+    border-color: var(--desktop-border) !important;
+  }
+}
