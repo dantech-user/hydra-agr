@@ -27,6 +27,7 @@ import {
   uploadAvatar,
 } from "../services/hydra-repository";
 import { capturePhoto, signedPrivateUrl, uploadPrivateImage } from "../services/media-service";
+import { signInWithStaffCode } from "../services/staff-service";
 import { backendConfigured, supabase } from "../services/supabase";
 
 export type SyncStatus = "saved" | "saving" | "offline" | "error";
@@ -53,6 +54,7 @@ async function readCachedAccount(userId: string) {
     const parsed = JSON.parse(value) as HydraAccount;
     return {
       ...parsed,
+      access: parsed.access ?? { kind: "owner", ownerUserId: parsed.id },
       nfcReadCount: Number(parsed.nfcReadCount ?? 0),
       subscription: parsed.subscription ?? { status: "active" },
       settings: {
@@ -84,6 +86,7 @@ function applyProtectedServerFields(local: HydraAccount, remote: HydraAccount): 
     ...local,
     id: remote.id,
     email: remote.email,
+    access: remote.access,
     role: remote.role,
     bannedAt: remote.bannedAt,
     banReason: remote.banReason,
@@ -132,8 +135,6 @@ export function useHydraStore() {
     setLastError("");
     const cached = await readCachedAccount(user.id);
     if (cached && currentBoot === bootId.current) {
-      // Cargos e Premium nunca são confiados ao cache local. O servidor
-      // precisa confirmar ambos em cada inicialização antes de liberá-los.
       applyAccount({
         ...cached,
         role: "user",
@@ -265,6 +266,19 @@ export function useHydraStore() {
     }
   }, [loadUser]);
 
+  const loginStaff = useCallback(async (code: string): Promise<AuthResult> => {
+    try {
+      setReady(false);
+      const data = await signInWithStaffCode(code);
+      if (!data.user) throw new Error("Sessão de funcionário inválida.");
+      await loadUser(data.user);
+      return { ok: true, message: "Acesso de funcionário liberado." };
+    } catch (error) {
+      setReady(true);
+      return { ok: false, message: friendlyError(error) };
+    }
+  }, [loadUser]);
+
   const createAccount = useCallback(async (payload: SignupPayload): Promise<AuthResult> => {
     try {
       setReady(false);
@@ -302,6 +316,7 @@ export function useHydraStore() {
       ...proposed,
       id: previous.id,
       email: previous.email,
+      access: previous.access,
       role: previous.role,
       bannedAt: previous.bannedAt,
       banReason: previous.banReason,
@@ -381,9 +396,10 @@ export function useHydraStore() {
   const saveAnimalPhoto = useCallback(async (animalId: string, file?: File) => {
     const current = accountRef.current;
     if (!current) throw new Error("Sessão inválida.");
+    if (current.access.kind === "staff" && current.access.staffRole !== "manager") throw new Error("Somente o dono ou gerente pode alterar fotos do rebanho.");
     const selected = file ?? await capturePhoto();
     if (!selected) return false;
-    const path = await uploadPrivateImage(current.id, selected, `animals/${animalId}-${Date.now()}`);
+    const path = await uploadPrivateImage(current.access.ownerUserId, selected, `animals/${animalId}-${Date.now()}`);
     const url = await signedPrivateUrl(path);
     await updateAccount((value) => ({ ...value, animals: value.animals.map((animal) => animal.id === animalId ? { ...animal, photoPath: path, photoUrl: url } : animal) }), { requireRemote: true });
     return true;
@@ -394,7 +410,7 @@ export function useHydraStore() {
     if (!current) throw new Error("Sessão inválida.");
     const selected = file ?? await capturePhoto();
     if (!selected) return false;
-    const path = await uploadPrivateImage(current.id, selected, `monitoring/${recordId}-${Date.now()}`);
+    const path = await uploadPrivateImage(current.access.ownerUserId, selected, `monitoring/${recordId}-${Date.now()}`);
     const url = await signedPrivateUrl(path);
     await updateAccount((value) => ({ ...value, monitoring: value.monitoring.map((record) => record.id === recordId ? { ...record, photoPaths: [...(record.photoPaths ?? []), path], photoUrls: url ? [...(record.photoUrls ?? []), url] : record.photoUrls } : record) }), { requireRemote: true });
     return true;
@@ -403,10 +419,11 @@ export function useHydraStore() {
   const savePropertyCover = useCallback(async (file?: File) => {
     const current = accountRef.current;
     if (!current) throw new Error("Sessão inválida.");
+    if (current.access.kind === "staff" && current.access.staffRole !== "manager") throw new Error("Somente o dono ou gerente pode alterar a propriedade.");
     const selected = file ?? await capturePhoto();
     if (!selected) return false;
-    const propertyId = current.property.id ?? `property-${current.id}`;
-    const path = await uploadPrivateImage(current.id, selected, `property/${propertyId}-cover-${Date.now()}`);
+    const propertyId = current.property.id ?? `property-${current.access.ownerUserId}`;
+    const path = await uploadPrivateImage(current.access.ownerUserId, selected, `property/${propertyId}-cover-${Date.now()}`);
     const url = await signedPrivateUrl(path);
     await updateAccount((value) => ({ ...value, property: { ...value.property, coverPath: path, coverUrl: url } }), { requireRemote: true });
     return true;
@@ -414,6 +431,7 @@ export function useHydraStore() {
 
   const changeCredentials = useCallback(async (values: { email?: string; password?: string }): Promise<AuthResult> => {
     try {
+      if (accountRef.current?.access.kind === "staff") return { ok: false, message: "Funcionários entram usando o código fornecido pelo dono da propriedade." };
       await updateCredentials(values);
       return { ok: true, message: values.email ? "Confirme a alteração no novo e-mail." : "Senha atualizada." };
     } catch (error) {
@@ -496,6 +514,7 @@ export function useHydraStore() {
     syncStatus,
     lastError,
     login,
+    loginStaff,
     createAccount,
     resetPassword,
     updateAccount,
