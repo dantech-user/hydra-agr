@@ -1,0 +1,113 @@
+/* Hydra Agro — menos texto visual e movimento mais vivo, sem mudar o design base. */
+
+/* Reduz ruido de texto sem apagar informacoes importantes do app. */
+.hydra-root .phone-app .screen-header p {
+  max-width: 34ch;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.hydra-root .phone-app .nfc-banner em,
+.hydra-root .phone-app .feature-link-grid small {
+  display: none !important;
+}
+
+.hydra-root .phone-app .nfc-inline-card small,
+.hydra-root .phone-app .herd-care-launch small,
+.hydra-root .phone-app .history-home-row small,
+.hydra-root .phone-app .profile-menu-row small,
+.hydra-root .phone-app .plan-card small,
+.hydra-root .phone-app .empty-state p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.hydra-root .phone-app .nfc-hero p {
+  max-width: 29ch;
+  margin-bottom: 12px !important;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.hydra-root .phone-app .property-hero p,
+.hydra-root .phone-app .task-card p,
+.hydra-root .phone-app .first-action-card p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+/* Entrada dos blocos depois da troca de funcao. A tela ja faz o fade principal;
+   aqui entra apenas um pequeno deslocamento em sequencia. */
+@keyframes hydra-block-enter {
+  0% {
+    transform: translate3d(0, 11px, 0) scale(.995);
+  }
+  72% {
+    transform: translate3d(0, -1px, 0) scale(1.001);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > *,
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > * {
+  transform-origin: center top;
+}
+
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > :nth-child(2),
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > :nth-child(2) {
+  animation: hydra-block-enter 250ms cubic-bezier(.16, 1, .3, 1) 35ms both !important;
+}
+
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > :nth-child(3),
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > :nth-child(3) {
+  animation: hydra-block-enter 270ms cubic-bezier(.16, 1, .3, 1) 65ms both !important;
+}
+
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > :nth-child(4),
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > :nth-child(4) {
+  animation: hydra-block-enter 285ms cubic-bezier(.16, 1, .3, 1) 90ms both !important;
+}
+
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > :nth-child(5),
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > :nth-child(5) {
+  animation: hydra-block-enter 295ms cubic-bezier(.16, 1, .3, 1) 110ms both !important;
+}
+
+/* Feedback mais vivo nos atalhos e cards clicaveis, sem bounce. */
+.hydra-root .phone-app .shortcut-row button,
+.hydra-root .phone-app .feature-link-grid button,
+.hydra-root .phone-app .nfc-banner,
+.hydra-root .phone-app .nfc-inline-card,
+.hydra-root .phone-app .herd-care-launch,
+.hydra-root .phone-app .animal-card,
+.hydra-root .phone-app .compact-row {
+  transition: transform 130ms cubic-bezier(.2,.8,.2,1), opacity 130ms ease !important;
+}
+
+.hydra-root .phone-app .shortcut-row button:active,
+.hydra-root .phone-app .feature-link-grid button:active,
+.hydra-root .phone-app .nfc-banner:active,
+.hydra-root .phone-app .nfc-inline-card:active,
+.hydra-root .phone-app .herd-care-launch:active,
+.hydra-root .phone-app .animal-card:active,
+.hydra-root .phone-app .compact-row:active {
+  transform: scale(.985) !important;
+  opacity: .92;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydra-root .phone-app .app-content > .screen.page-enter > * {
+    animation: none !important;
+    transform: none !important;
+  }
+}
