@@ -1,0 +1,110 @@
+/* Hydra Agro — movimento mais natural e discreto.
+   Mantem feedback de toque, mas remove entradas exageradas, blur e bounce. */
+
+@keyframes hydra-soft-fade {
+  from { opacity: .86; }
+  to { opacity: 1; }
+}
+
+/* O conteudo nao precisa aparecer bloco por bloco durante o scroll. */
+html.scroll-motion-ready .scroll-reveal,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-up,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-left,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-right,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-pop,
+html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
+  opacity: 1 !important;
+  translate: 0 0 !important;
+  scale: 1 !important;
+  filter: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+}
+
+/* Troca de tela: somente um fade curto. */
+.phone-app .app-content.route-motion-forward > *,
+.phone-app .app-content.route-motion-forward .page-enter,
+.phone-app .app-content.route-motion-back > *,
+.phone-app .app-content.route-motion-back .page-enter {
+  animation: hydra-soft-fade 135ms ease-out both !important;
+}
+
+/* Remove a entrada repetida de cards e secoes. */
+.phone-app .screen > section,
+.phone-app .screen > article,
+.phone-app .screen > .nfc-banner,
+.phone-app .screen > .shortcut-row,
+.phone-app .screen > .search-row,
+.phone-app .screen > .filter-chips,
+.phone-app .screen > .profile-social-tabs,
+.phone-app .screen > .plan-card,
+.phone-app .screen > .profile-menu-card,
+.phone-app .screen > .animal-list,
+.phone-app .screen > .notification-list,
+.phone-app .screen > .quick-grid,
+.phone-app .screen > .feature-link-grid {
+  animation: none !important;
+}
+
+/* Feedback de toque curto, sem efeito elastico. */
+.phone-app button,
+.phone-app a,
+.phone-app input,
+.phone-app select,
+.phone-app textarea,
+.phone-app [role="button"] {
+  transition-duration: 120ms !important;
+  transition-timing-function: ease-out !important;
+}
+
+.phone-app button:not(:disabled):active,
+.phone-app [role="button"]:active {
+  transform: scale(.988) !important;
+}
+
+.phone-app input:focus,
+.phone-app select:focus,
+.phone-app textarea:focus,
+.phone-app .search-box:focus-within {
+  transform: none !important;
+}
+
+/* O ripple grande deixava os botoes com aspecto artificial. */
+.phone-app .touch-ripple {
+  display: none !important;
+}
+
+/* Splash continua limpa, mas sem elementos rodando/pulsando sem parar. */
+.splash-glow,
+.splash-mark-inner,
+.splash-orbit,
+.splash-spore {
+  animation: none !important;
+}
+
+.splash-leaf-orange,
+.splash-leaf-green,
+.splash-stem {
+  animation-duration: 320ms !important;
+}
+
+/* Mantem spinners funcionais; apenas evita bounce em icones comuns. */
+.phone-app .shortcut-row button > span,
+.phone-app .feature-link-grid button > svg,
+.phone-app .history-home-row > span,
+.phone-app .nfc-banner-icon,
+.phone-app .profile-menu-icon,
+.phone-app .notification-item-icon,
+.phone-app .bottom-nav > button > span:first-of-type {
+  transition-timing-function: ease-out !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-app .app-content.route-motion-forward > *,
+  .phone-app .app-content.route-motion-forward .page-enter,
+  .phone-app .app-content.route-motion-back > *,
+  .phone-app .app-content.route-motion-back .page-enter {
+    animation: none !important;
+  }
+}
