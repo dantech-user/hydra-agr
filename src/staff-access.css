@@ -1,0 +1,159 @@
+/* Acesso de funcionários — login por código e gestão da equipe. */
+.staff-entry-button {
+  width: 100%;
+  min-height: 60px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #dfe6df;
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  background: #f8faf6;
+  color: #315941;
+  text-align: left;
+}
+.staff-entry-button > svg:first-child {
+  width: 38px;
+  height: 38px;
+  padding: 9px;
+  border-radius: 50%;
+  background: #e9f1e8;
+  color: #2f6748;
+}
+.staff-entry-button > span { min-width: 0; display: flex; flex-direction: column; }
+.staff-entry-button strong { color: var(--ink); font-size: 9.6px; line-height: 1.2; }
+.staff-entry-button small { margin-top: 3px; color: #7a877f; font-size: 7.4px; }
+.staff-entry-button > svg:last-child { color: #8c9991; }
+
+.staff-code-input {
+  min-height: 58px !important;
+  border-radius: 19px !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  letter-spacing: .08em !important;
+  text-align: center;
+  text-transform: uppercase;
+}
+.staff-code-note,
+.staff-access-explainer,
+.staff-session-banner,
+.staff-modal-note {
+  padding: 11px 12px;
+  border: 1px solid #dde5dc;
+  border-radius: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f5f8f2;
+  color: #446452;
+}
+.staff-code-note { margin: 10px 0 14px; }
+.staff-code-note > svg,
+.staff-access-explainer > svg,
+.staff-session-banner > svg,
+.staff-modal-note > svg { flex: 0 0 auto; margin-top: 1px; }
+.staff-code-note p,
+.staff-modal-note p { margin: 0; }
+.staff-code-note p,
+.staff-access-explainer > div,
+.staff-session-banner > div { min-width: 0; display: flex; flex-direction: column; }
+.staff-code-note strong,
+.staff-access-explainer strong,
+.staff-session-banner strong { color: #274e38; font-size: 8.8px; }
+.staff-code-note small,
+.staff-access-explainer small,
+.staff-session-banner small,
+.staff-modal-note p { margin-top: 2px; color: #75847a; font-size: 7.3px; line-height: 1.45; }
+
+.staff-session-banner { margin: 0 0 14px; background: #edf4ea; }
+.staff-access-explainer { margin: 0 0 13px; }
+.staff-modal-note { margin: 2px 0 4px; }
+
+.staff-member-list article {
+  position: relative;
+  grid-template-columns: auto minmax(0,1fr) auto !important;
+  padding-right: 10px !important;
+}
+.staff-member-list article.is-inactive { opacity: .62; }
+.staff-member-actions {
+  grid-column: 2 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  margin-top: 4px;
+}
+.staff-member-actions button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #dfe4dd;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #f8faf6;
+  color: #557061;
+}
+.staff-member-actions button:disabled { opacity: .45; }
+
+.staff-code-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.staff-code-result-icon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eaf2e8;
+  color: #2f6748;
+}
+.staff-code-result > p { margin: 12px 0 8px; color: var(--ink); font-size: 9.5px; }
+.staff-generated-code {
+  width: 100%;
+  min-height: 60px;
+  padding: 0 15px;
+  border: 1px solid #cfded1;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #f2f7ef;
+  color: #235039;
+}
+.staff-generated-code strong { font-size: 15px; letter-spacing: .08em; }
+.staff-code-result > small { margin: 10px 0 15px; color: #77847c; font-size: 7.4px; line-height: 1.5; }
+
+.hydra-root.theme-dark .staff-entry-button,
+.hydra-root.theme-dark .staff-code-note,
+.hydra-root.theme-dark .staff-access-explainer,
+.hydra-root.theme-dark .staff-session-banner,
+.hydra-root.theme-dark .staff-modal-note,
+.hydra-root.theme-dark .staff-member-actions button,
+.hydra-root.theme-dark .staff-generated-code {
+  border-color: #294235;
+  background: #102219;
+  color: #a9c6b2;
+}
+.hydra-root.theme-dark .staff-entry-button > svg:first-child,
+.hydra-root.theme-dark .staff-code-result-icon { background: #173326; color: #9dc9a6; }
+.hydra-root.theme-dark .staff-entry-button strong,
+.hydra-root.theme-dark .staff-code-note strong,
+.hydra-root.theme-dark .staff-access-explainer strong,
+.hydra-root.theme-dark .staff-session-banner strong { color: #eef3ef; }
+.hydra-root.theme-dark .staff-entry-button small,
+.hydra-root.theme-dark .staff-code-note small,
+.hydra-root.theme-dark .staff-access-explainer small,
+.hydra-root.theme-dark .staff-session-banner small,
+.hydra-root.theme-dark .staff-modal-note p,
+.hydra-root.theme-dark .staff-code-result > small { color: #91a098; }
+.hydra-root.theme-dark .staff-generated-code strong { color: #c3ddc9; }
+
+@media (min-width: 720px) {
+  .staff-entry-button { min-height: 66px; border-radius: 22px; }
+  .staff-generated-code { max-width: 380px; }
+}
