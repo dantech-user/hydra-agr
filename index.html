@@ -24,17 +24,18 @@
     <!-- Notebook: SOMENTE formato/posicionamento. Nenhuma skin ou tema próprio. -->
     <link rel="stylesheet" href="/src/desktop-format-only.css?v=desktop-format-mobile-skin-2" media="(min-width: 1024px)" />
 
-    <!-- Mantem a estrutura visual original, mas a camada final desativa reveals pesados. -->
-    <link rel="stylesheet" href="/src/scroll-reveal.css?v=scroll-motion-safe-1" />
-    <link rel="stylesheet" href="/src/natural-motion.css?v=natural-motion-3" />
+    <!-- Movimento leve e correções finais de fluxo. Versões novas evitam cache antigo no iPhone/PWA. -->
+    <link rel="stylesheet" href="/src/scroll-reveal.css?v=scroll-motion-safe-2" />
+    <link rel="stylesheet" href="/src/natural-motion.css?v=natural-motion-4" />
     <link rel="stylesheet" href="/src/pull-to-refresh.css?v=pull-refresh-1" />
+    <link rel="stylesheet" href="/src/mobile-flow-fix.css?v=mobile-flow-fix-1" />
 
     <title>Hydra Agro</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script type="module" src="/src/scroll-reveal.ts?v=scroll-motion-safe-1"></script>
+    <script type="module" src="/src/scroll-reveal.ts?v=scroll-motion-safe-2"></script>
     <script type="module" src="/src/pull-to-refresh.ts?v=pull-refresh-1"></script>
   </body>
 </html>
