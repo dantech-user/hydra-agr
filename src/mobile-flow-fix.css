@@ -1,8 +1,8 @@
 /* Hydra Agro — correção de fluxo mobile.
-   Garante que conteúdo funcional nunca fique transparente ou ocupe alturas fantasmas. */
+   Garante conteúdo visível, topo estável e interações curtas. */
 
 @keyframes hydra-flow-in {
-  from { opacity: .96; }
+  from { opacity: .985; }
   to { opacity: 1; }
 }
 
@@ -26,17 +26,61 @@
   transform: none !important;
   filter: none !important;
   transition: none !important;
+  animation: none !important;
   will-change: auto !important;
 }
 
-/* Entrada curta. Não usa scroll/reveal e não deixa o conteúdo em opacity: 0. */
+/* A troca de rota não anima a tela inteira. Assim o topo fica firme. */
 .hydra-root .phone-app .app-content.route-motion-forward > .screen,
 .hydra-root .phone-app .app-content.route-motion-back > .screen,
-.hydra-root .phone-app .screen > section,
-.hydra-root .phone-app .screen > article,
-.hydra-root .phone-app .screen > nav,
+.hydra-root .phone-app .page-enter {
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+  will-change: auto !important;
+}
+
+/* PARTE DE CIMA — logo, cabeçalhos, títulos e heróis aparecem direto. */
+.hydra-root .phone-app .screen > .screen-header,
+.hydra-root .phone-app .home-screen > .home-brandbar,
+.hydra-root .phone-app .home-screen > .greeting-block,
+.hydra-root .phone-app .profile-screen > .profile-hero,
+.hydra-root .phone-app .nfc-screen > .screen-header,
+.hydra-root .phone-app .screen > .water-overview,
 .hydra-root .phone-app .screen > .search-row,
-.hydra-root .phone-app .screen > .filter-chips,
+.hydra-root .phone-app .screen > .filter-chips {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  translate: 0 0 !important;
+  scale: 1 !important;
+  filter: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  will-change: auto !important;
+}
+
+.hydra-root .phone-app .screen-header h1,
+.hydra-root .phone-app .screen-header p,
+.hydra-root .phone-app .screen-header .eyebrow,
+.hydra-root .phone-app .home-brandbar .wordmark,
+.hydra-root .phone-app .home-brandbar .wordmark-mark,
+.hydra-root .phone-app .home-brandbar .wordmark-copy,
+.hydra-root .phone-app .greeting-block h1,
+.hydra-root .phone-app .greeting-block p,
+.hydra-root .phone-app .profile-hero h1,
+.hydra-root .phone-app .profile-hero > strong,
+.hydra-root .phone-app .profile-hero > p {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  will-change: auto !important;
+}
+
+/* Conteúdo abaixo do topo pode ter apenas um fade quase imperceptível. */
+.hydra-root .phone-app .screen > article,
 .hydra-root .phone-app .screen > .action-pair,
 .hydra-root .phone-app .screen > .shortcut-row,
 .hydra-root .phone-app .screen > .nfc-banner,
@@ -44,9 +88,13 @@
 .hydra-root .phone-app .screen > .herd-care-launch,
 .hydra-root .phone-app .screen > .animal-list,
 .hydra-root .phone-app .screen > .empty-state,
+.hydra-root .phone-app .screen > .content-section,
+.hydra-root .phone-app .screen > .profile-social-tabs,
+.hydra-root .phone-app .screen > .plan-card,
+.hydra-root .phone-app .screen > .profile-group,
 .hydra-root .phone-app .screen > .logout-button,
 .hydra-root .phone-app .screen > .home-fab-label {
-  animation: hydra-flow-in 110ms ease-out both !important;
+  animation: hydra-flow-in 70ms linear both !important;
   animation-delay: 0ms !important;
 }
 
@@ -67,7 +115,13 @@
   margin-top: 24px !important;
 }
 
-/* ÁGUA — overview e ações ficam em fluxo normal, sem área vazia gigante. */
+/* A marca e saudação do topo não recebem fade nem entrada. */
+.hydra-root .phone-app .home-screen > .greeting-block,
+.hydra-root .phone-app .home-screen > .home-brandbar {
+  animation: none !important;
+}
+
+/* ÁGUA — overview e ações ficam em fluxo normal. */
 .hydra-root .phone-app .screen:has(> .water-overview) > .water-overview {
   height: auto !important;
   min-height: 0 !important;
@@ -87,7 +141,7 @@
   visibility: visible !important;
 }
 
-/* REBANHO — busca e filtros voltam a ocupar somente o tamanho real. */
+/* Rebanho — busca e filtros ocupam somente o tamanho real. */
 .hydra-root .phone-app .screen:has(> .search-row) > .search-row {
   min-height: 46px !important;
   height: auto !important;
@@ -115,7 +169,7 @@
   visibility: visible !important;
 }
 
-/* NFC — o painel de leitura não pode virar um bloco invisível de tela inteira. */
+/* NFC — painel compacto e sem animação no cabeçalho. */
 .hydra-root .phone-app .nfc-screen > .nfc-hero {
   height: auto !important;
   min-height: 0 !important;
@@ -134,11 +188,17 @@
   visibility: visible !important;
 }
 
-/* PERFIL — corrige a tela completamente vazia mostrada no iPhone. */
+/* Perfil — topo permanece estático e conteúdo sempre visível. */
 .hydra-root .phone-app .profile-screen > .profile-hero {
   opacity: 1 !important;
   visibility: visible !important;
   display: flex !important;
+}
+
+.hydra-root .phone-app .profile-screen .profile-rings,
+.hydra-root .phone-app .profile-screen .profile-avatar {
+  animation: none !important;
+  transition: none !important;
 }
 
 .hydra-root .phone-app .profile-screen > .profile-social-tabs {
@@ -160,6 +220,33 @@
   visibility: visible !important;
 }
 
+/* Interações: curtas, sem bounce e sem deslocar layout. */
+.hydra-root .phone-app button,
+.hydra-root .phone-app a,
+.hydra-root .phone-app input,
+.hydra-root .phone-app select,
+.hydra-root .phone-app textarea,
+.hydra-root .phone-app [role="button"] {
+  transition-duration: 85ms !important;
+  transition-timing-function: ease-out !important;
+  touch-action: manipulation;
+}
+
+.hydra-root .phone-app button:not(:disabled):active,
+.hydra-root .phone-app [role="button"]:active {
+  transform: scale(.995) !important;
+}
+
+/* Barra inferior: sem bounce; só mudança curta de estado. */
+.hydra-root .phone-app .bottom-nav > button,
+.hydra-root .phone-app .bottom-nav > button > span:first-of-type,
+.hydra-root .phone-app .bottom-nav > button.active > span:first-of-type,
+.hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
+  animation: none !important;
+  transition-duration: 90ms !important;
+  transition-timing-function: ease-out !important;
+}
+
 /* Rolagem natural e estável no iOS. */
 html,
 body,
@@ -170,6 +257,7 @@ body,
 
 .phone-app {
   overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 1023px) {
