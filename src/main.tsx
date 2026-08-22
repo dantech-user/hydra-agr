@@ -33,6 +33,7 @@ import "./herd-weight-history.css";
 import "./demo-mode.css";
 import "./project-results.css";
 import "./public-animal.css";
+import "./authentic-ui.css";
 import HydraApp from "./hydra-app";
 import { ProjectResultsPanel } from "./features/demo/project-results-panel";
 import { supabase } from "./services/supabase";

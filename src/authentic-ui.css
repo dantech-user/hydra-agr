@@ -1,0 +1,917 @@
+/* Hydra Agro — acabamento visual autoral.
+   Mantém os componentes e fluxos existentes, mas elimina o aspecto de template. */
+
+.hydra-root {
+  --forest-950: #08271b;
+  --forest-900: #0d3425;
+  --forest-800: #154732;
+  --forest-700: #1f6547;
+  --forest-100: #e7eee9;
+  --sage: #7da967;
+  --sage-soft: #edf2ea;
+  --orange: #e78228;
+  --orange-soft: #f9eadb;
+  --cream: #f4f2ec;
+  --paper: #ffffff;
+  --ink: #17241d;
+  --muted: #66726b;
+  --line: #dfe3de;
+  --shadow: 0 1px 2px rgba(9, 39, 27, .04);
+  --type-display: 31px;
+  --type-section: 19px;
+  --type-card: 14px;
+  --type-body: 14px;
+  --type-control: 13px;
+  --type-caption: 11px;
+  --type-eyebrow: 10px;
+  --type-nav: 11px;
+}
+
+.hydra-root .app-shell,
+.hydra-root .phone-app,
+.hydra-root .screen,
+.hydra-root .route-loading {
+  background: var(--cream);
+}
+
+.hydra-root .app-shell {
+  background-image: none;
+}
+
+.hydra-root .phone-app {
+  box-shadow: none;
+}
+
+.hydra-root button {
+  overflow: visible;
+}
+
+.hydra-root :is(.primary-button, .secondary-button, .preview-button, .small-button, .danger-button, .wide-outline-button) {
+  min-height: 46px;
+  border-radius: 11px;
+  box-shadow: none;
+  font-weight: 700;
+}
+
+.hydra-root .primary-button {
+  background: var(--forest-800);
+}
+
+.hydra-root .primary-button:hover {
+  background: var(--forest-700);
+  transform: none;
+}
+
+.hydra-root .secondary-button {
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.hydra-root .icon-button,
+.hydra-root .small-button {
+  border-radius: 11px;
+}
+
+.hydra-root .icon-button.accent {
+  box-shadow: none;
+}
+
+.hydra-root .field > span {
+  color: #536259;
+  font-weight: 700;
+  letter-spacing: .03em !important;
+  text-transform: none;
+}
+
+.hydra-root .field input,
+.hydra-root .field select,
+.hydra-root .field textarea {
+  min-height: 48px;
+  border-radius: 10px;
+  background: #fbfcfa;
+  font-size: 14px !important;
+}
+
+.hydra-root .field input:focus,
+.hydra-root .field select:focus,
+.hydra-root .field textarea:focus {
+  transform: none;
+  border-color: var(--forest-700);
+  box-shadow: 0 0 0 3px rgba(31, 101, 71, .11);
+}
+
+.hydra-root .eyebrow,
+.hydra-root .group-label,
+.hydra-root .property-kicker {
+  letter-spacing: .06em !important;
+}
+
+.hydra-root .screen-header::after,
+.hydra-root .section-heading h2::after,
+.hydra-root .property-hero::before,
+.hydra-root .property-hero::after,
+.hydra-root .water-overview::after,
+.hydra-root .plus-price-hero::after,
+.hydra-root .profile-cover::before,
+.hydra-root .profile-cover::after,
+.hydra-root .nfc-banner-icon::after {
+  display: none !important;
+}
+
+.hydra-root :is(
+  .property-hero,
+  .water-overview,
+  .nfc-hero,
+  .plus-price-hero,
+  .profile-cover,
+  .ranking-hero
+) {
+  box-shadow: none !important;
+}
+
+.hydra-root :is(
+  .animal-card,
+  .sector-card,
+  .monitoring-card,
+  .first-action-card,
+  .feature-link-grid button,
+  .community-composer,
+  .post-card,
+  .challenge-card,
+  .activity-card,
+  .property-section-card,
+  .setting-card,
+  .compact-row,
+  .profile-menu-row,
+  .plan-card,
+  .nfc-inline-card,
+  .nfc-manual-card,
+  .notification-list > div,
+  .task-card,
+  .history-home-row
+) {
+  border-radius: 13px !important;
+  box-shadow: none !important;
+}
+
+.hydra-root :is(
+  .animal-card,
+  .sector-card,
+  .first-action-card,
+  .feature-link-grid button,
+  .community-composer,
+  .profile-menu-row,
+  .nfc-inline-card,
+  .quick-grid > button
+):is(:hover, :active) {
+  transform: none !important;
+}
+
+.hydra-root :is(
+  .empty-icon,
+  .water-total-icon svg,
+  .plan-mark svg,
+  .ranking-hero > span svg,
+  .nfc-waves > svg,
+  .wordmark-mark
+) {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Entrada */
+.hydra-root .splash-screen {
+  gap: 18px;
+  background: var(--forest-900);
+}
+
+.hydra-root .splash-glow {
+  display: none;
+}
+
+.hydra-root .splash-brand {
+  width: 104px;
+  height: 104px;
+}
+
+.hydra-root .splash-mark {
+  width: 96px;
+  height: 96px;
+  filter: none;
+  animation: hydra-mark-in 420ms ease-out both;
+}
+
+.hydra-root .splash-loader {
+  width: 82px;
+  height: 2px;
+  background: rgba(255, 255, 255, .18);
+}
+
+.hydra-root .splash-loader span {
+  background: rgba(255, 255, 255, .82);
+  animation: hydra-load 1.6s ease forwards;
+}
+
+.hydra-root .splash-screen > p {
+  bottom: max(30px, calc(env(safe-area-inset-bottom) + 20px));
+  color: rgba(255, 255, 255, .62);
+  letter-spacing: .12em;
+  font-size: 10px;
+}
+
+@keyframes hydra-mark-in {
+  from { opacity: 0; transform: scale(.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hydra-load {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Autenticação */
+.hydra-root .auth-shell {
+  min-height: 100dvh;
+  padding: 0;
+  display: block;
+  overflow-x: hidden;
+  background: var(--paper);
+}
+
+.hydra-root .auth-story {
+  min-height: 260px;
+  padding: max(28px, calc(env(safe-area-inset-top) + 18px)) 24px 62px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 30px;
+  color: white;
+  background: var(--forest-900);
+}
+
+.hydra-root .auth-story .wordmark-copy {
+  color: white;
+}
+
+.hydra-root .auth-story-copy > span {
+  display: block;
+  margin-bottom: 10px;
+  color: #b9cec1;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hydra-root .auth-story-copy h2 {
+  max-width: 540px;
+  margin: 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: clamp(29px, 9vw, 42px);
+  line-height: 1.08;
+  letter-spacing: -.04em;
+}
+
+.hydra-root .auth-story-copy p {
+  max-width: 520px;
+  margin: 14px 0 0;
+  color: #c7d6cd;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.hydra-root .auth-story-features,
+.hydra-root .auth-story-availability {
+  display: none;
+}
+
+.hydra-root .auth-card {
+  width: 100%;
+  min-height: calc(100dvh - 230px);
+  margin-top: -28px;
+  padding: 30px 22px max(30px, env(safe-area-inset-bottom));
+  border-radius: 26px 26px 0 0;
+  background: var(--paper);
+  box-shadow: none;
+  animation: none;
+}
+
+.hydra-root .auth-card-wide {
+  width: 100%;
+}
+
+.hydra-root .auth-brand-row {
+  display: none;
+}
+
+.hydra-root .auth-brand-row > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.hydra-root .auth-content,
+.hydra-root .signup-flow {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.hydra-root .auth-content h1,
+.hydra-root .signup-panel h1 {
+  font-size: clamp(27px, 8vw, 34px);
+}
+
+.hydra-root .auth-subtitle {
+  font-size: 14px;
+}
+
+.hydra-root .auth-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+}
+
+.hydra-root .auth-enter,
+.hydra-root .auth-enter > *,
+.hydra-root .signup-panel,
+.hydra-root .signup-panel > * {
+  opacity: 1;
+  animation: none !important;
+}
+
+.hydra-root .staff-entry-button,
+.hydra-root .staff-code-note,
+.hydra-root .review-card,
+.hydra-root .preview-note,
+.hydra-root .municipality-trigger,
+.hydra-root .state-readonly,
+.hydra-root .municipality-panel {
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+/* Aplicativo móvel */
+.hydra-root .screen {
+  padding: max(21px, calc(env(safe-area-inset-top) + 13px)) 18px calc(92px + env(safe-area-inset-bottom));
+}
+
+.hydra-root .home-screen {
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
+.hydra-root .home-brandbar {
+  min-height: 58px;
+}
+
+.hydra-root .home-brandbar .wordmark-mark {
+  width: 43px;
+  height: 43px;
+}
+
+.hydra-root .home-brandbar .wordmark-copy {
+  font-size: 17px;
+}
+
+.hydra-root .greeting-block {
+  margin-top: 23px;
+}
+
+.hydra-root .greeting-block h1 {
+  margin-bottom: 7px;
+  color: var(--ink);
+}
+
+.hydra-root .greeting-block p {
+  font-size: 12px !important;
+}
+
+.hydra-root .shortcut-row {
+  gap: 7px;
+  margin: 26px 0 22px;
+}
+
+.hydra-root .shortcut-row button {
+  gap: 7px;
+}
+
+.hydra-root .shortcut-row button > span {
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 12px;
+  color: var(--forest-800);
+  background: var(--forest-100);
+  box-shadow: none;
+}
+
+.hydra-root .shortcut-row button > span::after {
+  display: none;
+}
+
+.hydra-root .shortcut-row button small {
+  color: #435149;
+  font-size: 10px !important;
+  font-weight: 650;
+}
+
+.hydra-root .nfc-banner {
+  padding: 12px;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--orange);
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.hydra-root .nfc-banner-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 11px;
+}
+
+.hydra-root .nfc-banner-copy small {
+  color: #a95413;
+  font-size: 9px !important;
+  letter-spacing: .05em;
+}
+
+.hydra-root .nfc-banner-copy strong {
+  font-size: 14px !important;
+}
+
+.hydra-root .property-hero {
+  margin-top: 16px;
+  border-radius: 17px;
+  background: var(--forest-800);
+}
+
+.hydra-root .property-hero-top {
+  padding: 21px 20px 16px;
+}
+
+.hydra-root .property-hero h2 {
+  font-size: 22px !important;
+}
+
+.hydra-root .property-hero p,
+.hydra-root .property-hero small {
+  color: #c6d6cd;
+}
+
+.hydra-root .property-metrics {
+  border-color: rgba(255, 255, 255, .12);
+}
+
+.hydra-root .property-link {
+  background: rgba(0, 0, 0, .09);
+}
+
+.hydra-root .home-section {
+  margin-top: 24px;
+}
+
+.hydra-root .history-home-row,
+.hydra-root .task-card,
+.hydra-root .feature-link-grid button,
+.hydra-root .first-action-card {
+  border-color: var(--line);
+  background: var(--paper);
+}
+
+.hydra-root .feature-link-grid button {
+  min-height: 82px;
+}
+
+.hydra-root .home-fab-label {
+  min-height: 46px;
+  margin: 24px 0 0;
+  padding: 0 17px;
+  border-radius: 11px;
+  background: var(--orange);
+  box-shadow: none;
+}
+
+.hydra-root .bottom-nav {
+  left: 0;
+  width: 100%;
+  height: calc(76px + env(safe-area-inset-bottom));
+  padding: 6px 6px env(safe-area-inset-bottom);
+  border-color: var(--line);
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 -1px 0 rgba(10, 40, 28, .03);
+  backdrop-filter: none;
+  transform: none;
+}
+
+.hydra-root .bottom-nav.is-hidden {
+  transform: translateY(calc(100% + 20px));
+}
+
+.hydra-root .bottom-nav-indicator {
+  display: none;
+}
+
+.hydra-root .bottom-nav button {
+  gap: 3px;
+  color: #737d77;
+}
+
+.hydra-root .bottom-nav button span {
+  width: 38px;
+  height: 32px;
+  border-radius: 10px;
+}
+
+.hydra-root .bottom-nav button.active span {
+  color: var(--forest-800);
+  background: var(--forest-100);
+  transform: none;
+  animation: none;
+}
+
+.hydra-root .bottom-nav button small {
+  font-weight: 650;
+}
+
+.hydra-root .desktop-nav-brand {
+  display: none;
+}
+
+.hydra-root .screen-header {
+  margin-bottom: 25px;
+}
+
+.hydra-root .screen-heading h1 {
+  color: var(--ink);
+}
+
+.hydra-root .screen-heading p {
+  margin-top: 7px;
+  font-size: 13px !important;
+}
+
+.hydra-root .water-overview,
+.hydra-root .nfc-hero,
+.hydra-root .plus-price-hero {
+  border-radius: 17px;
+  background-image: none;
+  background-color: var(--forest-800);
+}
+
+.hydra-root .nfc-waves span {
+  animation-duration: 2.8s;
+}
+
+.hydra-root .animal-list,
+.hydra-root .profile-group,
+.hydra-root .content-section {
+  gap: 10px;
+}
+
+.hydra-root .filter-chips button,
+.hydra-root .community-tabs button,
+.hydra-root .choice-chip,
+.hydra-root .segmented-control button {
+  border-radius: 9px;
+}
+
+.hydra-root .profile-cover {
+  border-radius: 0 0 18px 18px;
+  background-image: none;
+  background-color: var(--forest-800);
+}
+
+.hydra-root .modal-sheet,
+.hydra-root .quick-sheet,
+.hydra-root .theme-dialog,
+.hydra-root .demo-dialog {
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -8px 30px rgba(9, 39, 27, .12);
+}
+
+.hydra-root .page-enter,
+.hydra-root .route-motion-forward,
+.hydra-root .route-motion-back {
+  animation: hydra-page-in 160ms ease-out both !important;
+}
+
+@keyframes hydra-page-in {
+  from { opacity: .5; }
+  to { opacity: 1; }
+}
+
+/* Tema escuro sem brilhos ou gradientes decorativos. */
+.hydra-root.theme-dark {
+  --cream: #111713;
+  --paper: #18201b;
+  --ink: #edf2ee;
+  --muted: #a7b2aa;
+  --line: #2b3730;
+  --forest-100: #22332a;
+  --sage-soft: #23342b;
+  --orange-soft: #3b2c20;
+}
+
+.hydra-root.theme-dark :is(.app-shell, .phone-app, .screen, .route-loading, .auth-shell, .auth-card) {
+  background: var(--cream);
+}
+
+.hydra-root.theme-dark :is(.field input, .field select, .field textarea) {
+  color: var(--ink);
+  border-color: var(--line);
+  background: #151d18;
+}
+
+.hydra-root.theme-dark .bottom-nav {
+  border-color: var(--line);
+  background: rgba(24, 32, 27, .98);
+}
+
+/* Desktop: navegação lateral estável, conteúdo com largura editorial. */
+@media (min-width: 900px) {
+  .hydra-root .auth-shell {
+    display: grid;
+    grid-template-columns: minmax(350px, .86fr) minmax(520px, 1.14fr);
+    align-items: stretch;
+    background: var(--paper);
+  }
+
+  .hydra-root .auth-story {
+    min-height: 100dvh;
+    padding: clamp(46px, 6vw, 78px);
+    gap: 48px;
+  }
+
+  .hydra-root .auth-story-copy h2 {
+    font-size: clamp(39px, 4.5vw, 64px);
+  }
+
+  .hydra-root .auth-story-features {
+    display: grid;
+    gap: 10px;
+  }
+
+  .hydra-root .auth-story-features > div {
+    min-height: 65px;
+    padding: 11px 12px;
+    border-top: 1px solid rgba(255, 255, 255, .16);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #d7e2dc;
+  }
+
+  .hydra-root .auth-story-features > div > svg {
+    flex: none;
+    color: #e9a05c;
+  }
+
+  .hydra-root .auth-story-features span {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hydra-root .auth-story-features strong {
+    color: white;
+    font-size: 13px;
+  }
+
+  .hydra-root .auth-story-features small {
+    margin-top: 3px;
+    color: #aec3b6;
+    font-size: 11px;
+  }
+
+  .hydra-root .auth-story-availability {
+    display: block;
+    color: #9fb6a8;
+    font-size: 11px;
+  }
+
+  .hydra-root .auth-card,
+  .hydra-root .auth-card-wide {
+    width: min(calc(100% - 80px), 580px);
+    min-height: 0;
+    max-height: calc(100dvh - 64px);
+    margin: 32px auto;
+    padding: 24px 10px;
+    overflow-y: auto;
+    border-radius: 0;
+  }
+
+  .hydra-root .auth-brand-row {
+    display: none;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1023px) {
+  .hydra-root .app-shell {
+    padding-top: 0;
+  }
+
+  .hydra-root .phone-app,
+  .hydra-root .screen {
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+  }
+
+  .hydra-root .bottom-nav {
+    max-width: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hydra-root .app-shell,
+  .hydra-root .phone-app {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: var(--cream) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .app-content {
+    width: calc(100% - 248px) !important;
+    min-width: 0 !important;
+    min-height: 100dvh !important;
+    margin: 0 0 0 248px !important;
+    padding: 0 !important;
+  }
+
+  .hydra-root .app-content > .screen,
+  .hydra-root .app-content .screen {
+    width: min(calc(100% - 72px), 1180px) !important;
+    max-width: 1180px !important;
+    min-height: 100dvh !important;
+    margin: 0 auto !important;
+    padding: 42px 0 56px !important;
+    border-radius: 0 !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav {
+    position: fixed !important;
+    z-index: 100 !important;
+    inset: 0 auto 0 0 !important;
+    width: 248px !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: 30px 18px 22px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    border: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, .08) !important;
+    border-radius: 0 !important;
+    color: white !important;
+    background: var(--forest-900) !important;
+    transform: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav.is-hidden {
+    visibility: visible !important;
+    pointer-events: none !important;
+    opacity: .42 !important;
+    transform: none !important;
+  }
+
+  .hydra-root .desktop-nav-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin: 0 8px 33px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+  }
+
+  .hydra-root .desktop-nav-brand .wordmark-copy {
+    color: white;
+  }
+
+  .hydra-root .desktop-nav-brand > small {
+    color: #9fb7a9;
+    font-size: 11px;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button,
+  .hydra-root .phone-app .bottom-nav > button:nth-of-type(3) {
+    flex: none !important;
+    width: 100% !important;
+    min-height: 50px !important;
+    height: 50px !important;
+    margin: 0 !important;
+    padding: 0 13px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    border-radius: 10px !important;
+    color: #b8c9bf !important;
+    text-align: left !important;
+    transform: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, .06) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button.active {
+    color: white !important;
+    background: rgba(255, 255, 255, .1) !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button > span,
+  .hydra-root .phone-app .bottom-nav > button.active > span {
+    width: 28px !important;
+    height: 28px !important;
+    color: inherit !important;
+    background: transparent !important;
+    transform: none !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button > small {
+    color: inherit !important;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+  }
+
+  .hydra-root .home-brandbar {
+    display: none !important;
+  }
+
+  .hydra-root .home-screen {
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    column-gap: 24px !important;
+    row-gap: 22px !important;
+  }
+
+  .hydra-root .home-screen > .greeting-block,
+  .hydra-root .home-screen > .home-announcements,
+  .hydra-root .home-screen > .shortcut-row {
+    grid-column: 1 / -1 !important;
+  }
+
+  .hydra-root .home-screen > .shortcut-row {
+    width: min(100%, 660px) !important;
+    margin: 4px 0 2px !important;
+  }
+
+  .hydra-root .home-screen > .nfc-banner {
+    grid-column: 1 / span 5 !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .property-hero {
+    grid-column: 6 / -1 !important;
+    margin: 0 !important;
+  }
+
+  .hydra-root .home-screen > .home-summary-section {
+    grid-column: 1 / span 7 !important;
+  }
+
+  .hydra-root .home-screen > .home-section:not(.home-summary-section) {
+    grid-column: 8 / -1 !important;
+  }
+
+  .hydra-root .modal-sheet,
+  .hydra-root .quick-sheet {
+    left: calc(50% + 124px);
+    width: min(620px, calc(100vw - 300px));
+    border-radius: 18px 18px 0 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .hydra-root .screen {
+    padding-inline: 15px;
+  }
+
+  .hydra-root .shortcut-row {
+    gap: 3px;
+  }
+
+  .hydra-root .shortcut-row button > span {
+    width: 42px;
+    height: 42px;
+  }
+
+  .hydra-root .shortcut-row button small {
+    font-size: 9px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydra-root *,
+  .hydra-root *::before,
+  .hydra-root *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

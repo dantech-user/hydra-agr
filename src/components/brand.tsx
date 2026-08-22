@@ -42,32 +42,7 @@ export function HydraWordmark({ compact = false }: { compact?: boolean }) {
 export function SplashBrand() {
   return (
     <div className="splash-brand" aria-label="Carregando Hydra Agro">
-      <div className="splash-orbit" />
-      <div className="splash-spore splash-spore-a" />
-      <div className="splash-spore splash-spore-b" />
-      <svg className="splash-mark" viewBox="0 0 64 64" aria-hidden="true">
-        <g className="splash-mark-inner">
-          <path
-            className="splash-leaf splash-leaf-orange"
-            d="M17 35c0-10 7-18 15-24 0 14 8 18 8 29 0 8-5 14-12 14-6 0-11-4-11-10 0-5 3-9 8-13-1 7 1 12 6 15"
-            fill="#f49a31"
-          />
-          <path
-            className="splash-leaf splash-leaf-green"
-            d="M39 14c8 2 12 8 10 17-7-1-12-5-13-12 4 4 7 6 11 7"
-            fill="#83ba5b"
-          />
-          <path
-            className="splash-stem"
-            d="M23 46c4 4 11 4 16-1"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="3"
-            strokeLinecap="round"
-          />
-        </g>
-      </svg>
+      <HydraMark className="splash-mark" />
     </div>
   );
 }
-

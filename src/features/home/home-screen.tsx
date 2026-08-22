@@ -32,54 +32,18 @@ type Props = {
   announcements: Announcement[];
 };
 
-function welcomeMessage(firstName: string, accountId: string) {
-  const now = new Date();
-  const hour = now.getHours();
-
-  const morning = [
-    `Bom dia, ${firstName}`,
-    `Que bom ver você, ${firstName}`,
-    `Pronto para mais um dia, ${firstName}?`,
-    `Como está o campo hoje, ${firstName}?`,
-    `Vamos começar o dia, ${firstName}?`,
-    `Um novo dia por aqui, ${firstName}`,
-  ];
-
-  const afternoon = [
-    `Boa tarde, ${firstName}`,
-    `Que bom ter você por aqui, ${firstName}`,
-    `Vamos continuar de onde paramos, ${firstName}?`,
-    `Como vai a propriedade, ${firstName}?`,
-    `Vamos acompanhar tudo, ${firstName}?`,
-    `Hora de conferir o campo, ${firstName}`,
-  ];
-
-  const evening = [
-    `Boa noite, ${firstName}`,
-    `Que bom ver você de volta, ${firstName}`,
-    `Como foi o dia por aí, ${firstName}?`,
-    `Vamos fechar o dia, ${firstName}?`,
-    `Vamos conferir como ficou tudo, ${firstName}?`,
-    `Mais uma olhada na propriedade, ${firstName}?`,
-  ];
-
-  const lateNight = [
-    `Ainda por aqui, ${firstName}?`,
-    `Boa madrugada, ${firstName}`,
-    `Vamos dar uma última conferida, ${firstName}?`,
-    `Que bom ter você por aqui, ${firstName}`,
-  ];
-
-  const messages = hour < 5 ? lateNight : hour < 12 ? morning : hour < 18 ? afternoon : evening;
-  const identitySeed = Array.from(accountId).reduce((total, char) => total + char.charCodeAt(0), 0);
-  const daySeed = now.getFullYear() * 372 + (now.getMonth() + 1) * 31 + now.getDate();
-  return messages[(identitySeed + daySeed) % messages.length];
+function welcomeMessage(firstName: string) {
+  const hour = new Date().getHours();
+  if (hour < 5) return `Boa noite, ${firstName}`;
+  if (hour < 12) return `Bom dia, ${firstName}`;
+  if (hour < 18) return `Boa tarde, ${firstName}`;
+  return `Boa noite, ${firstName}`;
 }
 
 export function HomeScreen({ account, navigate, onQuickAction, announcements }: Props) {
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const firstName = account.profile.name.split(/\s+/)[0] || "Produtor";
-  const welcome = welcomeMessage(firstName, account.id);
+  const welcome = welcomeMessage(firstName);
   const today = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date());
   const waterTotal = account.waterRecords.reduce((total, record) => total + record.amount, 0);
   const pendingActivities = account.activities.filter((activity) => !activity.done);

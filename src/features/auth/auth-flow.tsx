@@ -5,11 +5,14 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  ClipboardCheck,
+  Droplets,
   Eye,
   EyeOff,
   KeyRound,
   LockKeyhole,
   MapPin,
+  Nfc,
   UserRound,
   UsersRound,
 } from "lucide-react";
@@ -205,18 +208,25 @@ export function AuthFlow({ onLogin, onStaffLogin, onSignup, onResetPassword }: P
 
   return (
     <main className="auth-shell">
-      <div className="auth-ambient auth-ambient-one" />
-      <div className="auth-ambient auth-ambient-two" />
-      <div className="auth-vine" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </div>
+      <aside className="auth-story" aria-label="Sobre o Hydra Agro">
+        <HydraWordmark />
+        <div className="auth-story-copy">
+          <span>Gestão rural no dia a dia</span>
+          <h2>A propriedade organizada, do campo à tela.</h2>
+          <p>Registre o que acontece, acompanhe os animais e consulte as informações sem depender de cadernos espalhados.</p>
+        </div>
+        <div className="auth-story-features">
+          <div><Nfc size={20} /><span><strong>Brinco NFC</strong><small>Abra a ficha do animal por aproximação.</small></span></div>
+          <div><Droplets size={20} /><span><strong>Gestão hídrica</strong><small>Acompanhe fontes, leituras e consumo.</small></span></div>
+          <div><ClipboardCheck size={20} /><span><strong>Rotina da propriedade</strong><small>Organize atividades e registros em um lugar.</small></span></div>
+        </div>
+        <small className="auth-story-availability">Disponível para Android e navegadores.</small>
+      </aside>
 
       <section className={`auth-card ${mode === "signup" ? "auth-card-wide" : ""}`}>
         <div className="auth-brand-row">
           <HydraWordmark compact />
-          <span className="preview-badge">APP SEGURO</span>
+          <span>Acesso ao Hydra Agro</span>
         </div>
 
         {mode === "login" ? (
