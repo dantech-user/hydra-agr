@@ -1,86 +1,132 @@
-/* Hydra Agro — transição premium entre funções/rotas.
-   A tela troca como um bloco único: fade forte, deslize, zoom e blur curto. */
+/* Hydra Agro — transição de entrada marcante entre funções da bottom bar.
+   A nova tela entra como um bloco único: fade forte, reveal lateral, zoom e encaixe curto. */
 
 @keyframes hydra-route-forward {
   0% {
-    opacity: .42;
-    transform: translate3d(28px, 0, 0) scale(.978);
-    filter: blur(4px);
+    opacity: 0;
+    transform: translate3d(46px, 0, 0) scale(.965);
+    filter: blur(6px);
+    clip-path: inset(0 0 0 12% round 18px);
   }
-  58% {
-    opacity: .95;
-    transform: translate3d(-2px, 0, 0) scale(1.004);
-    filter: blur(.6px);
+  42% {
+    opacity: .78;
+    transform: translate3d(8px, 0, 0) scale(.992);
+    filter: blur(2px);
+    clip-path: inset(0 0 0 2% round 8px);
+  }
+  72% {
+    opacity: 1;
+    transform: translate3d(-3px, 0, 0) scale(1.006);
+    filter: blur(0);
+    clip-path: inset(0 round 0);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
     filter: blur(0);
+    clip-path: inset(0 round 0);
   }
 }
 
 @keyframes hydra-route-back {
   0% {
-    opacity: .42;
-    transform: translate3d(-28px, 0, 0) scale(.978);
-    filter: blur(4px);
+    opacity: 0;
+    transform: translate3d(-46px, 0, 0) scale(.965);
+    filter: blur(6px);
+    clip-path: inset(0 12% 0 0 round 18px);
   }
-  58% {
-    opacity: .95;
-    transform: translate3d(2px, 0, 0) scale(1.004);
-    filter: blur(.6px);
+  42% {
+    opacity: .78;
+    transform: translate3d(-8px, 0, 0) scale(.992);
+    filter: blur(2px);
+    clip-path: inset(0 2% 0 0 round 8px);
+  }
+  72% {
+    opacity: 1;
+    transform: translate3d(3px, 0, 0) scale(1.006);
+    filter: blur(0);
+    clip-path: inset(0 round 0);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
     filter: blur(0);
+    clip-path: inset(0 round 0);
   }
 }
 
+@keyframes hydra-route-sheen {
+  0% { opacity: 0; transform: translate3d(-65%, 0, 0); }
+  22% { opacity: .34; }
+  100% { opacity: 0; transform: translate3d(75%, 0, 0); }
+}
+
 @keyframes hydra-tab-pop {
-  0% { transform: translateY(0) scale(.88); }
-  62% { transform: translateY(-3px) scale(1.09); }
+  0% { transform: translateY(1px) scale(.76); opacity: .55; }
+  55% { transform: translateY(-4px) scale(1.14); opacity: 1; }
+  78% { transform: translateY(-1px) scale(1.01); }
   100% { transform: translateY(-2px) scale(1.04); }
 }
 
 @keyframes hydra-nfc-pop {
-  0% { transform: translateY(-9px) scale(.88); }
-  62% { transform: translateY(-12px) scale(1.08); }
+  0% { transform: translateY(-9px) scale(.72); opacity: .55; }
+  55% { transform: translateY(-13px) scale(1.15); opacity: 1; }
+  78% { transform: translateY(-8px) scale(.98); }
   100% { transform: translateY(-9px) scale(1); }
 }
 
-/* A tela inteira faz a transição; os elementos internos não entram separados. */
-.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter {
-  animation: hydra-route-forward 240ms cubic-bezier(.16, 1, .3, 1) both !important;
+/* A tela nova sempre entra de forma visível quando a rota muda. */
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter,
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter {
+  position: relative;
   transform-origin: center center !important;
-  will-change: transform, opacity, filter !important;
+  will-change: transform, opacity, filter, clip-path !important;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter {
+  animation: hydra-route-forward 330ms cubic-bezier(.16, 1, .3, 1) both !important;
 }
 
 .hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter {
-  animation: hydra-route-back 240ms cubic-bezier(.16, 1, .3, 1) both !important;
-  transform-origin: center center !important;
-  will-change: transform, opacity, filter !important;
-  backface-visibility: hidden;
+  animation: hydra-route-back 330ms cubic-bezier(.16, 1, .3, 1) both !important;
 }
 
+/* Flash/reveal curto sobre a tela durante a entrada. */
+.hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter::after,
+.hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter::after {
+  content: "";
+  position: absolute;
+  z-index: 999;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 18%, rgba(255,255,255,.20) 48%, transparent 76%);
+  animation: hydra-route-sheen 360ms ease-out both;
+}
+
+/* Nada de elementos internos entrando separados. */
 .hydra-root .phone-app .app-content.route-motion-forward > .screen.page-enter > *,
 .hydra-root .phone-app .app-content.route-motion-back > .screen.page-enter > * {
   animation: none !important;
   animation-delay: 0ms !important;
 }
 
-/* A barra fica fixa, mas o ícone da nova função dá um pop sincronizado. */
+/* A barra fica fixa, mas a aba escolhida confirma a troca com um pop forte. */
 .hydra-root .phone-app .bottom-nav {
   transform: translate3d(-50%, 0, 0) !important;
 }
 
 .hydra-root .phone-app .bottom-nav > button.active:not(:nth-of-type(3)) > span:first-of-type {
-  animation: hydra-tab-pop 230ms cubic-bezier(.2, 1.2, .3, 1) both !important;
+  animation: hydra-tab-pop 320ms cubic-bezier(.16, 1.25, .3, 1) both !important;
 }
 
 .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
-  animation: hydra-nfc-pop 250ms cubic-bezier(.2, 1.18, .3, 1) both !important;
+  animation: hydra-nfc-pop 340ms cubic-bezier(.16, 1.22, .3, 1) both !important;
+}
+
+.hydra-root.theme-dark .phone-app .app-content > .screen.page-enter::after {
+  background: linear-gradient(105deg, transparent 18%, rgba(150,198,163,.11) 48%, transparent 76%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -91,6 +137,11 @@
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;
+    clip-path: none !important;
+  }
+
+  .hydra-root .phone-app .app-content > .screen.page-enter::after {
+    display: none !important;
   }
 
   .hydra-root .phone-app .bottom-nav > button:nth-of-type(3).active > span:first-of-type {
