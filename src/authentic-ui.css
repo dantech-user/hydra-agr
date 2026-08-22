@@ -253,6 +253,11 @@
   color: white;
 }
 
+.hydra-root .auth-story .wordmark-copy span,
+.hydra-root .desktop-nav-brand .wordmark-copy span {
+  color: white !important;
+}
+
 .hydra-root .auth-story-copy > span {
   display: block;
   margin-bottom: 10px;
