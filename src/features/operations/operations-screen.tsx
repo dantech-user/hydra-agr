@@ -103,7 +103,14 @@ export function OperationsScreen({ account, updateAccount, onBack, openNfc }: Pr
   }
   async function addOccurrence(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const data = new FormData(event.currentTarget); const animalId = String(data.get("animalId") || ""); const description = String(data.get("description") || "").trim(); const category = String(data.get("category") || "Outro"); const priority = String(data.get("priority") || "Atenção"); const employee = account.access.kind === "staff" ? account.profile.name : String(data.get("employee") || account.profile.name);
-    await updateAccount((current) => ({ ...current, monitoring: [{ id: makeId("occ"), date: today(), type: "Ocorrência", occurrence: description, note: encode("HYDRA_OCCURRENCE", { employee, category, priority, animalId, status: "Aberta" }) }, ...current.monitoring], animals: animalId ? current.animals.map((animal) => animal.id === animalId ? { ...animal, history: [{ id: makeId("history"), date: today(), type: `Ocorrência · ${category}`, description }, ...(animal.history || [])] } : animal) : current.animals }), { requireRemote: true }); setOccurrenceOpen(false); showAppToast("Ocorrência registrada");
+    await updateAccount((current) => {
+      const canEditAnimalHistory = current.access.kind === "owner" || current.access.staffRole === "manager";
+      return {
+        ...current,
+        monitoring: [{ id: makeId("occ"), date: today(), type: "Ocorrência", occurrence: description, note: encode("HYDRA_OCCURRENCE", { employee, category, priority, animalId, status: "Aberta" }) }, ...current.monitoring],
+        animals: animalId && canEditAnimalHistory ? current.animals.map((animal) => animal.id === animalId ? { ...animal, history: [{ id: makeId("history"), date: today(), type: `Ocorrência · ${category}`, description }, ...(animal.history || [])] } : animal) : current.animals,
+      };
+    }, { requireRemote: true }); setOccurrenceOpen(false); showAppToast("Ocorrência registrada");
   }
   async function toggleTask(id: string) { await updateAccount((current) => ({ ...current, activities: current.activities.map((item) => item.id === id ? { ...item, done: !item.done } : item) }), { requireRemote: true }); }
 
