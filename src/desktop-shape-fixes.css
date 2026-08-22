@@ -1,0 +1,173 @@
+/* Hydra Agro — correções de forma exclusivas do notebook/PC.
+   Mantém o mobile intocado e corrige o excesso de blocos quadrados no desktop. */
+
+@media (min-width: 1024px) {
+  /* Cada rota passa a parecer um painel único e arredondado, não uma tela quadrada solta. */
+  .hydra-root .app-content > .screen {
+    padding: 30px 32px 54px !important;
+    border: 1px solid rgba(220, 223, 215, .78) !important;
+    border-radius: 34px !important;
+    background: rgba(255, 254, 251, .62) !important;
+    box-shadow: 0 34px 78px -58px rgba(14, 52, 36, .42) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.03);
+    backdrop-filter: blur(18px) saturate(1.03);
+  }
+
+  /* Atalhos: volta à linguagem do mobile — ícone circular e sem caixote em volta. */
+  .hydra-root .home-screen > .shortcut-row {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    padding: 6px 2px 2px !important;
+  }
+
+  .hydra-root .shortcut-row > button {
+    min-height: 92px !important;
+    padding: 8px 4px !important;
+    border: 0 !important;
+    border-radius: 20px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+  }
+
+  .hydra-root .shortcut-row > button:hover {
+    translate: 0 -3px;
+    border-color: transparent !important;
+    background: rgba(237, 243, 233, .62) !important;
+    box-shadow: none !important;
+  }
+
+  .hydra-root .shortcut-row > button > span:not(.touch-ripple) {
+    width: 62px !important;
+    height: 62px !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 50% !important;
+    background: var(--paper) !important;
+    color: var(--forest-700) !important;
+    box-shadow: 0 14px 30px -24px rgba(20, 67, 46, .42) !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .hydra-root .shortcut-row > button:hover > span:not(.touch-ripple) {
+    border-color: rgba(131, 186, 91, .48) !important;
+    box-shadow: 0 18px 34px -24px rgba(20, 67, 46, .52) !important;
+  }
+
+  .hydra-root .shortcut-row > button small {
+    color: #405047 !important;
+    font-size: 10px !important;
+    font-weight: 750 !important;
+  }
+
+  /* Arredondamento consistente das superfícies que ainda pareciam quadradas. */
+  .hydra-root :is(
+    .content-section,
+    .animal-card,
+    .post-card,
+    .nfc-inline-card,
+    .herd-care-launch,
+    .community-tabs,
+    .community-composer,
+    .today-sync-card,
+    .today-report-card,
+    .today-history-link,
+    .property-history-summary,
+    .property-history-list,
+    .nfc-manual-card,
+    .nfc-result-card,
+    .water-overview,
+    .plan-card,
+    .profile-menu-card,
+    .search-row,
+    .filter-chips
+  ) {
+    border-radius: 24px !important;
+  }
+
+  .hydra-root .animal-list > .animal-card,
+  .hydra-root .community-screen > .post-list > .post-card {
+    overflow: hidden !important;
+  }
+
+  .hydra-root .screen:has(> .water-overview) > .action-pair > button,
+  .hydra-root .today-screen .today-metrics > article,
+  .hydra-root .property-history-filters,
+  .hydra-root .property-history-filters button,
+  .hydra-root .profile-screen > .profile-group .profile-menu-row {
+    border-radius: 18px !important;
+  }
+
+  /* Cabeçalho integrado ao painel, com cantos um pouco mais suaves. */
+  .hydra-root .screen > .screen-header,
+  .hydra-root .community-screen > .screen-header {
+    border-radius: 26px !important;
+  }
+
+  /* NFC e propriedade da Home sem quinas duras. */
+  .hydra-root .home-screen > .nfc-banner {
+    border-radius: 24px !important;
+  }
+
+  .hydra-root .home-screen > .property-hero {
+    border-radius: 30px !important;
+  }
+
+  /* Perfil mantém o painel lateral, mas todas as peças ficam com a mesma família de cantos. */
+  .hydra-root .profile-screen > .profile-hero {
+    border-radius: 30px !important;
+  }
+
+  .hydra-root .profile-screen > .profile-social-tabs,
+  .hydra-root .profile-screen > .plan-card,
+  .hydra-root .profile-screen > .profile-group {
+    border-radius: 24px !important;
+  }
+
+  /* Modais e ações rápidas também seguem o acabamento do desktop. */
+  .hydra-root .modal-sheet:not(.modal-tall),
+  .hydra-root .quick-sheet {
+    border-radius: 30px !important;
+  }
+
+  /* Dock um pouco mais orgânica. */
+  .hydra-root .phone-app .bottom-nav {
+    border-radius: 32px !important;
+  }
+
+  .hydra-root .phone-app .bottom-nav > button:not(:nth-of-type(3)) {
+    border-radius: 20px !important;
+  }
+
+  .hydra-root.theme-dark .app-content > .screen {
+    border-color: rgba(50, 76, 61, .66) !important;
+    background: rgba(10, 25, 17, .62) !important;
+    box-shadow: 0 34px 78px -58px rgba(0, 0, 0, .76) !important;
+  }
+
+  .hydra-root.theme-dark .shortcut-row > button:hover {
+    background: rgba(29, 57, 42, .52) !important;
+  }
+
+  .hydra-root.theme-dark .shortcut-row > button > span:not(.touch-ripple) {
+    border-color: #294235 !important;
+    background: #102219 !important;
+    color: #9dc9a6 !important;
+  }
+
+  .hydra-root.theme-dark .shortcut-row > button small {
+    color: #c7d3cb !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1180px) {
+  .hydra-root .app-content > .screen {
+    padding: 26px 24px 50px !important;
+    border-radius: 28px !important;
+  }
+}
