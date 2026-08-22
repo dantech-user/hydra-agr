@@ -16,6 +16,15 @@ export type AppRoute =
   | "admin";
 
 export type UserRole = "user" | "moderator" | "admin" | "owner";
+export type StaffRole = "employee" | "manager";
+
+export type PropertyAccess = {
+  kind: "owner" | "staff";
+  ownerUserId: string;
+  memberId?: string;
+  staffRole?: StaffRole;
+  area?: string;
+};
 
 export type WaterSource = {
   id: string;
@@ -135,6 +144,7 @@ export type HydraAccount = {
   id: string;
   email: string;
   phone: string;
+  access: PropertyAccess;
   profile: {
     name: string;
     plan: "Gratuito" | "Hydra Agro+";
@@ -280,6 +290,7 @@ export function createEmptyAccount(user: {
     id: user.id,
     email: user.email,
     phone: user.phone ?? "",
+    access: { kind: "owner", ownerUserId: user.id },
     profile: { name: user.name?.trim() || "Produtor", plan: "Gratuito" },
     subscription: { status: "active" },
     property: { ...emptyProperty, otherActivities: [], waterKinds: [] },
