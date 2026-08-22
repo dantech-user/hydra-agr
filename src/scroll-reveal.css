@@ -1,94 +1,33 @@
-/* Hydra Agro — animacoes globais de scroll.
-   Nao altera layout, cores ou dimensoes finais. */
+/* Hydra Agro — compatibilidade com o antigo sistema de reveal.
+   O reveal por scroll foi removido: classes antigas nunca escondem conteúdo. */
 
-html.scroll-motion-ready .scroll-reveal {
-  --scroll-reveal-delay: 0ms;
-  opacity: 0 !important;
-  translate: 0 24px;
-  scale: .985;
-  filter: blur(5px);
-  will-change: opacity, translate, scale, filter;
-  transition:
-    opacity 620ms cubic-bezier(.22, 1, .36, 1) var(--scroll-reveal-delay),
-    translate 700ms cubic-bezier(.22, 1, .36, 1) var(--scroll-reveal-delay),
-    scale 700ms cubic-bezier(.22, 1, .36, 1) var(--scroll-reveal-delay),
-    filter 520ms ease var(--scroll-reveal-delay) !important;
-  animation: none !important;
-}
-
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-up {
-  translate: 0 26px;
-}
-
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-left {
-  translate: -22px 12px;
-}
-
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-right {
-  translate: 22px 12px;
-}
-
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-pop {
-  translate: 0 18px;
-  scale: .965;
-}
-
-html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
+html.scroll-motion-ready .scroll-reveal,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-up,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-left,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-right,
+html.scroll-motion-ready .scroll-reveal.scroll-reveal-pop,
+html.scroll-motion-ready .scroll-reveal.is-scroll-visible,
+.scroll-reveal,
+.scroll-reveal-up,
+.scroll-reveal-left,
+.scroll-reveal-right,
+.scroll-reveal-pop {
   opacity: 1 !important;
+  visibility: visible !important;
   translate: 0 0 !important;
   scale: 1 !important;
-  filter: blur(0) !important;
+  filter: none !important;
+  animation: none !important;
+  transition: none !important;
+  will-change: auto !important;
 }
 
-/* Atalhos entram em sequencia sem perder o estilo original. */
-html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(1) { --scroll-reveal-delay: 0ms !important; }
-html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(2) { --scroll-reveal-delay: 45ms !important; }
-html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(3) { --scroll-reveal-delay: 90ms !important; }
-html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(4) { --scroll-reveal-delay: 135ms !important; }
-html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(5) { --scroll-reveal-delay: 180ms !important; }
-
-/* Em telas largas, listas em colunas recebem um deslocamento lateral discreto. */
+/* Mantém apenas o acabamento da dock em telas grandes. */
 @media (min-width: 1024px) {
-  html.scroll-motion-ready .scroll-reveal.scroll-reveal-left {
-    translate: -30px 10px;
-  }
-
-  html.scroll-motion-ready .scroll-reveal.scroll-reveal-right {
-    translate: 30px 10px;
-  }
-
-  html.scroll-motion-ready .scroll-reveal.scroll-reveal-pop {
-    translate: 0 20px;
-    scale: .97;
-  }
-
-  /*
-     Vidro de oclusao da dock do PC/notebook.
-     A area se estende alem da barra e desfoca o conteudo que passa por baixo,
-     evitando que cards, botoes ou textos continuem legiveis atras da navegacao.
-  */
   .hydra-root .phone-app .bottom-nav {
     isolation: isolate;
     -webkit-backdrop-filter: blur(30px) saturate(1.05) !important;
     backdrop-filter: blur(30px) saturate(1.05) !important;
-    box-shadow:
-      0 24px 56px -28px rgba(9, 48, 32, .34),
-      0 0 48px 12px rgba(248, 246, 239, .30) !important;
-  }
-
-  .hydra-root .phone-app .bottom-nav::before {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    inset: -34px -46px -28px;
-    pointer-events: none;
-    border-radius: 52px;
-    background: rgba(248, 246, 239, .72);
-    -webkit-backdrop-filter: blur(34px) saturate(.92) !important;
-    backdrop-filter: blur(34px) saturate(.92) !important;
-    box-shadow:
-      0 0 38px 18px rgba(248, 246, 239, .34),
-      inset 0 0 0 1px rgba(255, 255, 255, .24);
   }
 
   .hydra-root .phone-app .bottom-nav > button,
@@ -96,53 +35,14 @@ html.scroll-motion-ready .shortcut-row > .scroll-reveal:nth-child(5) { --scroll-
     position: relative;
     z-index: 2;
   }
-
-  .hydra-root.theme-dark .phone-app .bottom-nav {
-    box-shadow:
-      0 24px 56px -28px rgba(0, 0, 0, .72),
-      0 0 48px 12px rgba(12, 30, 20, .34) !important;
-  }
-
-  .hydra-root.theme-dark .phone-app .bottom-nav::before {
-    background: rgba(12, 30, 20, .74);
-    box-shadow:
-      0 0 38px 18px rgba(12, 30, 20, .40),
-      inset 0 0 0 1px rgba(255, 255, 255, .035);
-  }
-}
-
-/* No mobile o movimento fica mais curto e rapido. */
-@media (max-width: 700px) {
-  html.scroll-motion-ready .scroll-reveal {
-    filter: blur(3px);
-    transition-duration: 520ms, 590ms, 590ms, 420ms !important;
-  }
-
-  html.scroll-motion-ready .scroll-reveal.scroll-reveal-up {
-    translate: 0 18px;
-  }
-
-  html.scroll-motion-ready .scroll-reveal.scroll-reveal-left {
-    translate: -14px 8px;
-  }
-
-  html.scroll-motion-ready .scroll-reveal.scroll-reveal-right {
-    translate: 14px 8px;
-  }
-
-  html.scroll-motion-ready .scroll-reveal.scroll-reveal-pop {
-    translate: 0 14px;
-    scale: .975;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.scroll-motion-ready .scroll-reveal,
-  html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
-    opacity: 1 !important;
-    translate: none !important;
-    scale: 1 !important;
-    filter: none !important;
+  .scroll-reveal,
+  .scroll-reveal-up,
+  .scroll-reveal-left,
+  .scroll-reveal-right,
+  .scroll-reveal-pop {
     transition: none !important;
     animation: none !important;
   }
