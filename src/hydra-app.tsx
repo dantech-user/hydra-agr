@@ -231,7 +231,7 @@ export default function HydraApp() {
     return <main className="splash-screen"><div className="splash-glow" /><SplashBrand /><div className="splash-loader"><span /></div><p>HYDRA AGRO</p></main>;
   }
 
-  if (!store.account) return <AuthFlow onLogin={store.login} onSignup={store.createAccount} onResetPassword={store.resetPassword} />;
+  if (!store.account) return <AuthFlow onLogin={store.login} onStaffLogin={store.loginStaff} onSignup={store.createAccount} onResetPassword={store.resetPassword} />;
   if (store.account.bannedAt) return <BannedScreen reason={store.account.banReason} logout={store.logout} />;
   if (passwordRecovery) return <PasswordRecoveryScreen save={async (password) => { const result = await store.changeCredentials({ password }); if (result.ok) window.setTimeout(() => setPasswordRecovery(false), 650); return result; }} logout={async () => { setPasswordRecovery(false); await store.logout(); }} />;
 
