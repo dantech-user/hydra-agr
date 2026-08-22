@@ -1,0 +1,192 @@
+/* Hydra Agro — correção de fluxo mobile.
+   Garante que conteúdo funcional nunca fique transparente ou ocupe alturas fantasmas. */
+
+@keyframes hydra-flow-in {
+  from { opacity: .96; }
+  to { opacity: 1; }
+}
+
+/* Segurança global: filhos reais das telas devem permanecer visíveis. */
+.hydra-root .phone-app .screen > * {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Neutraliza qualquer resto do antigo reveal, inclusive em cache. */
+.hydra-root .phone-app .scroll-reveal,
+.hydra-root .phone-app .scroll-reveal-up,
+.hydra-root .phone-app .scroll-reveal-left,
+.hydra-root .phone-app .scroll-reveal-right,
+.hydra-root .phone-app .scroll-reveal-pop,
+.hydra-root .phone-app .scroll-reveal.is-scroll-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  translate: 0 0 !important;
+  scale: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+/* Entrada curta. Não usa scroll/reveal e não deixa o conteúdo em opacity: 0. */
+.hydra-root .phone-app .app-content.route-motion-forward > .screen,
+.hydra-root .phone-app .app-content.route-motion-back > .screen,
+.hydra-root .phone-app .screen > section,
+.hydra-root .phone-app .screen > article,
+.hydra-root .phone-app .screen > nav,
+.hydra-root .phone-app .screen > .search-row,
+.hydra-root .phone-app .screen > .filter-chips,
+.hydra-root .phone-app .screen > .action-pair,
+.hydra-root .phone-app .screen > .shortcut-row,
+.hydra-root .phone-app .screen > .nfc-banner,
+.hydra-root .phone-app .screen > .nfc-inline-card,
+.hydra-root .phone-app .screen > .herd-care-launch,
+.hydra-root .phone-app .screen > .animal-list,
+.hydra-root .phone-app .screen > .empty-state,
+.hydra-root .phone-app .screen > .logout-button,
+.hydra-root .phone-app .screen > .home-fab-label {
+  animation: hydra-flow-in 110ms ease-out both !important;
+  animation-delay: 0ms !important;
+}
+
+/* HOME — nada pode sumir entre a marca e a barra inferior. */
+.hydra-root .phone-app .home-screen > .greeting-block,
+.hydra-root .phone-app .home-screen > .home-announcements,
+.hydra-root .phone-app .home-screen > .shortcut-row,
+.hydra-root .phone-app .home-screen > .nfc-banner,
+.hydra-root .phone-app .home-screen > .property-hero,
+.hydra-root .phone-app .home-screen > .home-section,
+.hydra-root .phone-app .home-screen > .home-fab-label {
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+}
+
+.hydra-root .phone-app .home-screen > .greeting-block {
+  margin-top: 24px !important;
+}
+
+/* ÁGUA — overview e ações ficam em fluxo normal, sem área vazia gigante. */
+.hydra-root .phone-app .screen:has(> .water-overview) > .water-overview {
+  height: auto !important;
+  min-height: 0 !important;
+  margin-top: 18px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.hydra-root .phone-app .screen:has(> .water-overview) > .action-pair {
+  margin-top: 14px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.hydra-root .phone-app .screen:has(> .water-overview) > .content-section {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* REBANHO — busca e filtros voltam a ocupar somente o tamanho real. */
+.hydra-root .phone-app .screen:has(> .search-row) > .search-row {
+  min-height: 46px !important;
+  height: auto !important;
+  margin-top: 18px !important;
+  margin-bottom: 12px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.hydra-root .phone-app .screen:has(> .search-row) > .filter-chips {
+  min-height: 0 !important;
+  height: auto !important;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.hydra-root .phone-app .screen:has(> .search-row) > .nfc-inline-card,
+.hydra-root .phone-app .screen:has(> .search-row) > .herd-care-launch,
+.hydra-root .phone-app .screen:has(> .search-row) > .empty-state,
+.hydra-root .phone-app .screen:has(> .search-row) > .animal-list {
+  height: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* NFC — o painel de leitura não pode virar um bloco invisível de tela inteira. */
+.hydra-root .phone-app .nfc-screen > .nfc-hero {
+  height: auto !important;
+  min-height: 0 !important;
+  margin-top: 18px !important;
+  margin-bottom: 16px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+}
+
+.hydra-root .phone-app .nfc-screen > .nfc-segment,
+.hydra-root .phone-app .nfc-screen > .nfc-manual-card,
+.hydra-root .phone-app .nfc-screen > .empty-state,
+.hydra-root .phone-app .nfc-screen > .nfc-result-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* PERFIL — corrige a tela completamente vazia mostrada no iPhone. */
+.hydra-root .phone-app .profile-screen > .profile-hero {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+.hydra-root .phone-app .profile-screen > .profile-social-tabs {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: grid !important;
+}
+
+.hydra-root .phone-app .profile-screen > .plan-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+.hydra-root .phone-app .profile-screen > .profile-group,
+.hydra-root .phone-app .profile-screen > .logout-button,
+.hydra-root .phone-app .profile-screen > .profile-version {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Rolagem natural e estável no iOS. */
+html,
+body,
+.hydra-root,
+.phone-app {
+  scroll-behavior: auto !important;
+}
+
+.phone-app {
+  overflow-x: hidden !important;
+}
+
+@media (max-width: 1023px) {
+  .hydra-root .phone-app .screen {
+    height: auto !important;
+    min-height: 100dvh !important;
+  }
+
+  .hydra-root .phone-app .nfc-screen > .nfc-desktop-notice {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hydra-root .phone-app .screen > *,
+  .hydra-root .phone-app .app-content > * {
+    animation: none !important;
+    transition-duration: .001ms !important;
+  }
+}
