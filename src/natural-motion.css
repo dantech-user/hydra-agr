@@ -1,36 +1,64 @@
-/* Hydra Agro — movimento mais natural e discreto.
-   Mantem feedback de toque, mas remove entradas exageradas, blur e bounce. */
+/* Hydra Agro — movimento curto, previsivel e leve. */
 
 @keyframes hydra-soft-fade {
-  from { opacity: .86; }
+  from { opacity: .94; }
   to { opacity: 1; }
 }
 
-/* O conteudo nao precisa aparecer bloco por bloco durante o scroll. */
-html.scroll-motion-ready .scroll-reveal,
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-up,
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-left,
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-right,
-html.scroll-motion-ready .scroll-reveal.scroll-reveal-pop,
-html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
+/* Fail-safe: o conteudo principal nunca pode ficar invisivel por causa de reveal. */
+html,
+body,
+#root,
+.hydra-root {
+  min-height: 100%;
+}
+
+#root,
+.hydra-root,
+.phone-app,
+.app-content,
+.screen {
+  visibility: visible !important;
+}
+
+.scroll-reveal,
+.scroll-reveal.scroll-reveal-up,
+.scroll-reveal.scroll-reveal-left,
+.scroll-reveal.scroll-reveal-right,
+.scroll-reveal.scroll-reveal-pop,
+.scroll-reveal.is-scroll-visible {
   opacity: 1 !important;
   translate: 0 0 !important;
   scale: 1 !important;
   filter: none !important;
-  transition: none !important;
   animation: none !important;
+  transition: none !important;
   will-change: auto !important;
 }
 
-/* Troca de tela: somente um fade curto. */
+/* Scroll nativo: sem smooth global e sem animacao ligada a rolagem. */
+html,
+body {
+  scroll-behavior: auto !important;
+}
+
+.phone-app,
+.app-content,
+.screen,
+.modal-sheet,
+.modal-content {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Troca de tela bem curta, apenas para evitar corte seco. */
 .phone-app .app-content.route-motion-forward > *,
 .phone-app .app-content.route-motion-forward .page-enter,
 .phone-app .app-content.route-motion-back > *,
 .phone-app .app-content.route-motion-back .page-enter {
-  animation: hydra-soft-fade 135ms ease-out both !important;
+  animation: hydra-soft-fade 90ms ease-out both !important;
 }
 
-/* Remove a entrada repetida de cards e secoes. */
+/* Nenhuma entrada automatica de cards/secoes. */
 .phone-app .screen > section,
 .phone-app .screen > article,
 .phone-app .screen > .nfc-banner,
@@ -43,24 +71,30 @@ html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
 .phone-app .screen > .animal-list,
 .phone-app .screen > .notification-list,
 .phone-app .screen > .quick-grid,
-.phone-app .screen > .feature-link-grid {
+.phone-app .screen > .feature-link-grid,
+.phone-app .animal-card,
+.phone-app .post-card,
+.phone-app .task-card,
+.phone-app .activity-card,
+.phone-app .monitor-card,
+.phone-app .sector-card {
   animation: none !important;
 }
 
-/* Feedback de toque curto, sem efeito elastico. */
+/* Feedback de toque rapido e discreto. */
 .phone-app button,
 .phone-app a,
 .phone-app input,
 .phone-app select,
 .phone-app textarea,
 .phone-app [role="button"] {
-  transition-duration: 120ms !important;
+  transition-duration: 90ms !important;
   transition-timing-function: ease-out !important;
 }
 
 .phone-app button:not(:disabled):active,
 .phone-app [role="button"]:active {
-  transform: scale(.988) !important;
+  transform: scale(.992) !important;
 }
 
 .phone-app input:focus,
@@ -70,12 +104,12 @@ html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
   transform: none !important;
 }
 
-/* O ripple grande deixava os botoes com aspecto artificial. */
+/* Remove ripple grande. */
 .phone-app .touch-ripple {
   display: none !important;
 }
 
-/* Splash continua limpa, mas sem elementos rodando/pulsando sem parar. */
+/* Splash curta, sem movimento infinito. */
 .splash-glow,
 .splash-mark-inner,
 .splash-orbit,
@@ -86,10 +120,10 @@ html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
 .splash-leaf-orange,
 .splash-leaf-green,
 .splash-stem {
-  animation-duration: 320ms !important;
+  animation-duration: 280ms !important;
 }
 
-/* Mantem spinners funcionais; apenas evita bounce em icones comuns. */
+/* Sem bounce em icones comuns. */
 .phone-app .shortcut-row button > span,
 .phone-app .feature-link-grid button > svg,
 .phone-app .history-home-row > span,
@@ -101,6 +135,12 @@ html.scroll-motion-ready .scroll-reveal.is-scroll-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
   .phone-app .app-content.route-motion-forward > *,
   .phone-app .app-content.route-motion-forward .page-enter,
   .phone-app .app-content.route-motion-back > *,
