@@ -2,7 +2,6 @@ import { useState, type ReactNode } from "react";
 import { Bell, BriefcaseBusiness, ChevronRight, KeyRound, LogOut, MapPin, ShieldCheck, UserRound } from "lucide-react";
 import { Modal } from "../../components/ui";
 import type { AppRoute, HydraAccount } from "../../lib/hydra-types";
-import "../profile/profile-screen.css";
 import "./staff-access.css";
 
 type Props = {
